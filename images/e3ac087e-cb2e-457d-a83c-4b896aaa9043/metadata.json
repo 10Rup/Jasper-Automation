@@ -1,0 +1,29 @@
+{
+    "file_id": "e3ac087e-cb2e-457d-a83c-4b896aaa9043",
+    "regions": [
+        {
+            "band": "pageHeader",
+            "file": "pageHeader_1.png",
+            "x": 54,
+            "y": 158,
+            "width": 1526,
+            "height": 468
+        },
+        {
+            "band": "detail",
+            "file": "detail_1.png",
+            "x": 56,
+            "y": 990,
+            "width": 1528,
+            "height": 552
+        },
+        {
+            "band": "pageFooter",
+            "file": "pageFooter_1.png",
+            "x": 54,
+            "y": 1548,
+            "width": 1544,
+            "height": 578
+        }
+    ]
+}
