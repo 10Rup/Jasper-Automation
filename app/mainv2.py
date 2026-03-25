@@ -19,7 +19,7 @@ os.makedirs(IMAGE_DIR, exist_ok=True)
 
 from openai import OpenAI
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="secret_key")
 
 
 def generate_jrxml_prompt(text, band):
