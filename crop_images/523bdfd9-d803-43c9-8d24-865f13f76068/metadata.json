@@ -1,0 +1,14 @@
+[
+    {
+        "band": "pageHeader",
+        "file": "crop_1.png"
+    },
+    {
+        "band": "detail",
+        "file": "crop_3.png"
+    },
+    {
+        "band": "pageFooter",
+        "file": "crop_4.png"
+    }
+]

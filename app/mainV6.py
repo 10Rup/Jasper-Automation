@@ -79,211 +79,57 @@ def get_image(file_id: str):
     return FileResponse(os.path.join(IMAGE_DIR, f"{file_id}.png"))
 
 
-# ================= CANVAS SCRIPT (ADVANCED EDITING) =================
+# ================= CANVAS SCRIPT =================
 def get_canvas_script():
     return """
     <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
-    const bandSelect = document.getElementById("band");
 
     let rectangles = [];
     let img = new Image();
     img.src = imageUrl;
 
-    let selectedRect = null; // Tracks the box being edited
-    let isDrawing = false;
-    let isDragging = false;
-    let isResizing = false;
-    let resizeHandle = null; // Which corner ('tl', 'tr', 'bl', 'br')
-
-    let startX, startY, offX, offY;
-    const HANDLE_SIZE = 8; // Size of corner resize handles
-
     img.onload = function () {
         canvas.width = img.width;
         canvas.height = img.height;
-        draw();
+        ctx.drawImage(img, 0, 0);
     };
 
-    // --- Helper: Check if point (x,y) is inside rectangle r ---
-    function isInside(x, y, r) {
-        const rx = r.x, ry = r.y, rw = r.width, rh = r.height;
-        // Handle negative widths/heights
-        const realX = rw > 0 ? rx : rx + rw;
-        const realY = rh > 0 ? ry : ry + rh;
-        const realW = Math.abs(rw);
-        const realH = Math.abs(rh);
-        return x >= realX && x <= realX + realW && y >= realY && y <= realY + realH;
-    }
+    let startX, startY, isDrawing = false;
 
-    // --- Helper: Get resize handle at point (x,y) for selected rect ---
-    function getHandle(x, y, r) {
-        const rx = r.x, ry = r.y, rw = r.width, rh = r.height;
-        const rXR = rx + rw;
-        const rYB = ry + rh;
-        const h = HANDLE_SIZE / 2;
-
-        if (x >= rx-h && x <= rx+h && y >= ry-h && y <= ry+h) return 'tl'; // Top Left
-        if (x >= rXR-h && x <= rXR+h && y >= ry-h && y <= ry+h) return 'tr'; // Top Right
-        if (x >= rx-h && x <= rx+h && y >= rYB-h && y <= rYB+h) return 'bl'; // Bottom Left
-        if (x >= rXR-h && x <= rXR+h && y >= rYB-h && y <= rYB+h) return 'br'; // Bottom Right
-        return null;
-    }
-
-    // --- Interaction 1: Band Dropdown Sync ---
-    bandSelect.addEventListener("change", e => {
-        if (selectedRect) {
-            selectedRect.band = e.target.value;
-            draw();
-        }
-    });
-
-    // --- Interaction 2: Mouse Down (New, Edit, Resize) ---
     canvas.addEventListener("mousedown", e => {
-        const mx = e.offsetX;
-        const my = e.offsetY;
-
-        // A. Check for Resizing existing selected box
-        if (selectedRect) {
-            resizeHandle = getHandle(mx, my, selectedRect);
-            if (resizeHandle) {
-                isResizing = true;
-                return;
-            }
-        }
-
-        // B. Check for Dragging/Selecting an existing box
-        let found = false;
-        rectangles.slice().reverse().forEach(r => { // Check newest first
-            if (!found && isInside(mx, my, r)) {
-                selectedRect = r;
-                offX = mx - r.x; // Save offsets for smooth dragging
-                offY = my - r.y;
-                isDragging = true;
-                found = true;
-                bandSelect.value = r.band; // Sync dropdown
-            }
-        });
-
-        if (found) { draw(); return; }
-
-        // C. Start Drawing a New Box
-        selectedRect = null; // Clear selection
-        bandSelect.value = bandSelect.options[1].value; // Reset to default
-        startX = mx;
-        startY = my;
+        startX = e.offsetX;
+        startY = e.offsetY;
         isDrawing = true;
-        draw();
     });
 
-    // --- Interaction 3: Mouse Move (Move, Resize, Draw Preview) ---
-    canvas.addEventListener("mousemove", e => {
-        const mx = e.offsetX;
-        const my = e.offsetY;
-
-        // Update Cursor UI feedback
-        if (selectedRect) {
-            const h = getHandle(mx, my, selectedRect);
-            if (h === 'tl' || h === 'br') canvas.style.cursor = 'nwse-resize';
-            else if (h === 'tr' || h === 'bl') canvas.style.cursor = 'nesw-resize';
-            else if (isInside(mx, my, selectedRect)) canvas.style.cursor = 'move';
-            else canvas.style.cursor = 'default';
-        } else {
-            canvas.style.cursor = 'default';
-        }
-
-        if (isResizing && selectedRect) {
-            const r = selectedRect;
-            if (resizeHandle === 'tl') { r.width += (r.x - mx); r.height += (r.y - my); r.x = mx; r.y = my; }
-            if (resizeHandle === 'tr') { r.width = mx - r.x; r.height += (r.y - my); r.y = my; }
-            if (resizeHandle === 'bl') { r.x = mx; r.width += (selectedRect.x - mx); r.height = my - r.y; }
-            if (resizeHandle === 'br') { r.width = mx - r.x; r.height = my - r.y; }
-            draw();
-        } else if (isDragging && selectedRect) {
-            selectedRect.x = mx - offX;
-            selectedRect.y = my - offY;
-            draw();
-        } else if (isDrawing) {
-            draw();
-            // New Box Preview (Dotted Blue)
-            ctx.setLineDash([5, 5]);
-            ctx.strokeStyle = "blue";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(startX, startY, mx - startX, my - startY);
-            ctx.setLineDash([]);
-        }
-    });
-
-    // --- Interaction 4: Mouse Up (Save/Finalize) ---
     canvas.addEventListener("mouseup", e => {
-        if (isDrawing) {
-            let rect = {
-                x: startX,
-                y: startY,
-                width: e.offsetX - startX,
-                height: e.offsetY - startY,
-                band: bandSelect.value
-            };
-            if (Math.abs(rect.width) > 5 && Math.abs(rect.height) > 5) {
-                rectangles.push(rect);
-                selectedRect = rect; // Select new box immediately
-            }
-        }
-        isDrawing = isDragging = isResizing = false;
-        resizeHandle = null;
-        draw();
-    });
+        if (!isDrawing) return;
 
-    // --- Interaction 5: Keyboard Delete (Delete Selected) ---
-    window.addEventListener("keydown", e => {
-        if ((e.key === "Delete" || e.key === "Backspace") && selectedRect) {
-            e.preventDefault();
-            rectangles = rectangles.filter(r => r !== selectedRect);
-            selectedRect = null;
-            draw();
-        }
+        let rect = {
+            x: startX,
+            y: startY,
+            width: e.offsetX - startX,
+            height: e.offsetY - startY,
+            band: document.getElementById("band").value
+        };
+
+        rectangles.push(rect);
+        draw();
+        isDrawing = false;
     });
 
     function draw() {
-        ctx.drawImage(img, 0, 0); // Background Image
-        
-        ctx.lineWidth = 2;
-        rectangles.forEach(r => {
-            const isSel = (r === selectedRect);
-            
-            // Draw Box
-            ctx.strokeStyle = isSel ? "lime" : "red"; // Green if selected
-            ctx.setLineDash(isSel ? [2, 2] : []);     // Dashed if selected
-            ctx.strokeRect(r.x, r.y, r.width, r.height);
-            ctx.setLineDash([]); // Reset
-            
-            // Draw Label
-            ctx.fillStyle = isSel ? "lime" : "red";
-            ctx.font = "bold 12px Arial";
-            ctx.fillText(r.band.toUpperCase(), r.x + 5, r.y + 15);
+        ctx.drawImage(img, 0, 0);
+        ctx.strokeStyle = "red";
 
-            // Draw Resize Handles (if selected)
-            if (isSel) {
-                ctx.fillStyle = "white";
-                ctx.strokeStyle = "lime";
-                ctx.lineWidth = 1;
-                const h = HANDLE_SIZE / 2;
-                const cornerHandles = [
-                    [r.x-h, r.y-h], [r.x+r.width-h, r.y-h], 
-                    [r.x-h, r.y+r.height-h], [r.x+r.width-h, r.y+r.height-h]
-                ];
-                cornerHandles.forEach(([hx, hy]) => {
-                    ctx.fillRect(hx, hy, HANDLE_SIZE, HANDLE_SIZE);
-                    ctx.strokeRect(hx, hy, HANDLE_SIZE, HANDLE_SIZE);
-                });
-                ctx.lineWidth = 2; // Reset
-            }
+        rectangles.forEach(r => {
+            ctx.strokeRect(r.x, r.y, r.width, r.height);
         });
     }
 
     function saveRegions() {
-        if (rectangles.length === 0) { alert("No regions to save."); return; }
         fetch("/save-regions", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -293,10 +139,11 @@ def get_canvas_script():
             })
         })
         .then(res => res.json())
-        .then(() => alert("All regions saved and synced successfully!"));
+        .then(() => alert("Saved"));
     }
     </script>
     """
+
 
 # ================= SAVE CROPS =================
 @app.post("/save-regions")
@@ -492,7 +339,7 @@ async def process_crop(file_id: str, filename: str, band: str, extra: str = Quer
         8. When a small square box is found (like a checkbox), use the <rectangle> component.
         9. STRICT: NO markdown formatting. Output ONLY the XML block starting with <{band}> and ending with </{band}>.
         """
-
+        
         # Append additional user instructions if they exist
         if extra:
             prompt += f"\nADDITIONAL USER REFINEMENT INSTRUCTIONS: {extra}\n"
