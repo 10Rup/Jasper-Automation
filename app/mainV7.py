@@ -2,8 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Request, Query
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from pdf2image import convert_from_bytes
 from PIL import Image
-# import google.generativeai as genai
-import google.genai as genai
+import google.generativeai as genai
 import os
 import uuid
 import json
@@ -20,121 +19,11 @@ CROP_IMAGE_DIR = "crop_images"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(IMAGE_DIR, exist_ok=True)
 
-def load_reference():
-    try:
-        with open("reference.txt", "r", encoding="utf-8") as f:
-            return f.read()
-    except:
-        return ""
+
 
 # 🔐 Gemini Setup
-# genai.configure(api_key="AIzaSyAcWnzx6Ny9SQVE_hcEtAG2qxB-S-0wB2k")
-client = genai.Client(api_key="AIzaSyAcWnzx6Ny9SQVE_hcEtAG2qxB-S-0wB2k")
-# model = genai.GenerativeModel("gemini-3-flash-preview")
-model = "gemini-3-flash-preview"
-
-import pandas as pd
-import io
-
-
-# ================= Excel HOME =================
-@app.get("/excel-tool", response_class=HTMLResponse)
-def excel_tool():
-    return """
-    <h2>Excel to Jasper XML Converter</h2>
-    <p>Upload an excel file to auto-generate ColumnHeader and Detail bands.</p>
-    <input type="file" id="excelFile" accept=".xlsx, .xls"/>
-    <button onclick="uploadExcel()">Convert to XML</button>
-    <br><br>
-    <textarea id="excelResult" style="width:100%; height:400px; background:#2d2d2d; color:white;"></textarea>
-
-    <script>
-    function uploadExcel() {
-        const fileInput = document.getElementById('excelFile');
-        const resultBox = document.getElementById('excelResult');
-        if (!fileInput.files[0]) return alert("Select a file");
-
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-
-        resultBox.value = "Processing Excel...";
-        
-        fetch("/process-excel", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.status === "success") {
-                resultBox.value = data.xml;
-            } else {
-                alert("Error: " + data.message);
-            }
-        });
-    }
-    </script>
-    """
-
-# ================= EXCEL TO JRXML =================
-@app.post("/process-excel")
-async def process_excel(file: UploadFile = File(...)):
-    try:
-        # Read Excel content
-        contents = await file.read()
-        df = pd.read_excel(io.BytesIO(contents))
-        
-        columns = df.columns.tolist()
-        
-        # Configuration for layout
-        col_width = 100
-        row_height = 20
-        current_x = 0
-        
-        # 1. Generate columnHeader Band
-        column_header_xml = "    <columnHeader>\n        <band height=\"30\">\n"
-        for col in columns:
-            column_header_xml += f"""            <staticText>
-                <reportElement x="{current_x}" y="0" width="{col_width}" height="{row_height}"/>
-                <box><pen lineWidth="1.0"/></box>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font isBold="true"/>
-                </textElement>
-                <text><![CDATA[{col}]]></text>
-            </staticText>\n"""
-            current_x += col_width
-        column_header_xml += "        </band>\n    </columnHeader>"
-
-        # 2. Generate detail Band (Mapping fields)
-        current_x = 0
-        detail_xml = "    <detail>\n        <band height=\"25\">\n"
-        for col in columns:
-            # Clean column name for field reference (no spaces/special chars)
-            field_name = str(col).replace(" ", "_")
-            detail_xml += f"""            <textField>
-                <reportElement x="{current_x}" y="0" width="{col_width}" height="{row_height}"/>
-                <box><pen lineWidth="1.0"/></box>
-                <textElement textAlignment="Center" verticalAlignment="Middle"/>
-                <textFieldExpression><![CDATA[$F{{{field_name}}}]]></textFieldExpression>
-            </textField>\n"""
-            current_x += col_width
-        detail_xml += "        </band>\n    </detail>"
-
-        # 3. Generate Fields definitions (Required for Jasper)
-        fields_xml = ""
-        for col in columns:
-            field_name = str(col).replace(" ", "_")
-            fields_xml += f'    <field name="{field_name}" class="java.lang.String"/>\n'
-
-        full_xml = f"{fields_xml}\n{column_header_xml}\n{detail_xml}"
-
-        return JSONResponse({
-            "status": "success",
-            "xml": full_xml,
-            "message": "Excel structure converted to Jasper Bands successfully."
-        })
-
-    except Exception as e:
-        return JSONResponse({"status": "error", "message": str(e)})
+genai.configure(api_key="AIzaSyAcWnzx6Ny9SQVE_hcEtAG2qxB-S-0wB2k")
+model = genai.GenerativeModel("gemini-3-flash-preview")
 
 
 # ================= HOME =================
@@ -609,22 +498,12 @@ async def process_crop(file_id: str, filename: str, band: str, extra: str = Quer
         if extra:
             prompt += f"\nADDITIONAL USER REFINEMENT INSTRUCTIONS: {extra}\n"
 
-        # # Call Gemini API
-        # response = model.generate_content([prompt, img])
-        # xml_content = response.text.strip()
-
-        # # Final cleanup to remove any potential markdown code blocks
-        # xml_content = xml_content.replace("```xml", "").replace("```", "").strip()
-
-
-        # Use the client to generate content
-        response = client.models.generate_content(
-            model=model, # or "gemini-1.5-flash"
-            contents=[prompt, img]
-        )
-        
-        # In the new SDK, the text is accessed via .text
+        # Call Gemini API
+        response = model.generate_content([prompt, img])
         xml_content = response.text.strip()
+
+        # Final cleanup to remove any potential markdown code blocks
+        xml_content = xml_content.replace("```xml", "").replace("```", "").strip()
 
         return JSONResponse({"status": "success", "xml": xml_content})
 
