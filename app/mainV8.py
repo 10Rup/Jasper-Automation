@@ -573,26 +573,6 @@ def view_project(file_id: str):
     """
     return html
 
-
-# ================= LOAD REFERENCE =================
-def load_reference_by_band(band):
-    mapping = {
-        "detail": "reference/detail.xml",
-        "title": "reference/title.xml",
-        "pageHeader": "reference/pageHeader.xml",
-        "pageFooter": "reference/pageFooter.xml",
-        "columnHeader": "reference/columnHeader.xml"
-    }
-
-    path = mapping.get(band)
-
-    if path and os.path.exists(path):
-        with open(path, "r", encoding="utf-8") as f:
-            return f.read()
-
-    return ""
-
-
 # ================= NEW: PROCESS CROP ENDPOINT =================
 @app.get("/process-crop/{file_id}/{filename}/{band}")
 async def process_crop(file_id: str, filename: str, band: str, extra: str = Query("")):
@@ -607,37 +587,27 @@ async def process_crop(file_id: str, filename: str, band: str, extra: str = Quer
         img = Image.open(image_path)
         
         # Base Prompt Construction
-        reference_xml = load_reference_by_band(band)
-
         prompt = f"""
-        You are a JasperReports expert.
-
-        Use the following reference JRXML as a STYLE GUIDE only.
-        Do NOT copy blindly. Adapt based on the image.
-
-        REFERENCE:
-        {reference_xml}
-
-        Now analyze the image and generate JRXML for <{band}>.
+       
+        Analyze this cropped image and generate high-precision JRXML code for the JasperReports <{band}> band.
 
         Mandatory Rules:
-        1. Use <staticText> for all elements
-        2. Proper (x, y, width, height)
-        3. Use <box><pen lineWidth="1.0" lineColor="#000000"/></box>
-        4. STRICT font hierarchy:
-        <textElement><font/></textElement>
-        5. textAlignment="Center", verticalAlignment="Middle"
-        6. Extract exact text
-        7. NO UUID
-        8. NO comments
-        9. NO markdown
-        10. Output ONLY valid XML inside <{band}>...</{band}>
-
-        {f"Additional instructions: {extra}" if extra else ""}
+        1. Use <staticText> for all elements/cells in the table.
+        2. Set proper (x, y, width, height) relative to the image size.
+        3. Use <box><pen lineWidth="1.0" lineColor="#000000"/></box> for borders if borders are present in the image.
+        4. STRICT HIERARCHY: All font settings must be inside <textElement>. 
+        The order MUST be: <textElement> -> <font/> -> </textElement>.
+        Example: <textElement><font size="10" isBold="true"/></textElement>.
+        5. Use textAlignment="Center" and verticalAlignment="Middle" for consistency unless the image clearly shows left/right alignment.
+        6. Extract actual text from the image accurately.
+        7. STRICT: DO NOT include UUID attributes.
+        8. When a small square box is found (like a checkbox), use the <rectangle> component.
+        9. STRICT: NO markdown formatting. Output ONLY the XML block starting with <{band}> and ending with </{band}>.
         """
+
         # Append additional user instructions if they exist
-        # if extra:
-        #     prompt += f"\nADDITIONAL USER REFINEMENT INSTRUCTIONS: {extra}\n"
+        if extra:
+            prompt += f"\nADDITIONAL USER REFINEMENT INSTRUCTIONS: {extra}\n"
 
         # # Call Gemini API
         # response = model.generate_content([prompt, img])
