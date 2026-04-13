@@ -10,6 +10,11 @@ import json
 import base64
 import xml.etree.ElementTree as ET
 
+from dotenv import load_dotenv
+load_dotenv()
+
+
+api_key_gemini = os.getenv("GEMINI_API_KEY")
 
 app = FastAPI()
 
@@ -29,7 +34,7 @@ def load_reference():
 
 # 🔐 Gemini Setup
 # genai.configure(api_key="AIzaSyAcWnzx6Ny9SQVE_hcEtAG2qxB-S-0wB2k")
-client = genai.Client(api_key="AIzaSyAcWnzx6Ny9SQVE_hcEtAG2qxB-S-0wB2k")
+client = genai.Client(api_key=api_key_gemini)
 # model = genai.GenerativeModel("gemini-3-flash-preview")
 model = "gemini-3-flash-preview"
 
