@@ -455,16 +455,6 @@ def get_canvas_script():
         });
     }
 
-    function normalizeRect(r) {
-        return {
-            x: r.width >= 0 ? r.x : r.x + r.width,
-            y: r.height >= 0 ? r.y : r.y + r.height,
-            width: Math.abs(r.width),
-            height: Math.abs(r.height),
-            band: r.band
-        };
-    }
-
     function saveRegions() {
         if (rectangles.length === 0) { alert("No regions to save."); return; }
         fetch("/save-regions", {
@@ -472,7 +462,7 @@ def get_canvas_script():
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 file_id: fileId,
-                regions: rectangles.map(normalizeRect)
+                regions: rectangles
             })
         })
         .then(res => res.json())
@@ -498,20 +488,21 @@ async def save_regions(request: Request):
     os.makedirs(folder, exist_ok=True)
 
     img = Image.open(image_path)
-    # img = img.resize((800, 800))
+    img = img.resize((800, 800))
 
     results = []
 
     for i, r in enumerate(regions):
         x, y, w, h = int(r["x"]), int(r["y"]), int(r["width"]), int(r["height"])
 
-        # Normalize coordinates (VERY IMPORTANT FIX)
-        x1 = x if w >= 0 else x + w
-        y1 = y if h >= 0 else y + h
-        x2 = x + w if w >= 0 else x
-        y2 = y + h if h >= 0 else y
+        if w < 0:
+            x += w
+            w = abs(w)
+        if h < 0:
+            y += h
+            h = abs(h)
 
-        crop = img.crop((x1, y1, x2, y2))
+        crop = img.crop((x, y, x + w, y + h))
 
         filename = f"crop_{i}.png"
         path = os.path.join(folder, filename)
