@@ -184,7 +184,64 @@ async def upload_pdf(file: UploadFile = File(...)):
     """
 
 
+
+
+
 # ================= SERVE IMAGE =================
+@app.get('/images', response_class = HTMLResponse)
+def get_images():
+    images = os.listdir(IMAGE_DIR)
+    print(images)
+    page  = ''
+    for image in images:
+        print(image)
+        page += f'''
+            <form action="/image/{image.replace(".png", "")}" method="post">
+        <img src="/image/{image.replace(".png", "")}" width="200">
+        <button type="submit">Process</button>
+        </form> <br><br><br>'''
+    
+    
+    return f'''
+    <html>
+    <body>
+    {page}
+    </body>
+    </html>
+    '''
+
+
+
+@app.post("/image/{file_id}", response_class = HTMLResponse)
+def process_image(file_id: str):
+    
+    return f"""
+    <h2>Draw Regions</h2>
+
+    <select id="band">
+            <option value="title">Title</option>
+            <option value="detail">Detail</option>
+            <option value="pageHeader">Page Header</option>
+            <option value="pageFooter">Page Footer</option>
+            <option value="columnHeader">Column Header</option>
+    </select>
+    <br><br>
+    <canvas id="canvas"></canvas>
+    <br><br>
+    <button onclick="saveRegions()">Save</button>
+    <button onclick="homePage()">Cancle</button>
+
+    <script>
+        const imageUrl = "/image/{file_id}";
+        const fileId = "{file_id}";
+    </script>
+
+    {get_canvas_script()}
+    """
+
+
+
+
 @app.get("/image/{file_id}")
 def get_image(file_id: str):
     return FileResponse(os.path.join(IMAGE_DIR, f"{file_id}.png"))
@@ -405,6 +462,10 @@ def get_canvas_script():
         })
         .then(res => res.json())
         .then(() => alert("All regions saved and synced successfully!"));
+    }
+
+    function homePage() {
+        window.location.href = "/";
     }
     </script>
     """
