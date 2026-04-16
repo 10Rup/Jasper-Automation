@@ -269,8 +269,8 @@ async def process_crop(file_id: str, filename: str, band: str, file_path: str, m
 
             # Use the client to generate content
             # 🔐 Gemini Setup
-            # genai.configure(api_key="AIzaSyAcWnzx6Ny9SQVE_hcEtAG2qxB-S-0wB2k")
-            client = genai.Client(api_key="AQ.Ab8RN6LObNr3cvP_ioDIyI9saWg0yJJ3Sf0Fi23HxT-p8qacgw")
+            # genai.configure(api_key=api_key.apikey)
+            client = genai.Client(api_key=api_key.apikey)
             # model = genai.GenerativeModel("gemini-3-flash-preview")
             model = "gemini-3-flash-preview"
             response = client.models.generate_content(
