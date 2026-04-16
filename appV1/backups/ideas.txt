@@ -1,0 +1,5 @@
+next step
+1. sending the whole image to the api to generate xml code for it.
+2. generating full jrxml code with dynamic page width and hieght and default page margin on all side of 20px.
+3. sending query and reading fields in the query and mapping then in the xml code.
+4. Ai giving report format by itself based on the user requirment and the prompt user givine to the ai api.

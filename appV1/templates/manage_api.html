@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Api Keys</title>
+</head>
+<body>
+    <h2>Manage Api Keys</h2>
+    <form action="/jasper/add-api-key" method="post">
+        <label for="username">User Name:</label>
+        <input id="username" name="username" placeholder="User Name" required><br>
+        <label for="apiname">Select API:</label>
+        <select id="apiname" name="apiname" required>
+            <option value="geminie">
+                API Geminie
+            </option>
+            <option value="openapi">
+                API Open AI
+            </option>
+        </select><br>
+        <label for="apikey">API Key:</label>
+        <input id="apikey" name="apikey" placeholder="API Key" required><br>
+        <button type="submit">Add</button>
+    </form>
+</body>
+</html>

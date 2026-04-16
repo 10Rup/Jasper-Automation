@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Files</title>
+    <style>
+        .crop-container { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .controls { margin: 15px 0; display: flex; gap: 10px; align-items: center; }
+        .btn { padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; }
+        .btn-delete { background-color: #ffcccc; color: #a00; border-color: #faa; }
+        .btn-process { background-color: #28a745; color: white; border-color: #218838; }
+        .refine-input { flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .result-box { width: 100%; height: 250px; font-family: 'Courier New', monospace; margin-top: 10px; display: none; background: #2d2d2d; color: #f8f8f2; padding: 12px; border-radius: 4px; font-size: 13px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <h2>Report Files</h2>
+    <div>
+        <h3>{{ filename }}</h3>
+    </div>  
+    <div>
+        {% for file in files %}
+            <div class="crop-container" id="container_{{file.id}}">
+                <b><span>(Target Band: <span style="color:blue;">{{file.bandname}}</span>)</b><br>
+                <img src="/{{ file_dir }}/{{imagepath}}/{{ file.filepath }}" width="300" height="200" style="border: 1px solid #999; margin-top:10px;">                    
+                <div class="controls">
+                    <input type="text" id="prompt_{{file.id}}" class="refine-input" placeholder="Optional: Add extra instructions (e.g., 'make text bold', '3 columns')...">
+                    
+                    <button class="btn btn-process" id="processGemini_{{file.id}}" onclick="processGemini('{{file.id}}', '{{file.uploadfile_id}}-{{filename}}', '{{file.bandname}}','{{file.filepath}}','gemini')">
+                        Gemini Process
+                    </button>
+
+                    <button class="btn btn-process" id="processOpenAi_{{file.id}}" onclick="processOpenAi('{{file.id}}', '{{file.uploadfile_id}}-{{filename}}', '{{file.bandname}}','{{file.filepath}}','openai')">
+                        OpenAI Process
+                    </button>
+                    
+                    <button class="btn btn-delete" onclick="deleteImage('{{file.id}}')">Delete</button>
+                </div>
+
+                <textarea class="result-box" id="resultGemini_{{file.id}}" readonly></textarea>            
+                <textarea class="result-box" id="resultOpenAi_{{file.id}}" readonly></textarea>
+
+         
+
+            </div>
+        {% endfor %}
+    </div>
+
+    
+
+    <script>
+        function deleteImage(filename) {
+            if (!confirm("Are you sure?")) return;
+            fetch(`/delete-region/${fileId}/${filename}`, { method: "DELETE" })
+            .then(res => res.json())
+            .then(() => {
+                alert("Deleted!");
+                location.reload();
+            });
+        }
+
+        function processOpenAi(fileId, filename, band, file_path, model) {
+            const resultBoxOpen = document.getElementById("resultOpenAi_" + fileId);
+            const processBtnOpen = document.getElementById("processOpenAi_" + fileId);
+            const extraPrompt = document.getElementById("prompt_" + fileId).value;
+
+           
+             // UI Feedback
+            resultBoxOpen.style.display = "block";
+            resultBoxOpen.value = "Analyzing image and generating JRXML... please wait.";
+            resultBoxOpen.style.background = "#fff";
+            resultBoxOpen.style.color = "#333";
+            processBtnOpen.disabled = true;
+            processBtnOpen.innerText = "Processing...";
+
+            // Encode the extra prompt to handle special characters in URL
+            const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
+
+            fetch(`/jasper/process-crop/${fileId}/${filename}/${band}/${file_path}/${model}${queryParams}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "error") {
+                    resultBoxOpen.value = "AI Error: " + data.message;
+                    resultBoxOpen.style.color = "red";
+                } else {
+                    resultBoxOpen.value = data.xml;
+                    resultBoxOpen.style.background = "#2d2d2d";
+                    resultBoxOpen.style.color = "#f8f8f2";
+                }
+            })
+            .catch(err => {
+                resultBoxOpen.value = "Network failed: " + err;
+                resultBoxOpen.style.color = "red";
+            })
+            .finally(() => {
+                processBtnOpen.disabled = false;
+                processBtnOpen.innerText = "Process to XML";
+            });
+        }
+
+
+        function processGemini(fileId, filename, band, file_path, model) {
+            const resultBoxGemini = document.getElementById("resultGemini_" + fileId);
+            const processBtnGemini = document.getElementById("processGemini_" + fileId);
+            const extraPrompt = document.getElementById("prompt_" + fileId).value;
+
+            // UI Feedback
+            resultBoxGemini.style.display = "block";
+            resultBoxGemini.value = "Analyzing image and generating JRXML... please wait.";
+            resultBoxGemini.style.background = "#fff";
+            resultBoxGemini.style.color = "#333";
+            processBtnGemini.disabled = true;
+            processBtnGemini.innerText = "Processing...";
+
+            // Encode the extra prompt to handle special characters in URL
+            const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
+
+            fetch(`/jasper/process-crop/${fileId}/${filename}/${band}/${file_path}/${model}${queryParams}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "error") {
+                    resultBoxGemini.value = "AI Error: " + data.message;
+                    resultBoxGemini.style.color = "red";
+                } else {
+                    resultBoxGemini.value = data.xml;
+                    resultBoxGemini.style.background = "#2d2d2d";
+                    resultBoxGemini.style.color = "#f8f8f2";
+                }
+            })
+            .catch(err => {
+                resultBoxGemini.value = "Network failed: " + err;
+                resultBoxGemini.style.color = "red";
+            })
+            .finally(() => {
+                processBtnGemini.disabled = false;
+                processBtnGemini.innerText = "Process to XML";
+            });
+        }
+    </script>
+
+    
+</body>
+
+
+</html>

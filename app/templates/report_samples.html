@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uploaded Files</title>
+</head>
+<body>
+    <h2>Uploaded Files</h2>
+        
+    <div>
+        {% for image in images %}
+            <div>
+                <h3>{{ image.filename }}</h3>
+                
+                <img src="/{{ image_dir }}/{{ image.filename }}.png" width="200">
+                    
+                    <a href="report-sample-image/{{image.id}}">
+                        <button>Crop Image</button>
+                    </a>
+                              
+                    <a href="report-files/{{image.id}}">
+                        <button>View Details</button>
+                    </a>
+                
+            </div><br><hr>
+        {% endfor %}
+    </div>
+
+
+
+    
+</body>
+
+</html>

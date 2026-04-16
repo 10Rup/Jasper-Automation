@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>API Settings - Jasper Automation</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+
+/* ===== SAME DASHBOARD CSS ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f3f4f6;
+}
+
+.app {
+  display: flex;
+}
+
+.sidebar {
+  width: 240px;
+  height: 100vh;
+  background: white;
+  padding: 20px;
+  position: fixed;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+}
+
+.logo {
+  color: #6d28d9;
+  margin-bottom: 20px;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #334155;
+  transition: 0.3s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: #6d28d9;
+  color: white;
+  transform: translateX(5px);
+}
+
+.bottom {
+  position: absolute;
+  bottom: 20px;
+}
+
+.main {
+  margin-left: 260px;
+  width: 100%;
+  padding: 20px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 200px;
+  height: 50px;
+  background: rgb(31, 134, 220);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  justify-content: center;
+}
+
+/* ===== API FORM ===== */
+
+.api-container {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  max-width: 500px;
+}
+
+/* INPUT GROUP */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #6d28d9;
+  outline: none;
+  box-shadow: 0 0 5px rgba(109,40,217,0.3);
+}
+
+/* BUTTONS */
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* PRIMARY */
+.btn-primary {
+  background: #6d28d9;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #9333ea;
+}
+
+/* SECONDARY */
+.btn-secondary {
+  background: #f97316;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #fb923c;
+}
+
+/* STATUS */
+.status {
+  margin-top: 15px;
+  font-weight: 600;
+}
+
+.success {
+  color: green;
+}
+
+.error {
+  color: red;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <h2 class="logo">Jasper Automation</h2>
+
+  <nav>
+    <a href="/">🏠 Dashboard</a>
+    <a href="/api/settings" class="active">🔑 API Settings</a>
+    <a href="D:\hulesh\HTML\upload.html">📤 Upload</a>
+    <a href="#">📊 Reports</a>
+  </nav>
+
+  <div class="bottom">
+    <!-- <a>👤 Profile</a>
+    <a style="color:red;">🚪 Logout</a> -->
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <header class="header">
+        <h2>Manage API Keys</h2>
+      <div class="header-right">
+        <div class="avatar">REPORT TEAM</div>
+      </div>
+    </header>
+
+
+<section class="api-container">
+<form action="/api/add-key" method="post" id="apiForm">
+  <div class="form-group">
+    <label>User Name</label>
+    <input type="text" id="username" name="username" placeholder="Enter User Name">
+  </div>
+
+  <div class="form-group">
+    <label>Select API</label>
+    <select id="apiname" name="apiname" required>
+      <option value="geminie">API Gemini</option>
+      <option value="openapi">OpenAI</option>
+      <option value="other">Custom API</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>API Key</label>
+    <input type="password" id="apikey" name="apikey"  placeholder="Enter API Key">
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-primary" type ="submit">Save</button>
+  </div>
+
+  <div id="status" class="status"></div>
+</form>
+</section>
+
+</main>
+
+</div>
+
+<script>
+
+</script>
+
+</body>
+</html>
