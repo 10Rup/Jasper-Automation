@@ -14,7 +14,9 @@ class ApiMaster(Base):
 class Uploadfile(Base):
     __tablename__ = 'uploadfiles'
     id = Column(Integer, primary_key=True, index=True)
+    displayname = Column(String,index=True)
     filename = Column(String,index=True)
+    filetype = Column(String,index=True)
     filepath = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)

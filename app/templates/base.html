@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Home - Jasper Automation</title>
+    <title>{% block title %}jasper Automation{% endblock %}</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -56,7 +56,30 @@
             color: white;
         }
 
+
+        .avatar {
+        padding: 8px 20px;
+        background: #1f86dc;
+        color: white;
+        border-radius: 20px;
+        font-weight: bold;
+        }
+         /* HEADER */
+        .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        }
+
+
     </style>
+
+    <!-- Page-specific styles -->
+    {% block styles %}{% endblock %}
+    
 </head>
 
 <body>
@@ -70,8 +93,8 @@
             <nav>
                 <a href="/" class="active">🏠 Dashboard</a>
                 <a href="/api/settings">🔑 API Settings</a>
-                <a href="D:\hulesh\HTML\upload.html">📤 Upload</a>
-                <a href="D:\hulesh\HTML\main.html">📊 Reports</a>
+                <a href="/upload/sample">📤 Upload</a>
+                <a href="/reports/">📊 Reports</a>
             </nav>
         </aside>
 
