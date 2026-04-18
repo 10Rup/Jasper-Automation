@@ -45,22 +45,22 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
 
     filename = samplefile.filename
     name, ext = os.path.splitext(samplefile.filename)
-
+    print(ext)
     # pdf to image process
-    # print(Path(samplefile.filename).name)
-    # if osModel != "Windows":
-    #     images = convert_from_bytes(pdf_bytes, poppler_path="/usr/bin")
-    # else:
-    #     images = convert_from_bytes(pdf_bytes)
-    # image_path = os.path.join(IMAGE_DIR, f"{reportname}.png")
-    # images[0].save(image_path, "PNG")
+    if ext==".pdf":
+        if osModel != "Windows":
+            images = convert_from_bytes(pdf_bytes, poppler_path="/usr/bin")
+        else:
+            images = convert_from_bytes(pdf_bytes)
+        image_path = os.path.join(IMAGE_DIR, f"{reportname}.png")
+        images[0].save(image_path, "PNG")
 
-    new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=filename, created_at=datetime.now(timezone.utc))
+    new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'/images/{reportname}.png', created_at=datetime.now(timezone.utc))
     db.add(new_file)
     db.commit()
 
     
-    # return RedirectResponse(
-    #     url='/reports',
-    #     status_code=303
-    # )
+    return RedirectResponse(
+        url='/reports',
+        status_code=303
+    )

@@ -40,17 +40,15 @@ def reports(request: Request):
 @router.get('/{report_type}')
 def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)):
 
-    files = db.query(UploadFile).filter(Uploadfile.filetype == report_type).all()
+    files = db.query(Uploadfile).filter(Uploadfile.filetype==report_type).all()
 
     return templates.TemplateResponse(
         request,
-        'reportlist.html',
+        'reportslist.html',
         {
             'files': files
         }
     )
-
-
 
 
 # @router.get('/')
