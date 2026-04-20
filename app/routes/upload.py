@@ -13,7 +13,7 @@ from ..models import ApiMaster, Uploadfile, CropImages
 from datetime import datetime, timezone
 
 
-router = APIRouter(prefix='/upload', tags=['API'])
+router = APIRouter(prefix='/upload', tags=['Upload'])
 templates = Jinja2Templates("app/templates")
 IMAGE_DIR = 'app/images'
 CROP_IMAGE_DIR = 'app/cropped_images'

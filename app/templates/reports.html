@@ -38,6 +38,11 @@
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
+        margin-top: 20PX;
+      }
+      .card-grid a{
+        text-decoration: none;
+        cursor: pointer;
       }
 
       .card {
@@ -106,7 +111,7 @@
 <main class="main">
 
     <header class="header">
-        <h2 class="header" >New Reports</h2>
+        <h2>Report Section</h2>
       <div class="header-right">
         <div class="avatar">REPORT TEAM</div>
       </div>
@@ -117,31 +122,35 @@
 </div> -->
 
 <section>
-  <h3 class="section-title">Report Section</h3>
+  <!-- <h3 class="section-title">Report Section</h3> -->
 
-  <div class="card-grid">
+        <div class="card-grid">
 
-    <a href="/reports/pdf"  >
-    <div class="card">
-      <div class="icon"><i class="fas fa-file-pdf"></i></div>
-      <p>PDF Report</p>
-    </div>
-  </a>
-
-    <div class="card">
-      <div class="icon"><i class="fas fa-file-excel"></i></div>
-      <p>Excel Report</p>
-    </div>
-
-    <div class="card">
-      <div class="icon"><i class="fas fa-layer-group"></i></div>
-      <p>Combined Reports</p>
-    </div>
-
-    <div class="card">
-      <div class="icon"><i class="fas fa-code"></i></div>
-      <p>HTML Reports</p>
-    </div>
+        <div class="card-grid">
+            <a href="/reports/pdf"  >
+            <div class="card">
+              <div class="icon"><i class="fas fa-file-pdf"></i></div>
+              <p>PDF Reports</p>
+            </div>
+          </a>
+          <a href="/reports/excel"  >
+          <div class="card">
+            <div class="icon"><i class="fas fa-file-excel"></i></div>
+            <p>Excel Report</p>
+          </div>
+        </a>
+        <a href="/reports/Combine"  >
+            <div class="card">
+              <div class="icon"><i class="fas fa-layer-group"></i></div>
+              <p>Combined Reports</p>
+            </div>
+        </a>
+        <a href="/reports/html"  >
+            <div class="card">
+              <div class="icon"><i class="fas fa-code"></i></div>
+              <p>HTML Reports</p>
+            </div>
+        </a>
 
   </div>
 </section>

@@ -13,11 +13,14 @@
         background: white;
         padding: 20px;
         border-radius: 16px;
+        margin-top: 20px ;
         }
 
         .report-table {
         width: 100%;
         border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 10px;
         }
 
         .report-table thead {
@@ -30,13 +33,14 @@
         }
 
         .report-name {
-        cursor: pointer;
+        cursor:pointer;
         color: #6d28d9;
         font-weight: bold;
+        /* text-decoration: none; */
         }
 
         .report-name:hover {
-        text-decoration: underline;
+        text-decoration: none;
         }
 
         /* BUTTONS */
@@ -142,9 +146,12 @@
         }
 
         /* PROCESS */
-        function process(i){
-        alert("Processing " + reports[i].name);
-        }
+        // function process(i){
+        // alert("Processing ");
+        // }
+        function process(fileId){
+        window.location.href = `/process/${fileId}`;
+      }
 
         /* DELETE */
         function removeRow(i){

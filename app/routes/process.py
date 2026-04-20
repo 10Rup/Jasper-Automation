@@ -12,7 +12,7 @@ from ..models import ApiMaster, Uploadfile, CropImages
 from datetime import datetime, timezone
 
 
-router = APIRouter(prefix='/reports', tags=['Report'])
+router = APIRouter(prefix='/process', tags=['Process'])
 templates = Jinja2Templates("app/templates")
 IMAGE_DIR = 'app/images'
 CROP_IMAGE_DIR = 'app/cropped_images'
@@ -32,20 +32,21 @@ def reports(request: Request):
 
     return templates.TemplateResponse(
         request,
-        'reports.html'
+        'processdemo.html'
     )
 
 
 
-@router.get('/{report_type}')
-def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)):
+@router.get('/{report_id}')
+def pdfreports(request: Request, report_id: int, db: Session = Depends(get_db)):
 
-    files = db.query(Uploadfile).filter(Uploadfile.filetype==report_type).all()
+    report = db.query(Uploadfile).filter(Uploadfile.id==report_id).first()
 
+    # print(report.filepath)
     return templates.TemplateResponse(
         request,
-        'reportslist.html',
+        'process.html',
         {
-            'files': files
+            'report': report
         }
     )

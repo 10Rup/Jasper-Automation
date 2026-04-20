@@ -17,7 +17,7 @@ class Uploadfile(Base):
     filename = Column(String,index=True)
     filepath = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    deleted_at = Column(DateTime, nullable=True)
+    isdeleted = Column(Boolean, default=False)
 
 class CropImages(Base):
     __tablename__ = 'cropimages'
