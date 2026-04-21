@@ -91,13 +91,13 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
         db.add(new_crop_image)
         db.commit()
         db.refresh(new_crop_image)
-
-        new_crop_image.filepath = f'{new_crop_image.id}{new_crop_image.bandname}.png'
-        db.commit()
-
-        path = os.path.join(folder, new_crop_image.filepath)
+        path = os.path.join(folder, f'{new_crop_image.id}{new_crop_image.bandname}.png')
         crop.save(path)
         print(f"Saved cropped image: {path}")
+        new_crop_image.filepath = f'/cropimages/{file_name}/{new_crop_image.id}{new_crop_image.bandname}.png'
+        db.commit()
+
+        
   
         # results.append({"band": r["band"], "file": filename})
 
@@ -106,14 +106,19 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
 
     return {
         'status': 'success',
-        'redirect': '/reports/'
+        'redirect': f'/process/{file_id}/cropped/'
     }
 
-# @router.get('/{report_id}/cropped')
-# def cropped(request: Request,report_id: int, db: Session = Depends(get_db)):
+@router.get('/{report_id}/cropped')
+def cropped(request: Request,report_id: int, db: Session = Depends(get_db)):
+    crops = db.query(CropImages).filter(CropImages.uploadfile_id == report_id).all()
+    report = db.query(Uploadfile).filter(Uploadfile.id == report_id).first()
 
-    
-#     return templates.TemplateResponse(
-#         request,
-#         'home.html'
-#     )
+    return templates.TemplateResponse(
+        request,
+        'cropped.html',
+        {
+            'crops': crops,
+            'report': report
+        }
+    )

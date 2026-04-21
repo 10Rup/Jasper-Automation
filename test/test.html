@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      background: rgb(65, 65, 65);
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<script>
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let particles = [];
+
+// create particles
+for (let i = 0; i < 250; i++) {
+  let isShip = Math.random() < 0.05; // 5% ships
+
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * (isShip ? 2 : 0.5),
+    vy: (Math.random() - 0.5) * (isShip ? 2 : 0.5),
+    size: isShip ? 2.5 : Math.random() * 2,
+    type: isShip ? "ship" : "normal",
+    trail: []
+  });
+}
+
+function drawTrail(p) {
+  if (p.trail.length < 2) return;
+
+  ctx.beginPath();
+  ctx.moveTo(p.trail[0].x, p.trail[0].y); // ✅ FIX
+
+  for (let i = 1; i < p.trail.length; i++) {
+    let t = p.trail[i];
+    ctx.lineTo(t.x, t.y);
+  }
+
+//   ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.strokeStyle = "rgba(255,140,0,0.3)";
+    
+    ctx.lineWidth = 2;
+    ctx.stroke();
+}
+
+function animate() {
+  // motion blur background
+  ctx.fillStyle = "rgba(0,0,0,0.3)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+
+    let wrapped = false;
+
+    // wrap around screen
+    if (p.x < 0) { p.x = canvas.width; wrapped = true; }
+    if (p.x > canvas.width) { p.x = 0; wrapped = true; }
+    if (p.y < 0) { p.y = canvas.height; wrapped = true; }
+    if (p.y > canvas.height) { p.y = 0; wrapped = true; }
+
+    // 🚫 prevent long glitch lines
+    if (wrapped) {
+      p.trail = [];
+    }
+
+    if (p.type === "ship") {
+      // add trail
+      p.trail.push({ x: p.x, y: p.y });
+      if (p.trail.length > 15) p.trail.shift();
+
+      drawTrail(p);
+
+      // glow effect
+      ctx.shadowBlur = 10 + Math.random() * 5;
+      ctx.shadowColor = "white";
+    //   ctx.shadowColor = "rgb(255,140,0)";
+    }
+
+    // draw particle
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fillStyle = "white";
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
