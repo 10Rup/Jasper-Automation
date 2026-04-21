@@ -3,7 +3,10 @@
 <head>
     <title>Uploaded Files</title>
     <style>
-    /* HEADER */
+        * {
+            user-select: none;
+        }
+        /* HEADER */
             .header {
             position: sticky;
             top: 0;
@@ -393,17 +396,24 @@
 
         function saveRegions() {
             if (rectangles.length === 0) { alert("No regions to save."); return; }
-            fetch("save-regions", {
+            fetch("/process/save-region", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     file_id: fileId,
                     file_name: filename,
+                    imageUrl: imageUrl,
                     regions: rectangles.map(normalizeRect)
                 })
             })
             .then(res => res.json())
-            .then(() => alert("All regions saved and synced successfully!"));
+            .then(data => {
+                alert("All regions saved and synced successfully!");
+                // console.log(data)
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            });
         }
 
         function cancelBtn() {

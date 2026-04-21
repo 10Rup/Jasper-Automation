@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>API Keys - Jasper Automation</title>
+{% extends "base.html" %}
+{% block content %}
 
+
+{% block styles %}
 <style>
 
 /* ===== RESET ===== */
@@ -78,44 +77,28 @@ body {
 }
 
 </style>
-</head>
-
-<body>
-
+{% endblock %}
 <div class="main">
-
-<div class="table-container">
-
-  <div class="title">Saved API Keys</div>
-
-  <table class="api-table">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>API Type</th>
-        <th>API Key</th>
-      </tr>
-    </thead>
-
-    <tbody id="tableBody">
-      {% for key in apikeys%}
-      <tr>
-        <td  >{{key.username}}</td>
-        <td >{{key.apiname}}</td>
-        <td >{{key.apikey}}</td>
-
-      </tr>
-      {% endfor%}
-    </tbody>
-  </table>
-
+  <div class="table-container">
+    <div class="title">Saved API Keys</div>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>API Type</th>
+            <th>API Key</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          {% for key in apikeys%}
+          <tr>
+            <td  >{{key.username}}</td>
+            <td >{{key.apiname}}</td>
+            <td >{{key.apikey}}</td>
+          </tr>
+          {% endfor%}
+        </tbody>
+      </table>
+  </div>
 </div>
-
-</div>
-
-<script>
-
-</script>
-
-</body>
-</html>
+{% endblock %}

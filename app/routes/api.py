@@ -46,7 +46,7 @@ def add_api_key(request: Request, username: str = Form(...), apiname: str = Form
 
 
     return RedirectResponse(
-        url='/api-keys',
+        url='/api/api-keys',
         status_code=303
     )
 

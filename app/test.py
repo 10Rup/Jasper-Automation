@@ -10,6 +10,7 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY")
 app.mount("/images", StaticFiles(directory="app/images"), name="images")
 app.mount("/cropped_images", StaticFiles(directory="app/cropped_images"), name="cropped_images")
+app.mount('/static', StaticFiles(directory='app/assets/static'), name='static')
 
 Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates("app/templates")
