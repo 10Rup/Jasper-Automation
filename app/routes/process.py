@@ -63,14 +63,15 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
     file_id = data['file_id']
     file_name = data['file_name']
     regions = data['regions']
+    image_path = data['image_path']
 
 
-    imageUrl = os.path.join(IMAGE_DIR, f'{file_name}.png')
+    image_Url = os.path.join(IMAGE_DIR, f'{image_path}')
 
     folder = os.path.join(CROP_IMAGE_DIR, f'{file_name}')
     os.makedirs(folder, exist_ok=True)
-
-    img = Image.open(imageUrl)
+    print(image_Url)
+    img = Image.open(image_Url)
     results = []
 
     for i, r in enumerate(regions):
@@ -84,7 +85,6 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
 
         crop = img.crop((x1, y1, x2, y2))
 
-        ###### filename = f'{r["band"]}{i}.png'
 
         # Insert crop image record in DB
         new_crop_image = CropImages(uploadfile_id = file_id, bandname = r['band'])
@@ -94,7 +94,7 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
         path = os.path.join(folder, f'{new_crop_image.id}{new_crop_image.bandname}.png')
         crop.save(path)
         print(f"Saved cropped image: {path}")
-        new_crop_image.filepath = f'/cropimages/{file_name}/{new_crop_image.id}{new_crop_image.bandname}.png'
+        new_crop_image.filepath = f'{file_name}/{new_crop_image.id}{new_crop_image.bandname}.png'
         db.commit()
 
         
@@ -114,11 +114,14 @@ def cropped(request: Request,report_id: int, db: Session = Depends(get_db)):
     crops = db.query(CropImages).filter(CropImages.uploadfile_id == report_id).all()
     report = db.query(Uploadfile).filter(Uploadfile.id == report_id).first()
 
-    return templates.TemplateResponse(
+    response = templates.TemplateResponse(
         request,
         'cropped.html',
+        
         {
             'crops': crops,
             'report': report
         }
     )
+
+    return response

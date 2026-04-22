@@ -45,7 +45,7 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
 
     filename = samplefile.filename
     name, ext = os.path.splitext(samplefile.filename)
-    print(ext)
+   
     # pdf to image process
     if ext==".pdf":
         if osModel != "Windows":
@@ -55,7 +55,7 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
         image_path = os.path.join(IMAGE_DIR, f"{reportname}.png")
         images[0].save(image_path, "PNG")
 
-    new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'/images/{reportname}.png', created_at=datetime.now(timezone.utc))
+    new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'/{reportname}.png', created_at=datetime.now(timezone.utc))
     db.add(new_file)
     db.commit()
 

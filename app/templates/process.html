@@ -177,9 +177,10 @@
 
    
     <script>
-        const imageUrl = "{{report.filepath}}";
+        const imageUrl = "/images/{{report.filepath}}";
         const fileId = "{{report.id}}";
         const filename = "{{report.displayname}}";
+        const imagePath = "{{report.filepath}}";
 
     </script>
 
@@ -401,7 +402,7 @@
                 body: JSON.stringify({
                     file_id: fileId,
                     file_name: filename,
-                    imageUrl: imageUrl,
+                    image_path: imagePath,
                     regions: rectangles.map(normalizeRect)
                 })
             })
@@ -410,10 +411,28 @@
                 alert("All regions saved and synced successfully!");
                 // console.log(data)
                 if (data.redirect) {
+                    // setting flag
+                    localStorage.setItem('regionsSaved', 'true'); 
                     window.location.href = data.redirect;
                 }
             });
         }
+
+
+        window.addEventListener('pageshow', function(event){
+            if(localStorage.getItem('regionsSaved')){
+                // clear rectagles
+                rectangles = [];
+                selectedRect = null;
+                bandSelect.value = "detail";
+                draw();
+
+                // remove flag
+                localStorage.removeItem('regionsSaved');
+
+            }
+
+        });
 
         function cancelBtn() {
             window.location.href = "/reports/";

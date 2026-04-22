@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Report Files</title>
+    <title>Report Files</title>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
       * {
             user-select: none;
         }
+
+        body {
+            background: #f3f4f6;
+        }
+
         /* HEADER */
             .header {
             position: sticky;
@@ -86,6 +94,27 @@
             box-shadow: 0 0 5px rgba(109,40,217,0.3);
             }
 
+           /* MODEL CSS */
+            /* .modal-backdrop.show {
+            background: rgba(0,0,0,0.15) !important;
+            backdrop-filter: blur(2px);
+            }
+            .modal-backdrop.show {
+            background: rgba(0,0,0,0.15) !important;
+            backdrop-filter: blur(2px);
+            } */
+/* 
+            .modal-content {
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            }
+            .modal-header {
+            background: linear-gradient(135deg,#6d28d9,#9333ea);
+            color: white;
+            } */
+
+     
+
 
         .crop-container { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
         .controls { margin: 15px 0; display: flex; gap: 10px; align-items: center; }
@@ -97,14 +126,13 @@
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="header-top">
-                <div class="header-left">
-                    <h2>Report Files</h2>
-                    <h4>{{ report.displayname }}</h4>
-                </div>
-  <!-- API DROPDOWN -->
+            <div class="header-left">
+                <h2>Report Files</h2>
+                <h4>{{ report.displayname }}</h4>
+            </div>  
+            <!-- API DROPDOWN -->
             <div class="header-right">
                 <div class="form-group">
                     <label>Select API</label>
@@ -116,63 +144,136 @@
                 </div>
             </div>
     </div>
-</div>
-
 
     <div>
         {% for crop in crops %}
             <div class="crop-container" id="container_{{crop.id}}">
-                <b><span>(Target Band: <span style="color:blue;">{{crop.bandname}}</span>)</b><br>
-                <img src="{{crop.filepath}}" width="300" height="200" style="border: 1px solid #999; margin-top:10px;">                    
+                <b>
+                    <span>(Target Band: <span style="color:blue;">{{crop.bandname}}</span>)
+                </b>
+                <br>
+                <img src="/cropimages/{{crop.filepath}}" onclick="openPreview('/cropimages/{{crop.filepath}}')" width="300" height="200" style="border: 1px solid #999; margin-top:10px;">                    
                 <div class="controls">
                     <input type="text" id="prompt_{{crop.id}}" class="refine-input" placeholder="Optional: Add extra instructions (e.g., 'make text bold', '3 columns')...">
                     
-                    <button class="btn btn-process" id="processGemini_{{crop.id}}" onclick="processGemini('{{crop.id}}', '{{crop.uploadfile_id}}-{{filename}}', '{{crop.bandname}}','{{crop.filepath}}','gemini')">
-                        Gemini Process
-                    </button>
-
-                    <button class="btn btn-process" id="processOpenAi_{{crop.id}}" onclick="processOpenAi('{{crop.id}}', '{{crop.uploadfile_id}}-{{filename}}', '{{crop.bandname}}','{{crop.filepath}}','openai')">
-                        OpenAI Process
+                    <button class="btn btn-process" id="btn_{{crop.id}}" onclick="apiProcess('{{crop.id}}', '{{crop.uploadfile_id}}-{{filename}}', '{{crop.bandname}}','{{crop.filepath}}')">
+                        Prepare Design
                     </button>
                     
                     <button class="btn btn-delete" onclick="deleteImage('{{crop.id}}')">Delete</button>
                 </div>
-
-                <textarea class="result-box" id="resultGemini_{{crop.id}}" readonly></textarea>            
-                <textarea class="result-box" id="resultOpenAi_{{crop.id}}" readonly></textarea>
-
          
-
+                <textarea class="result-box" id="result_{{crop.id}}" readonly></textarea>
             </div>
         {% endfor %}
     </div>
 
     <!-- MODAL -->
-<div class="modal fade" id="previewModal">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
+        <div class="modal fade" id="previewModal" tabindex="1" >
+            <div class="modal-dialog modal-lg modal-dialog-centered" >
+                <div class="modal-content">
 
-      <div class="modal-header">
-        <h5>Image Preview</h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+                <div class="modal-header">
+                    <h5 class="modal-title">Report Preview</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-      <div class="modal-body text-center">
-        <img id="previewImage" style="width:100%; border-radius:10px;">
-      </div>
+                <div class="modal-body text-center">
+                    <img id="previewImage" style="width:100%; border-radius:10px;">
+                </div>
 
-    </div>
-  </div>
-</div>
-<script>
-    /* IMAGE PREVIEW */
-function openPreview(src){
-  document.getElementById("previewImage").src = src;
-  new bootstrap.Modal(document.getElementById("previewModal")).show();
-}
-</script>
+                </div>
+            </div>
+        </div>
 
 
+    <!-- <script  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+
+<!-- 
+    <script>
+        /* IMAGE PREVIEW */
+    function openPreview(img){
+
+        document.getElementById("previewImage").src = img;
+        new bootstrap.Modal(document.getElementById("previewModal")).show();
+    }
+    
+    </script> -->
+    <script>
+        /* IMAGE PREVIEW */
+        function openPreview(img){
+            console.log("Image:", img); // debug
+
+            const preview = document.getElementById("previewImage");
+            preview.src = img;
+
+            const modal = new bootstrap.Modal(document.getElementById("previewModal"));
+            modal.show();
+        }
+    </script>
+
+
+    <script>
+        function deleteImage(filename) {
+            if (!confirm("Are you sure?")) return;
+            // fetch(`/delete-region/${fileId}/${filename}`, { method: "DELETE" })
+            // .then(res => res.json())
+            // .then(() => {
+            //     alert("Deleted!");
+            //     location.reload();
+            // });
+            alert("Deleted");
+
+        }
+
+        function apiProcess(fileId, filename, band, file_path) {
+            const resultBox = document.getElementById("result_" + fileId);
+            const processBtn = document.getElementById("btn_" + fileId);
+            const extraPrompt = document.getElementById("prompt_" + fileId).value;
+            const api_name = document.getElementById('apiname').value;
+
+           
+             // UI Feedback
+            resultBox.style.display = "block";
+            resultBox.value = "Analyzing image and generating JRXML... please wait.";
+            resultBox.style.background = "#fff";
+            resultBox.style.color = "#333";
+            processBtn.disabled = true;
+            processBtn.innerText = "Processing...";
+
+            // Encode the extra prompt to handle special characters in URL
+            const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
+            console.log('fileId',fileId);
+            console.log('band',band);
+            console.log('file_path',file_path);
+            console.log('filename',filename);
+
+            // fetch(`/jasper/process/${fileId}/${filename}/${band}/${file_path}/${model}${queryParams}`)
+            // .then(res => res.json())
+            // .then(data => {
+            //     if (data.status === "error") {
+            //         resultBox.value = "AI Error: " + data.message;
+            //         resultBox.style.color = "red";
+            //     } else {
+            //         resultBox.value = data.xml;
+            //         resultBox.style.background = "#2d2d2d";
+            //         resultBox.style.color = "#f8f8f2";
+            //     }
+            // })
+            // .catch(err => {
+            //     resultBox.value = "Network failed: " + err;
+            //     resultBox.style.color = "red";
+            // })
+            // .finally(() => {
+            //     processBtn.disabled = false;
+            //     processBtn.innerText = "Process to XML";
+            // });
+        }
+
+
+    </script>
 
     <!-- <script>
 
