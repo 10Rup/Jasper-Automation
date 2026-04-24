@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from .database import Base
@@ -30,3 +30,11 @@ class CropImages(Base):
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
 
+class XmlCode(Base):
+    __tablename__ = 'xmlcodes'
+    id = Column(Integer, primary_key=True, index=True)
+    crop_id = Column(Integer, ForeignKey('cropimages.id'), nullable=False)
+    bandname = Column(String, default="")
+    codes = Column(Text, default="")
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    deleted_at = Column(DateTime, nullable=True)

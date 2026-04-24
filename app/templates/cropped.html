@@ -94,35 +94,47 @@
             box-shadow: 0 0 5px rgba(109,40,217,0.3);
             }
 
-           /* MODEL CSS */
-            /* .modal-backdrop.show {
-            background: rgba(0,0,0,0.15) !important;
-            backdrop-filter: blur(2px);
+
+            /* xml code section */
+            .xml-box-container {
+                position: relative;
+                margin-top: 10px;
+                margin-right: 20px;
             }
-            .modal-backdrop.show {
-            background: rgba(0,0,0,0.15) !important;
-            backdrop-filter: blur(2px);
-            } */
-/* 
-            .modal-content {
-            border-radius: 16px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+
+            .xml-actions {
+                position: absolute;
+                top: 8px;
+                right: 10px;
+                z-index: 10;
+                display: flex;
+                gap: 10px;
             }
-            .modal-header {
-            background: linear-gradient(135deg,#6d28d9,#9333ea);
-            color: white;
-            } */
 
-     
+            .xml-actions i {
+                cursor: pointer;
+                color: #ccc;
+                font-size: 16px;
+                transition: 0.2s;
+            }
 
+            .xml-actions i:hover {
+                color: #fff;
+            } 
+            
 
-        .crop-container { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
-        .controls { margin: 15px 0; display: flex; gap: 10px; align-items: center; }
-        .btn { padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; }
-        .btn-delete { background-color: #ffcccc; color: #a00; border-color: #faa; }
-        .btn-process { background-color: #28a745; color: white; border-color: #218838; }
-        .refine-input { flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
-        .result-box { width: 100%; height: 250px; font-family: 'Courier New', monospace; margin-top: 10px; display: none; background: #2d2d2d; color: #f8f8f2; padding: 12px; border-radius: 4px; font-size: 13px; line-height: 1.5; }
+            /* textarea padding so text doesn't overlap icons */
+            .result-box {
+                padding-top: 30px;
+            }
+
+            .crop-container { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+            .controls { margin: 15px 0; display: flex; gap: 10px; align-items: center; }
+            .btn { padding: 8px 15px; cursor: pointer; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; }
+            .btn-delete { background-color: #ffcccc; color: #a00; border-color: #faa; }
+            .btn-process { background-color: #28a745; color: white; border-color: #218838; }
+            .refine-input { flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+            .result-box { width: 100%; height: 250px; font-family: 'Courier New', monospace; margin-top: 10px; display: none; background: #2d2d2d; color: #f8f8f2; padding: 12px; border-radius: 4px; font-size: 13px; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -156,14 +168,23 @@
                 <div class="controls">
                     <input type="text" id="prompt_{{crop.id}}" class="refine-input" placeholder="Optional: Add extra instructions (e.g., 'make text bold', '3 columns')...">
                     
-                    <button class="btn btn-process" id="btn_{{crop.id}}" onclick="apiProcess('{{crop.id}}', '{{crop.uploadfile_id}}-{{filename}}', '{{crop.bandname}}','{{crop.filepath}}')">
+                    <button class="btn btn-process" id="btn_{{crop.id}}" onclick="apiProcess('{{crop.id}}', '{{report.displayname}}', '{{crop.bandname}}','{{crop.filepath}}')">
                         Prepare Design
                     </button>
                     
                     <button class="btn btn-delete" onclick="deleteImage('{{crop.id}}')">Delete</button>
                 </div>
          
-                <textarea class="result-box" id="result_{{crop.id}}" readonly></textarea>
+                <div class="xml-box-container">
+    
+                    <div class="xml-actions">
+                        <i class="fas fa-copy" onclick="copyXML('{{crop.id}}')" title="Copy"></i>
+                        <i class="fas fa-save" onclick="saveXML('{{crop.id}}','{{crop.bandname}}')" title="Save"></i>
+                    </div>
+
+                    <textarea class="result-box" id="result_{{crop.id}}" readonly></textarea>
+
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -186,34 +207,24 @@
             </div>
         </div>
 
-
-    <!-- <script  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- <script  src="https://cdn.jsdeliv"-->        
+     <script 
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
     
-
-<!-- 
     <script>
-        /* IMAGE PREVIEW */
-    function openPreview(img){
+        let previewModal = null;
 
-        document.getElementById("previewImage").src = img;
-        new bootstrap.Modal(document.getElementById("previewModal")).show();
-    }
-    
-    </script> -->
-    <script>
-        /* IMAGE PREVIEW */
+        document.addEventListener("DOMContentLoaded", () => {
+            previewModal = new bootstrap.Modal(document.getElementById("previewModal"));
+        });
+
         function openPreview(img){
-            console.log("Image:", img); // debug
-
             const preview = document.getElementById("previewImage");
             preview.src = img;
-
-            const modal = new bootstrap.Modal(document.getElementById("previewModal"));
-            modal.show();
+            previewModal.show();
         }
     </script>
-
 
     <script>
         function deleteImage(filename) {
@@ -244,128 +255,75 @@
             processBtn.innerText = "Processing...";
 
             // Encode the extra prompt to handle special characters in URL
-            const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
-            console.log('fileId',fileId);
-            console.log('band',band);
-            console.log('file_path',file_path);
-            console.log('filename',filename);
+            // const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
 
-            // fetch(`/jasper/process/${fileId}/${filename}/${band}/${file_path}/${model}${queryParams}`)
-            // .then(res => res.json())
-            // .then(data => {
-            //     if (data.status === "error") {
-            //         resultBox.value = "AI Error: " + data.message;
-            //         resultBox.style.color = "red";
-            //     } else {
-            //         resultBox.value = data.xml;
-            //         resultBox.style.background = "#2d2d2d";
-            //         resultBox.style.color = "#f8f8f2";
-            //     }
-            // })
-            // .catch(err => {
-            //     resultBox.value = "Network failed: " + err;
-            //     resultBox.style.color = "red";
-            // })
-            // .finally(() => {
-            //     processBtn.disabled = false;
-            //     processBtn.innerText = "Process to XML";
-            // });
+            fetch('/prepare/image-to-xml',{
+                method: "POST",
+                header: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    crop_id : fileId,
+                    reportname : filename,
+                    bandname : band,
+                    reportpath : file_path,
+                    apiname : api_name,
+                    extrapromt : extraPrompt
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "error") {
+                    resultBox.value = "AI Error: " + data.message;
+                    resultBox.style.color = "red";
+                } else {
+                    resultBox.value = data.xml;
+                    resultBox.style.background = "#2d2d2d";
+                    resultBox.style.color = "#f8f8f2";
+                }
+            })
+            .catch(err => {
+                resultBox.value = "Network failed: " + err;
+                resultBox.style.color = "red";
+            })
+            .finally(() => {
+                processBtn.disabled = false;
+                processBtn.innerText = "Process to XML";
+            });
+
         }
 
 
+        function copyXML(id) {
+            const text = document.getElementById("result_" + id).value;
+
+            navigator.clipboard.writeText(text)
+                // .then(() => alert("Copied!"))
+                // .catch(() => alert("Copy failed"));
+        }
+
+        function saveXML(id, band) {
+            const xml = document.getElementById("result_" + id).value;
+
+            fetch("/prepare/save-xml", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    crop_id: id,
+                    band: band,
+                    xml: xml
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status == "success"){
+                    alert(data.message)
+                }
+                    
+            })
+            .catch(() => alert("Save failed"));
+        }
     </script>
-
-    <!-- <script>
-
-        function deleteImage(filename) {
-            if (!confirm("Are you sure?")) return;
-            fetch(`/delete-region/${fileId}/${filename}`, { method: "DELETE" })
-            .then(res => res.json())
-            .then(() => {
-                alert("Deleted!");
-                location.reload();
-            });
-        }
-
-        function processOpenAi(fileId, filename, band, file_path, model) {
-            const resultBoxOpen = document.getElementById("resultOpenAi_" + fileId);
-            const processBtnOpen = document.getElementById("processOpenAi_" + fileId);
-            const extraPrompt = document.getElementById("prompt_" + fileId).value;
-
-           
-             // UI Feedback
-            resultBoxOpen.style.display = "block";
-            resultBoxOpen.value = "Analyzing image and generating JRXML... please wait.";
-            resultBoxOpen.style.background = "#fff";
-            resultBoxOpen.style.color = "#333";
-            processBtnOpen.disabled = true;
-            processBtnOpen.innerText = "Processing...";
-
-            // Encode the extra prompt to handle special characters in URL
-            const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
-
-            fetch(`/jasper/process-crop/${fileId}/${filename}/${band}/${file_path}/${model}${queryParams}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "error") {
-                    resultBoxOpen.value = "AI Error: " + data.message;
-                    resultBoxOpen.style.color = "red";
-                } else {
-                    resultBoxOpen.value = data.xml;
-                    resultBoxOpen.style.background = "#2d2d2d";
-                    resultBoxOpen.style.color = "#f8f8f2";
-                }
-            })
-            .catch(err => {
-                resultBoxOpen.value = "Network failed: " + err;
-                resultBoxOpen.style.color = "red";
-            })
-            .finally(() => {
-                processBtnOpen.disabled = false;
-                processBtnOpen.innerText = "Process to XML";
-            });
-        }
-
-
-        function processGemini(fileId, filename, band, file_path, model) {
-            const resultBoxGemini = document.getElementById("resultGemini_" + fileId);
-            const processBtnGemini = document.getElementById("processGemini_" + fileId);
-            const extraPrompt = document.getElementById("prompt_" + fileId).value;
-
-            // UI Feedback
-            resultBoxGemini.style.display = "block";
-            resultBoxGemini.value = "Analyzing image and generating JRXML... please wait.";
-            resultBoxGemini.style.background = "#fff";
-            resultBoxGemini.style.color = "#333";
-            processBtnGemini.disabled = true;
-            processBtnGemini.innerText = "Processing...";
-
-            // Encode the extra prompt to handle special characters in URL
-            const queryParams = extraPrompt ? `?extra=${encodeURIComponent(extraPrompt)}` : "";
-
-            fetch(`/jasper/process-crop/${fileId}/${filename}/${band}/${file_path}/${model}${queryParams}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === "error") {
-                    resultBoxGemini.value = "AI Error: " + data.message;
-                    resultBoxGemini.style.color = "red";
-                } else {
-                    resultBoxGemini.value = data.xml;
-                    resultBoxGemini.style.background = "#2d2d2d";
-                    resultBoxGemini.style.color = "#f8f8f2";
-                }
-            })
-            .catch(err => {
-                resultBoxGemini.value = "Network failed: " + err;
-                resultBoxGemini.style.color = "red";
-            })
-            .finally(() => {
-                processBtnGemini.disabled = false;
-                processBtnGemini.innerText = "Process to XML";
-            });
-        }
-    </script> -->
-
     
 </body>
 
