@@ -19,7 +19,7 @@ class Uploadfile(Base):
     filetype = Column(String,index=True)
     filepath = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
-    deleted_at = Column(Boolean, default=False)
+    deleted_at = Column(DateTime, nullable=True)
 
 class CropImages(Base):
     __tablename__ = 'cropimages'
@@ -36,5 +36,12 @@ class XmlCode(Base):
     crop_id = Column(Integer, ForeignKey('cropimages.id'), nullable=False)
     bandname = Column(String, default="")
     codes = Column(Text, default="")
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    deleted_at = Column(DateTime, nullable=True)
+
+class BandMst(Base):
+    __tablename__ = 'bandmsts'
+    id = Column(Integer, primary_key=True, index=True)
+    bandname = Column(String, default="")
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)

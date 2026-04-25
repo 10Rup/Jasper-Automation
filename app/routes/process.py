@@ -44,7 +44,7 @@ def get_db():
 @router.get('/{report_id}')
 def pdfreports(request: Request, report_id: int, db: Session = Depends(get_db)):
 
-    report = db.query(Uploadfile).filter(Uploadfile.id==report_id).first()
+    report = db.query(Uploadfile).filter(Uploadfile.id==report_id, Uploadfile.deleted_at==None).first()
 
     # print(report.filepath)
     return templates.TemplateResponse(
@@ -112,7 +112,7 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
 @router.get('/{report_id}/cropped')
 def cropped(request: Request,report_id: int, db: Session = Depends(get_db)):
     crops = db.query(CropImages).filter(CropImages.uploadfile_id == report_id).all()
-    report = db.query(Uploadfile).filter(Uploadfile.id == report_id).first()
+    report = db.query(Uploadfile).filter(Uploadfile.id == report_id, Uploadfile.deleted_at==None).first()
 
     response = templates.TemplateResponse(
         request,
