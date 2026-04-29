@@ -47,13 +47,16 @@ def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)
     
     else:
         files = db.query(Uploadfile).filter(Uploadfile.filetype==report_type, Uploadfile.deleted_at==None).all()
-
-
+    if report_type=="Combine":
+        html_template = 'compile.html'
+    else:
+        html_template = 'reportslist.html'
     return templates.TemplateResponse(
         request,
-        'reportslist.html',
+        html_template,
         {
-            'files': files
+            'files': files,
+            'report_ext': report_type
         }
     )
 
