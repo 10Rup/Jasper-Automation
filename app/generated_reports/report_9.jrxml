@@ -1,0 +1,498 @@
+<?xml version='1.0' encoding='utf-8'?>
+<jasperReport>
+	<queryString>
+		
+	</queryString>
+	<background>
+		<band splitType="Stretch" />
+	</background>
+	<title>
+		<band height="79" splitType="Stretch" />
+	</title>
+	<pageHeader>
+	<band height="320">
+		<staticText>
+			<reportElement x="0" y="0" width="555" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="12" isBold="true" />
+			</textElement>
+			<text>Four Year B.Sc. SEMESTER - V Examination, 2025 (Under CCF, 2022)</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="40" width="180" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Name of the Candidate :</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="65" width="180" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Father's/Guardian's Name :</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="90" width="100" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Roll &amp; No. :</text>
+		</staticText>
+		<staticText>
+			<reportElement x="250" y="90" width="120" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Registration No.</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="115" width="200" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Subjects Enrolled (Home Centre) :</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="140" width="200" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Subjects Enrolled (Away Centre) :</text>
+		</staticText>
+		<staticText>
+			<reportElement x="20" y="165" width="380" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="9" />
+			</textElement>
+			<text>CEMM (DSCC-9), CEMM (DSCC-10), CEMM (DSCC-11), CEMM (DSCC-12),</text>
+		</staticText>
+		<staticText>
+			<reportElement x="20" y="180" width="150" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="9" />
+			</textElement>
+			<text>MMTH (MN-3), MMTH (MN-4)</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="200" width="350" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Name of the College / Examination Centre (Home Centre) :</text>
+		</staticText>
+		<staticText>
+			<reportElement x="20" y="220" width="350" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" isBold="true" />
+			</textElement>
+			<text>ACHARYA JAGADISH CHANDRA BOSE COLLEGE</text>
+		</staticText>
+		<staticText>
+			<reportElement x="10" y="245" width="280" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Examination Centre (Away Centre) : ** (023)</text>
+		</staticText>
+		<staticText>
+			<reportElement x="20" y="265" width="300" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" isBold="true" />
+			</textElement>
+			<text>NEW ALIPORE COLLEGE</text>
+		</staticText>
+		<staticText>
+			<reportElement x="20" y="280" width="200" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>'L' BLOCK, NEW ALIPORE,</text>
+		</staticText>
+		<staticText>
+			<reportElement x="20" y="295" width="200" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>KOLKATA - 700 053</text>
+		</staticText>
+		<staticText>
+			<reportElement x="350" y="295" width="180" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" />
+			</textElement>
+			<text>Ph: 2407-1828/2478-0224</text>
+		</staticText>
+		<staticText>
+			<reportElement x="420" y="45" width="120" height="135" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="8" />
+			</textElement>
+			<text>PHOTO</text>
+		</staticText>
+		<staticText>
+			<reportElement x="420" y="185" width="120" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font fontName="SansSerif" size="10" isItalic="true" />
+			</textElement>
+			<text>Mehnaz Fatima</text>
+		</staticText>
+	</band>
+</pageHeader><columnHeader>
+		<band height="61" splitType="Stretch" />
+	</columnHeader>
+	<detail>
+    <band height="240">
+        <staticText>
+            <reportElement x="0" y="0" width="80" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>Monday</text>
+        </staticText>
+        <staticText>
+            <reportElement x="80" y="0" width="90" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>19/01/2026</text>
+        </staticText>
+        <staticText>
+            <reportElement x="170" y="0" width="70" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>10 A.M.</text>
+        </staticText>
+        <staticText>
+            <reportElement x="240" y="0" width="60" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>CEMM</text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="0" width="30" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>TH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="330" y="0" width="300" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>DSCC-9 ORGANIC CHEMISTRY-III</text>
+        </staticText>
+        <staticText>
+            <reportElement x="630" y="0" width="50" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>1</text>
+        </staticText>
+        <staticText>
+            <reportElement x="680" y="0" width="120" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text />
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="40" width="80" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>Wednesday</text>
+        </staticText>
+        <staticText>
+            <reportElement x="80" y="40" width="90" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>21/01/2026</text>
+        </staticText>
+        <staticText>
+            <reportElement x="170" y="40" width="70" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>10 A.M.</text>
+        </staticText>
+        <staticText>
+            <reportElement x="240" y="40" width="60" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>CEMM</text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="40" width="30" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>TH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="330" y="40" width="300" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>DSCC-10 INORGANIC CHEMISTRY-III</text>
+        </staticText>
+        <staticText>
+            <reportElement x="630" y="40" width="50" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>1</text>
+        </staticText>
+        <staticText>
+            <reportElement x="680" y="40" width="120" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text />
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="80" width="80" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>Wednesday</text>
+        </staticText>
+        <staticText>
+            <reportElement x="80" y="80" width="90" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>28/01/2026</text>
+        </staticText>
+        <staticText>
+            <reportElement x="170" y="80" width="70" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>10 A.M.</text>
+        </staticText>
+        <staticText>
+            <reportElement x="240" y="80" width="60" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>CEMM</text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="80" width="30" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>TH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="330" y="80" width="300" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>DSCC-11 PHYSICAL CHEMISTRY-III</text>
+        </staticText>
+        <staticText>
+            <reportElement x="630" y="80" width="50" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>1</text>
+        </staticText>
+        <staticText>
+            <reportElement x="680" y="80" width="120" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text />
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="120" width="80" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>Friday</text>
+        </staticText>
+        <staticText>
+            <reportElement x="80" y="120" width="90" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>30/01/2026</text>
+        </staticText>
+        <staticText>
+            <reportElement x="170" y="120" width="70" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>10 A.M.</text>
+        </staticText>
+        <staticText>
+            <reportElement x="240" y="120" width="60" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>CEMM</text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="120" width="30" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>TH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="330" y="120" width="300" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>DSCC-12 ORGANIC CHEMISTRY-IV</text>
+        </staticText>
+        <staticText>
+            <reportElement x="630" y="120" width="50" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>1</text>
+        </staticText>
+        <staticText>
+            <reportElement x="680" y="120" width="120" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text />
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="160" width="80" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>Monday</text>
+        </staticText>
+        <staticText>
+            <reportElement x="80" y="160" width="90" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>02/02/2026</text>
+        </staticText>
+        <staticText>
+            <reportElement x="170" y="160" width="70" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>10 A.M.</text>
+        </staticText>
+        <staticText>
+            <reportElement x="240" y="160" width="60" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>MMTH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="160" width="30" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>TH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="330" y="160" width="300" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>MN-3 ORDINARY DIFFERENTIAL EQUATIONS AND GROUP THEORY</text>
+        </staticText>
+        <staticText>
+            <reportElement x="630" y="160" width="50" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>1</text>
+        </staticText>
+        <staticText>
+            <reportElement x="680" y="160" width="120" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text />
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="200" width="80" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>Tuesday</text>
+        </staticText>
+        <staticText>
+            <reportElement x="80" y="200" width="90" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>03/02/2026</text>
+        </staticText>
+        <staticText>
+            <reportElement x="170" y="200" width="70" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>10 A.M.</text>
+        </staticText>
+        <staticText>
+            <reportElement x="240" y="200" width="60" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>MMTH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="200" width="30" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>TH</text>
+        </staticText>
+        <staticText>
+            <reportElement x="330" y="200" width="300" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>MN-4 MECHANICS</text>
+        </staticText>
+        <staticText>
+            <reportElement x="630" y="200" width="50" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text>1</text>
+        </staticText>
+        <staticText>
+            <reportElement x="680" y="200" width="120" height="40" />
+            <box><pen lineWidth="1.0" lineColor="#000000" /></box>
+            <textElement textAlignment="Center" verticalAlignment="Middle"><font /></textElement>
+            <text />
+        </staticText>
+    </band>
+</detail><columnFooter>
+		<band height="45" splitType="Stretch" />
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch" />
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch" />
+	</summary>
+</jasperReport>

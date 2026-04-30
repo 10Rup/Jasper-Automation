@@ -45,3 +45,14 @@ class BandMst(Base):
     bandname = Column(String, default="")
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
+
+
+class CompileReport(Base):
+    __tablename__ = 'compilereports'
+    id = Column(Integer, primary_key=True, index=True)
+    uploadfile_id = Column(Integer, ForeignKey('uploadfiles.id'), nullable=False)
+    filename = Column(String,index=True)
+    is_processed = Column(Boolean, default=False)
+    download_filepath = Column(Text, default="")
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    deleted_at = Column(DateTime, nullable=True)

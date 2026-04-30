@@ -267,7 +267,7 @@
 <section class="footer">
     <footer class="bg-light text-white text-center py-2">
         <div class="container">
-            <button type="button" id = "compile" class="btn btn-primary"  onclick="compile('{{report.id}}')">Compile Report</button>
+            <button type="button" id = "compile" class="btn btn-primary"  onclick="compile('{{report.id}}','{{report.displayname}}')">Compile Report</button>
         </div>
     </footer>
 <section>
@@ -410,8 +410,24 @@
 
 
         // COMPILE Button Script//
-    function compile(reportId) {
-    alert("Compiling report ID: " + reportId);
+    function compile(reportId, filename) {
+        fetch(`/jrxmls/compile/${reportId}`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                status: 'compiling',
+                filename: filename
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            // console.log(data);
+            if (data.redirect){
+                alert(data.status);
+                window.location.href = data.redirect;
+            }
+        })
+        // 
     }
 
         // For Compile file Downloaded //

@@ -9,7 +9,7 @@ from pdf2image import convert_from_bytes
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
-from ..models import ApiMaster, Uploadfile, CropImages, XmlCode
+from ..models import ApiMaster, Uploadfile, CropImages, XmlCode, CompileReport
 from datetime import datetime, timezone
 
 
@@ -17,7 +17,7 @@ router = APIRouter(prefix='/jrxmls', tags=['Jrxml'])
 templates = Jinja2Templates("app/templates")
 IMAGE_DIR = 'app/images'
 CROP_IMAGE_DIR = 'app/cropped_images'
-
+OUTPUT_DIR = "app/generated_reports"
 
 def get_db():
     db = SessionLocal()
@@ -26,85 +26,88 @@ def get_db():
     finally:
         db.close()
 
-# Namespace for JRXML
+
 NS = "http://jasperreports.sourceforge.net/jasperreports"
 namespaces = {"jr": NS}
 
 
-def clean_ai_xml(xml):
-    return xml.replace("```xml", "").replace("```", "").strip()
-
-
-def replace_band(root, new_xml_str, band_name):
-    try:
-        new_elem = ET.fromstring(new_xml_str)
-    except Exception as e:
-        print(f"Invalid XML for {band_name}: {e}")
-        return
-
-    # find existing band node
-    old_elem = root.find(f".//jr:{band_name}", namespaces)
-
-    if old_elem is None:
-        print(f"{band_name} not found in base template")
-        return
-
-    # find parent of old element
-    parent = root.find(f".//jr:{band_name}/..", namespaces)
-
-    if parent is None:
-        print(f"Parent not found for {band_name}")
-        return
-
-    # remove old and insert new
-    parent.remove(old_elem)
-    parent.append(new_elem)
-
-
-
-@router.get('/')
-def reports(request: Request, db: Session = Depends(get_db)):
-
-    records = db.query(XmlCode).filter(XmlCode.deleted_at == None).first()
-
-    # for record in records:
-        # print(record)
-
-    print(records.bandname)
-    return {
-        'status':'success',
-        'tablecode': records.codes
-    }
-    # return templates.TemplateResponse(
-    #     request,
-    #     'test_view.html'
-    # )
-
-
-
-@router.get('/{report_id}')
+@router.post('/generate/{report_id}')
 def generate_jrxml(report_id: int, db: Session = Depends(get_db)):
 
-    # 1. Load base template
-    tree = ET.parse("app/templates/base.jrxml")
+    xml_path = "app/templates/test.jrxml"
+    records = db.query(CropImages).join(XmlCode, XmlCode.crop_id == CropImages.id).filter(CropImages.uploadfile_id == report_id, XmlCode.deleted_at == None).with_entities(XmlCode.codes, CropImages.bandname).all()
+
+    tree = ET.parse(xml_path)
     root = tree.getroot()
 
-    # 2. Fetch DB data
-    crops = db.query(CropImages).filter(CropImages.uploadfile_id == report_id).all()
+    for record in records:
 
-    for crop in crops:
-        print(crop)
+        band_name = record.bandname
+        new_xml = record.codes
+        # print(f'{band_name} \n {new_xml}')
+        try:
+            new_tag = ET.fromstring(new_xml)
+            # # ✅ FIX: add namespace
+            # def add_ns(elem):
+            #     if not elem.tag.startswith("{"):
+            #         elem.tag = f"{{{NS}}}{elem.tag}"
+            #     for child in elem:
+            #         add_ns(child)
 
-    return {
-        'status':'success',
-    }
-    # # 3. Replace bands
-    # for c in crops:
-    #     if c.xml_code:
-    #         xml = clean_ai_xml(c.xml_code)
-    #         replace_band(root, xml, c.bandname)
+            # add_ns(new_tag)
 
-    # # 4. Convert back to string
-    # final_xml = ET.tostring(root, encoding="unicode")
+        except ET.ParseError:
+            print(f"❌ Invalid XML for band: {band_name}")
+            continue
 
-    # return final_xml
+        old_tag = root.find(band_name)
+
+        
+        if old_tag is not None:
+            # sequence maintain
+            index = list(root).index(old_tag)
+            root.remove(old_tag)
+            root.insert(index, new_tag)
+        else:
+            # if missing then add
+            root.append(new_tag)
+
+    
+    # print(ET.tostring(root, encoding="unicode"))
+
+
+    # root.tag = f"{{{NS}}}jasperReport"
+    # root.set("xmlns", NS)
+    # root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    # root.set(
+    #     "xsi:schemaLocation",
+    #     "http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    # )
+    # root.set("name", "Blank_A4")
+    # root.set("pageWidth", "595")
+    # root.set("pageHeight", "842")
+    # root.set("columnWidth", "555")
+    # root.set("leftMargin", "20")
+    # root.set("rightMargin", "20")
+    # root.set("topMargin", "20")
+    # root.set("bottomMargin", "20")
+    # root.set("uuid", "1a3ec0e9-a736-460b-81a4-fa0e06798b78")
+
+
+
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    file_path = os.path.join(OUTPUT_DIR, f"report_{report_id}.jrxml")
+    # ✅ Save NEW file instead of overwriting base
+    tree.write(file_path, encoding="utf-8", xml_declaration=True)
+
+    print('generating')
+    return 
+
+
+
+# update_bands_from_db("report.xml", db_data)
+# band_name = record["band_name"]
+# new_xml = record["xml_content"]
+# db_data = db.query(CropImages).filter(CropImages.report_id == report_id).all()
+

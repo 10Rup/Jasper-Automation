@@ -51,28 +51,29 @@
             <tr>
                 <td>{{ loop.index }}</td>
                 <td class="report-name" onclick="preview('/images/{{file.filepath}}')">
-                    {{ file.displayname }}
+                    {{ file.filename }}
                 </td>
                 <td>
                     {% if file.is_processed %}
-                        <span class="status-badge status-success">Ready</span>
+                        <span class="status-badge status-success">Completed</span>
                     {% else %}
                         <span class="status-badge status-pending">Pending</span>
                     {% endif %}
                 </td>
                 <td>
-                    <button class="btn-compile" onclick="compileReport('{{file.id}}')" id="compBtn_{{file.id}}">
-                        <i class="fas fa-code"></i> Compile
+                    <button class="btn-compile" onclick="GenerateReport('{{file.uploadfile_id}}')" id="compBtn_{{file.uploadfile_id}}">
+                        <!-- <i class="fas fa-code"></i>  -->
+                        Compile
                     </button>
                 </td>
                 <td>
-                    {% if file.jrxml_path %}
+                    {% if file.download_filepath %}
                         <a href="/download/jrxml/{{file.id}}" class="btn-download">
                             <i class="fas fa-download"></i> Download
                         </a>
                     {% else %}
                         <button class="btn-download btn-disabled" disabled title="Compile first to download">
-                            No File
+                            Pending
                         </button>
                     {% endif %}
                 </td>
@@ -83,48 +84,22 @@
   </div>
 </main>
 
-<!-- <div class="modal fade" id="queryModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Query</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body" style="height: 300px;">
-          <input type="hidden" id="currentFileId">
-          <textarea id="queryText" class="query-textarea" placeholder="Enter your query here..."></textarea>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="saveQuery()">Save Query</button>
-      </div>
-    </div>
-  </div>
-</div> -->
-<!-- 
-<div class="modal fade" id="previewModal" tabindex="-1">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Report Preview</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="previewImage" style="width:100%; border-radius:10px;">
-            </div>
-        </div>
-    </div>
-</div> -->
+
 
 <script>
-    function compileReport(fileId) {
+    function GenerateReport(fileId) {
         const btn = document.getElementById("compBtn_" + fileId);
         btn.innerText = "Compiling...";
         btn.classList.add("btn-disabled");
         btn.disabled = true;
 
-        fetch(`/reports/compile/${fileId}`, {
-            method: "POST"
+        fetch(`/jrxmls/generate/${fileId}`, {
+            method: "POST",
+            // headers: { 'Content-Type': 'application/json' },
+            // body: JSON.stringify({
+            //     status: 'compiling',
+            //     filename: filename
+            // })
         })
         .then(res => res.json())
         .then(data => {
@@ -138,17 +113,17 @@
                 btn.disabled = false;
             }
         })
-        .catch(err => {
-            console.error("Compile failed:", err);
-            alert("Network Error during compilation");
-        });
+        // .catch(err => {
+        //     console.error("Compile failed:", err);
+        //     alert("Network Error during compilation");
+        // });
     }
 
     /* PREVIEW MODAL LOGIC */
-    function preview(img) {
-        // You can keep your existing preview logic here if needed
-        console.log("Previewing:", img);
-    }
+    // function preview(img) {
+    //     // You can keep your existing preview logic here if needed
+    //     console.log("Previewing:", img);
+    // }
 </script>
 
 {% endblock %}

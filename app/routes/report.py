@@ -8,7 +8,7 @@ from pdf2image import convert_from_bytes
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
-from ..models import ApiMaster, Uploadfile, CropImages
+from ..models import ApiMaster, Uploadfile, CropImages, CompileReport
 from datetime import datetime, timezone
 
 
@@ -45,12 +45,23 @@ def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)
     elif report_type =='image':
         files = db.query(Uploadfile).filter(Uploadfile.filetype.in_(['png','jpeg']), Uploadfile.deleted_at==None).all()
     
+    elif report_type == 'Combine':
+        files = db.query(CompileReport).all()
+        html_template = 'compile.html'
+        return templates.TemplateResponse(
+            request,
+            html_template,
+            {
+                'files': files,
+                'report_ext': report_type
+            }
+        )
+
     else:
         files = db.query(Uploadfile).filter(Uploadfile.filetype==report_type, Uploadfile.deleted_at==None).all()
-    if report_type=="Combine":
-        html_template = 'compile.html'
-    else:
-        html_template = 'reportslist.html'
+    
+    
+    html_template = 'reportslist.html'
     return templates.TemplateResponse(
         request,
         html_template,
