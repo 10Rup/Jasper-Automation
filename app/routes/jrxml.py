@@ -30,6 +30,19 @@ def get_db():
 NS = "http://jasperreports.sourceforge.net/jasperreports"
 namespaces = {"jr": NS}
 
+@router.post('/compile/{report_id}')
+def compile_report(data: dict, request: Request, report_id: int, db: Session = Depends(get_db)):
+    file_name = data.get('filename')
+    report = db.query(CompileReport).filter(CompileReport.uploadfile_id == report_id, CompileReport.is_processed== True).first()
+    if report:
+        return {'status':'Report Already Compiled', 'redirect':'/reports/Combine'}
+
+    new_report = CompileReport(uploadfile_id = report_id, filename = file_name, is_processed = True, created_at=datetime.now(timezone.utc) )
+    db.add(new_report)
+    db.commit()
+    return {'status':'Report Compiled', 'redirect':'/reports/Combine'}
+ 
+
 
 @router.post('/generate/{report_id}')
 def generate_jrxml(report_id: int, db: Session = Depends(get_db)):
@@ -76,22 +89,22 @@ def generate_jrxml(report_id: int, db: Session = Depends(get_db)):
     # print(ET.tostring(root, encoding="unicode"))
 
 
-    # root.tag = f"{{{NS}}}jasperReport"
-    # root.set("xmlns", NS)
-    # root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
-    # root.set(
-    #     "xsi:schemaLocation",
-    #     "http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-    # )
-    # root.set("name", "Blank_A4")
-    # root.set("pageWidth", "595")
-    # root.set("pageHeight", "842")
-    # root.set("columnWidth", "555")
-    # root.set("leftMargin", "20")
-    # root.set("rightMargin", "20")
-    # root.set("topMargin", "20")
-    # root.set("bottomMargin", "20")
-    # root.set("uuid", "1a3ec0e9-a736-460b-81a4-fa0e06798b78")
+    root.tag = f"{{{NS}}}jasperReport"
+    root.set("xmlns", NS)
+    root.set("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+    root.set(
+        "xsi:schemaLocation",
+        "http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    )
+    root.set("name", f"report_{report_id}")
+    root.set("pageWidth", "595")
+    root.set("pageHeight", "842")
+    root.set("columnWidth", "555")
+    root.set("leftMargin", "20")
+    root.set("rightMargin", "20")
+    root.set("topMargin", "20")
+    root.set("bottomMargin", "20")
+    root.set("uuid", "1a3ec0e9-a736-460b-81a4-fa0e06798b78")
 
 
 

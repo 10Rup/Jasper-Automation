@@ -54,6 +54,10 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
             images = convert_from_bytes(pdf_bytes)
         image_path = os.path.join(IMAGE_DIR, f"{reportname}.png")
         images[0].save(image_path, "PNG")
+        new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'{reportname}.png', created_at=datetime.now(timezone.utc))
+        db.add(new_file)
+        db.commit()
+
 
 
     # PNG / JPEG → save directly
@@ -64,9 +68,9 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
             f.write(pdf_bytes)
 
     
-    new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'{reportname}{ext}', created_at=datetime.now(timezone.utc))
-    db.add(new_file)
-    db.commit()
+        new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'{reportname}{ext}', created_at=datetime.now(timezone.utc))
+        db.add(new_file)
+        db.commit()
 
     
     return RedirectResponse(

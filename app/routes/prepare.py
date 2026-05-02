@@ -66,15 +66,24 @@ async def image_to_xml(request: Request, db: Session = Depends(get_db)):
         Mandatory Rules:
         1. Use <staticText> for all elements
         2. Proper (x, y, width, height)
-        3. Use <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+        3. Use <box><pen lineWidth="1.0" lineColor="#000000"/></box> not for all, use it if it is required
         4. STRICT font hierarchy:
-        <textElement><font/></textElement>
+            <textElement><font/></textElement>
         5. textAlignment="Center", verticalAlignment="Middle"
         6. Extract exact text
         7. NO UUID
         8. NO comments
         9. NO markdown
         10. Output ONLY valid XML inside <{band}>...</{band}>
+        11. If page size is mention then try to keed the desing with in the alloted width and height and by default the report page will be A4 size.
+        12. Avoide using 
+            <text value="text" />
+
+        13. Correct Way
+            <text value="text" /> this is correct way.
+        
+
+
 
         {f"Additional instructions: {extra}" if extra else ""}
         """
@@ -127,4 +136,4 @@ def save_xml(data: dict, request: Request, db: Session = Depends(get_db)):
         db.commit()
         return {'status': 'success', 'message':'Xml Code Saved Successfully!'}
 
-    return {'status': 'error', 'message':'Some Issue in Savin Xml Code!'}
+    return {'status': 'error', 'message':'Some Issue in Saving Xml Code!'}

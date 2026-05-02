@@ -1,0 +1,914 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:jasperReport xmlns:ns0="http://jasperreports.sourceforge.net/jasperreports" xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report_11" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
+	<queryString>
+		
+	</queryString>
+	<background>
+		<band splitType="Stretch" />
+	</background>
+	<title>
+		<band height="79" splitType="Stretch" />
+	</title>
+	<pageHeader>
+	<band height="250">
+		<staticText>
+			<reportElement x="0" y="0" width="802" height="30" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="16" isBold="true" />
+			</textElement>
+			<text>SHAHEED MAHENDRA KARMA VISHWAVIDYALAYA, BASTAR, JAGDALPUR, CHHATTISGARH</text>
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="30" width="802" height="35" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="18" isBold="true" />
+			</textElement>
+			<text>शहीद महेन्द्र कर्मा विश्वविद्यालय , बस्तर, जगदलपुर, छत्तीसगढ़</text>
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="65" width="802" height="15" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" isBold="true" />
+			</textElement>
+			<text>(Accredited by NAAC)</text>
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="80" width="802" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="11" isBold="true" />
+			</textElement>
+			<text>BACHELOR OF SCIENCE (HOME SCIENCE) FIRST SEMESTER EXAMINATION JULY-DEC-2025</text>
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="100" width="802" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="11" isBold="true" />
+			</textElement>
+			<text>SESSION : 2025-2026</text>
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="120" width="802" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="12" isBold="true" />
+			</textElement>
+			<text>Mark sheet Cum Grade Sheet</text>
+		</staticText>
+		<staticText>
+			<reportElement x="50" y="150" width="110" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Status</text>
+		</staticText>
+		<staticText>
+			<reportElement x="160" y="150" width="100" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: REGULAR</text>
+		</staticText>
+		<staticText>
+			<reportElement x="450" y="150" width="100" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Sr. No.</text>
+		</staticText>
+		<staticText>
+			<reportElement x="550" y="150" width="120" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: 0001</text>
+		</staticText>
+		<staticText>
+			<reportElement x="50" y="165" width="110" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Name of Student</text>
+		</staticText>
+		<staticText>
+			<reportElement x="160" y="165" width="200" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: AYESHA MALIK</text>
+		</staticText>
+		<staticText>
+			<reportElement x="450" y="165" width="100" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Roll No.</text>
+		</staticText>
+		<staticText>
+			<reportElement x="550" y="165" width="120" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: 25040001</text>
+		</staticText>
+		<staticText>
+			<reportElement x="50" y="180" width="110" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Father's Name</text>
+		</staticText>
+		<staticText>
+			<reportElement x="160" y="180" width="200" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: MOHAMMED SALIM</text>
+		</staticText>
+		<staticText>
+			<reportElement x="450" y="180" width="100" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Enrollment</text>
+		</staticText>
+		<staticText>
+			<reportElement x="550" y="180" width="120" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: R25202040001</text>
+		</staticText>
+		<staticText>
+			<reportElement x="50" y="195" width="110" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Mother's Name</text>
+		</staticText>
+		<staticText>
+			<reportElement x="160" y="195" width="200" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: SHABANA BEGAM</text>
+		</staticText>
+		<staticText>
+			<reportElement x="450" y="195" width="100" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>ABC ID</text>
+		</staticText>
+		<staticText>
+			<reportElement x="550" y="195" width="120" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: 388304163782</text>
+		</staticText>
+		<staticText>
+			<reportElement x="50" y="210" width="110" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>Medium</text>
+		</staticText>
+		<staticText>
+			<reportElement x="160" y="210" width="200" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="false" />
+			</textElement>
+			<text>: ENGLISH</text>
+		</staticText>
+		<staticText>
+			<reportElement x="50" y="230" width="110" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text>College Name</text>
+		</staticText>
+		<staticText>
+			<reportElement x="160" y="230" width="550" height="15" />
+			<textElement textAlignment="Left" verticalAlignment="Middle">
+				<font size="10" isBold="false" />
+			</textElement>
+			<text>: 202 - GOVERNMENT DANTESHWARI POSTGRADUATE GIRLS COLLEGE, JAGDALPUR</text>
+		</staticText>
+		<staticText>
+			<reportElement x="710" y="150" width="80" height="80" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="8" />
+			</textElement>
+			<text>PHOTO</text>
+		</staticText>
+	</band>
+</pageHeader><columnHeader>
+	<band height="60">
+		<staticText>
+			<reportElement x="0" y="0" width="75" height="60" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="11" />
+			</textElement>
+			<text>Course
+Code</text>
+		</staticText>
+		<staticText>
+			<reportElement x="75" y="0" width="235" height="60" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="11" />
+			</textElement>
+			<text>Course Title</text>
+		</staticText>
+		<staticText>
+			<reportElement x="310" y="0" width="60" height="60" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="11" />
+			</textElement>
+			<text>Discipline</text>
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="0" width="145" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>SCHEME OF MARKS</text>
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="9" />
+			</textElement>
+			<text>ESE
+MAX</text>
+		</staticText>
+		<staticText>
+			<reportElement x="400" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="9" />
+			</textElement>
+			<text>IA
+MAX</text>
+		</staticText>
+		<staticText>
+			<reportElement x="430" y="30" width="50" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>TOTAL</text>
+		</staticText>
+		<staticText>
+			<reportElement x="480" y="30" width="35" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>MIN</text>
+		</staticText>
+		<staticText>
+			<reportElement x="515" y="0" width="120" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>MARKS OBTAINED</text>
+		</staticText>
+		<staticText>
+			<reportElement x="515" y="30" width="40" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>ESE</text>
+		</staticText>
+		<staticText>
+			<reportElement x="555" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>IA</text>
+		</staticText>
+		<staticText>
+			<reportElement x="585" y="30" width="50" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>TOTAL</text>
+		</staticText>
+		<staticText>
+			<reportElement x="635" y="0" width="120" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>CREDIT POINT</text>
+		</staticText>
+		<staticText>
+			<reportElement x="635" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>GR.</text>
+		</staticText>
+		<staticText>
+			<reportElement x="665" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>GP.</text>
+		</staticText>
+		<staticText>
+			<reportElement x="695" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>CR.</text>
+		</staticText>
+		<staticText>
+			<reportElement x="725" y="30" width="30" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="10" />
+			</textElement>
+			<text>CP.</text>
+		</staticText>
+	</band>
+</columnHeader><detail>
+		<band height="125" splitType="Stretch" />
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch" />
+	</columnFooter>
+	<pageFooter>
+	<band height="250">
+		<staticText>
+			<reportElement x="0" y="0" width="440" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Total Marks in Semester" />
+		</staticText>
+		<staticText>
+			<reportElement x="440" y="0" width="60" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="OUT OF 700" />
+		</staticText>
+		<staticText>
+			<reportElement x="500" y="0" width="60" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="517" />
+		</staticText>
+		<staticText>
+			<reportElement x="560" y="0" width="100" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="SGPA" />
+		</staticText>
+		<staticText>
+			<reportElement x="660" y="0" width="90" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="7.70" />
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="20" width="65" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="65" y="20" width="80" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Total" />
+		</staticText>
+		<staticText>
+			<reportElement x="145" y="20" width="80" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Obtained" />
+		</staticText>
+		<staticText>
+			<reportElement x="225" y="20" width="65" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="290" y="20" width="80" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Total" />
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="20" width="70" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Obtained" />
+		</staticText>
+		<staticText>
+			<reportElement x="440" y="20" width="120" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="GRAND TOTAL" />
+		</staticText>
+		<staticText>
+			<reportElement x="560" y="20" width="190" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="CGPA" />
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="40" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="1st Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="65" y="40" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="700" />
+		</staticText>
+		<staticText>
+			<reportElement x="145" y="40" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="517" />
+		</staticText>
+		<staticText>
+			<reportElement x="225" y="40" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="4th Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="290" y="40" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="40" width="70" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="440" y="40" width="60" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Total" />
+		</staticText>
+		<staticText>
+			<reportElement x="500" y="40" width="60" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Out Of" />
+		</staticText>
+		<staticText>
+			<reportElement x="560" y="40" width="190" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="RESULT" />
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="55" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="2nd Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="65" y="55" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="145" y="55" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="225" y="55" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="5th Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="290" y="55" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="55" width="70" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="70" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="3rd Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="65" y="70" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="145" y="70" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="225" y="70" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="6th Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="290" y="70" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="70" width="70" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="440" y="70" width="60" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="517" />
+		</staticText>
+		<staticText>
+			<reportElement x="500" y="70" width="60" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="700" />
+		</staticText>
+		<staticText>
+			<reportElement x="560" y="70" width="190" height="30" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="PASS" />
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="85" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="7th Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="65" y="85" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="145" y="85" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="225" y="85" width="65" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="8th Sem" />
+		</staticText>
+		<staticText>
+			<reportElement x="290" y="85" width="80" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="370" y="85" width="70" height="15" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="" />
+		</staticText>
+		<staticText>
+			<reportElement x="0" y="100" width="440" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="In Words : FIVE HUNDRED SEVENTEEN" />
+		</staticText>
+		<staticText>
+			<reportElement x="440" y="100" width="60" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="Out of" />
+		</staticText>
+		<staticText>
+			<reportElement x="500" y="100" width="250" height="20" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" />
+			</textElement>
+			<text value="700" />
+		</staticText>
+		<staticText>
+			<reportElement x="5" y="125" width="100" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" size="11" />
+			</textElement>
+			<text value="Division :" />
+		</staticText>
+		<staticText>
+			<reportElement x="500" y="125" width="130" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="false" size="11" />
+			</textElement>
+			<text value="Publication Date" />
+		</staticText>
+		<staticText>
+			<reportElement x="635" y="125" width="100" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="false" size="11" />
+			</textElement>
+			<text value="31-03-2026" />
+		</staticText>
+		<staticText>
+			<reportElement x="30" y="200" width="250" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" size="12" />
+			</textElement>
+			<text value="Assistant Registrar (Exam)" />
+		</staticText>
+		<staticText>
+			<reportElement x="550" y="200" width="150" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" size="12" />
+			</textElement>
+			<text value="Registrar" />
+		</staticText>
+		<staticText>
+			<reportElement x="30" y="225" width="250" height="20" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font isBold="true" size="10" />
+			</textElement>
+			<text value="Date of Issue : 24-04-2026" />
+		</staticText>
+		<staticText>
+			<reportElement x="300" y="185" width="200" height="15" />
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="8" />
+			</textElement>
+			<text value="|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" />
+		</staticText>
+		<staticText>
+			<reportElement x="300" y="210" width="150" height="35" />
+			<box>
+				<pen lineWidth="1.0" lineColor="#000000" />
+			</box>
+			<textElement textAlignment="Center" verticalAlignment="Middle">
+				<font size="8" />
+			</textElement>
+			<text value="" />
+		</staticText>
+	</band>
+</pageFooter><summary>
+		<band height="42" splitType="Stretch" />
+	</summary>
+</ns0:jasperReport>
