@@ -72,6 +72,23 @@ def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)
     )
 
 
+
+
+@router.post('/save-query')
+def save_query(data: dict, request: Request, db: Session =  Depends(get_db)):
+    file_id = data.get('id')
+    query = data.get('query')
+
+
+    record = db.query(Uploadfile).filter(Uploadfile.id == file_id, Uploadfile.deleted_at == None).first()
+
+    if not record:
+        return {'status': 'error', 'message':'Issue in Saving Query!'}
+    
+    record.report_query = query
+    db.commit()
+    return {'status':'success', 'message':'Query saved successfully!'}
+
 @router.delete('/delete/{report_id}')
 def delete_report(request: Request, report_id: int, db: Session = Depends(get_db)):
 
@@ -85,3 +102,11 @@ def delete_report(request: Request, report_id: int, db: Session = Depends(get_db
     return {'status':'success', 'message':'Report Deleted Successfullt.'}
 
         
+# @router.post('/process-query/{report_id}')
+# def process_query(request: Request, report_id: int, db: Session = Depends(get_db)):
+    
+#     query = db.query(Uploadfile).filter(Uploadfile.id == report_id, Uploadfile.deleted_at == None).first()
+
+#     print(query.report_query)
+
+#     return

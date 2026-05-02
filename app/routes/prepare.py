@@ -137,3 +137,83 @@ def save_xml(data: dict, request: Request, db: Session = Depends(get_db)):
         return {'status': 'success', 'message':'Xml Code Saved Successfully!'}
 
     return {'status': 'error', 'message':'Some Issue in Saving Xml Code!'}
+
+
+
+@router.get('/query/{report_id}')
+def generate_query(report_id: int, db: Session = Depends(get_db)):
+
+    record = db.query(Uploadfile).filter(Uploadfile.id == report_id, Uploadfile.deleted_at == None).first()
+    query = record.report_query
+    # return {'query':query}
+    
+    api_key = db.query(ApiMaster).filter(ApiMaster.apiname == 'geminie').first()
+    if not api_key:
+        return {'status': 'error', 'message':'issue with api key'}
+
+    try:
+        client = genai.Client(api_key=api_key.apikey)
+        model = "gemini-3-flash-preview"
+
+        prompt = f"""
+            You are a SQL parser.
+
+            Extract ONLY column names from this SQL query.
+
+            Rules:
+            - Return ONLY a JSON array
+            - No explanation
+            - No extra text
+            - No markdown
+            - No code block
+            - Only column names
+            - Use alias if present (AS)
+            - Remove table prefixes
+            - Convert to UPPERCASE
+
+            Example:
+            Input: SELECT a.marks AS total, b.name FROM table
+            Output: ["TOTAL", "NAME"]
+
+            Query:
+            {query}
+        """
+
+        response = client.models.generate_content(
+            model=model,
+            contents=prompt
+        )
+
+        raw_text = response.text.strip()
+
+        # 🔥 Clean possible markdown
+        raw_text = raw_text.replace("```json", "").replace("```", "").strip()
+
+        columns = json.loads(raw_text)
+
+
+        code = build_fields_from_db(query,columns)
+
+
+
+        # return columns
+        return {'status':'success','columns':columns, 'code':code}
+
+    except Exception as e:
+        print("Gemini Error:", e)
+        return {'status':'error', 'message': 'Gemini Error'}
+
+
+
+def build_fields_from_db(query, columns):
+
+    xml = "<queryString>\n"
+    xml += f"\t<![CDATA[{query}]]>\n"
+    xml += "</queryString>\n\n"
+
+    for col in columns:
+        xml += f'''<field name="{col}" class="java.lang.String">
+    <property name="com.jaspersoft.studio.field.label" value="{col}"/>
+</field>\n'''
+
+    return xml

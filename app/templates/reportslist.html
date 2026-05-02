@@ -125,8 +125,21 @@
         .then(res => res.json())
         .then(data => {
             if (data.status === 'success') {
-                alert("Query saved successfully!");
+                alert(data.message);
                 bootstrap.Modal.getInstance(document.getElementById("queryModal")).hide();
+                location.reload();
+
+                fetch(`/reports/process-query/${fileId}`,{
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                })
+
+
             } else {
                 alert("Error: " + data.message);
             }
