@@ -41,6 +41,7 @@
         <tr>
           <th>Report Name</th>
           <th>Query</th>
+          <th>Read Query</th>
           <th>Process</th>
           <th>Delete</th>
           <th>Prepare</th>
@@ -50,9 +51,8 @@
         {% for file in files %}
             <tr>
                 <td class="report-name" onclick="preview('/images/{{file.filepath}}')">{{file.displayname}}</td>
-                <td>
-                    <button class="btn-process" onclick="openQueryModal('{{file.id}}')">Add Query</button>
-                </td>
+                <td><button class="btn-process" onclick="openQueryModal('{{file.id}}')">Add Query</button></td>
+                <td><button class="btn-process" id="read-query-btn" onclick="readQuery('{{file.id}}')">Read Query</button></td>
                 <td><button class="btn-process" onclick="process('{{file.id}}')">Process</button></td>
                 <td><button class="btn-delete" onclick="removeRow('{{file.id}}')">Delete</button></td>
                 <td><button class="btn-prepare" onclick="prepare('{{file.id}}')">Prepare Report</button></td>
@@ -104,6 +104,29 @@
         new bootstrap.Modal(document.getElementById("queryModal")).show();
     }
 
+
+    // Read Query Logic
+    function readQuery(fileId){
+
+        const btn = document.getElementById("read-query-btn");
+        // when btn is clicked 
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+
+        fetch(`/prepare/query/${fileId}`,{
+            method:"POST", 
+            headers: {'Content-Type': 'application/json'},
+
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message)
+            btn.disabled = false;
+            btn.innerText = "Read Query";
+
+        })
+    }
+
     // SAVE LOGIC
     function saveQuery() {
         const fileId = document.getElementById("currentFileId").value;
@@ -129,15 +152,15 @@
                 bootstrap.Modal.getInstance(document.getElementById("queryModal")).hide();
                 location.reload();
 
-                fetch(`/reports/process-query/${fileId}`,{
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
+                // fetch(`/reports/process-query/${fileId}`,{
+                //     method: "POST",
+                //     headers: { 'Content-Type': 'application/json' },
                     
-                })
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data)
-                })
+                // })
+                // .then(res => res.json())
+                // .then(data => {
+                //     console.log(data)
+                // })
 
 
             } else {

@@ -19,6 +19,8 @@ class Uploadfile(Base):
     filetype = Column(String,index=True)
     filepath = Column(String, nullable=False)
     report_query = Column(Text, default="")
+    fields = Column(Text, default="")
+    queryString = Column(Text, default="")
     title = Column(Text, default="")
     pageHeader = Column(Text, default="")
     columnHeader = Column(Text, default="")

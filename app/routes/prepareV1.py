@@ -39,10 +39,7 @@ async def image_to_xml(request: Request, db: Session = Depends(get_db)):
     band = data['bandname']
     reportpath = data['reportpath']
     extra = data['extrapromt']
-    report_id = data['report_id']
     
-    report = db.query(Uploadfile).filter(Uploadfile.id == report_id, Uploadfile.deleted_at == None).first()
-    report_fields = report.fields
 
     image_path = os.path.join(CROP_IMAGE_DIR,reportpath)
 
@@ -58,57 +55,38 @@ async def image_to_xml(request: Request, db: Session = Depends(get_db)):
 
         Use the following reference JRXML as a STYLE GUIDE only.
         Do NOT copy blindly. Adapt based on the image.
+        If reference JRXML not found don't worry.
 
-        --------------------------------------------------
-        AVAILABLE DATA FIELDS (VERY IMPORTANT):
-       
-        --------------------------------------------------
 
-        FIELD USAGE RULES:
-        1. If any label in the image represents dynamic data (marks, totals, values, numbers), you MUST use <textField>
-        2. Use this format strictly:
+        
 
-        <textField>
-            <reportElement x="" y="" width="" height=""/>
-            <box><pen lineWidth="1.0" lineColor="#000000"/></box>
-            <textElement textAlignment="Center" verticalAlignment="Middle">
-                <font/>
-            </textElement>
-            <textFieldExpression><![CDATA[$F{{FIELD_NAME}}]]></textFieldExpression>
-        </textField>
-
-        3. Match labels with fields intelligently:
-        - "TOTAL THEO MARKS" → TOTAL_THEO_MARKS
-        - "TOTAL THEO OBTAINED" → TOTAL_THEO_OBT_MARKS
-
-        4. If no matching field is found → use <staticText>
-            {report_fields}
-        --------------------------------------------------
 
         Now analyze the image and generate JRXML for <{band}>.
 
         Mandatory Rules:
-        1. Use <staticText> for labels/headings
-        2. Use <textField> for dynamic values (based on fields above)
-        3. Proper (x, y, width, height)
-        4. Use <box> only if required
-        5. STRICT font hierarchy:
+        1. Use <staticText> for all elements
+        2. Proper (x, y, width, height)
+        3. Use <box><pen lineWidth="1.0" lineColor="#000000"/></box> not for all, use it if it is required
+        4. STRICT font hierarchy:
             <textElement><font/></textElement>
-        6. textAlignment="Center", verticalAlignment="Middle"
-        7. Extract exact text
-        8. NO UUID
-        9. NO comments
-        10. NO markdown
-        11. Output ONLY valid XML inside <{band}>...</{band}>
-        12. Keep layout within A4 bounds
-        13. DO NOT use:
+        5. textAlignment="Center", verticalAlignment="Middle"
+        6. Extract exact text
+        7. NO UUID
+        8. NO comments
+        9. NO markdown
+        10. Output ONLY valid XML inside <{band}>...</{band}>
+        11. If page size is mention then try to keed the desing with in the alloted width and height and by default the report page will be A4 size.
+        12. Avoide using 
             <text value="text" />
 
-        --------------------------------------------------
+        13. Correct Way
+            <text value="text" /> this is correct way.
+        
+
+
 
         {f"Additional instructions: {extra}" if extra else ""}
         """
-
         # Use the client to generate content
         if apiname == 'geminie':
             api_key = db.query(ApiMaster).filter(ApiMaster.apiname == apiname).first()
@@ -219,7 +197,6 @@ def generate_query(report_id: int, db: Session = Depends(get_db)):
 
         if columns:
             record.queryString = code
-            record.fields = columns
             db.commit()
             # return columns
             return {'status':'success','message':'Query Read Successfully!'}

@@ -215,7 +215,7 @@
 
                 <div class="btn-group-custom">
                     <button class="btn btn-success" id="btn_{{crop.id}}" 
-                            onclick="apiProcess('{{crop.id}}', '{{report.displayname}}', '{{crop.bandname}}','{{crop.filepath}}')">
+                            onclick="apiProcess('{{report.id}}','{{crop.id}}', '{{report.displayname}}', '{{crop.bandname}}','{{crop.filepath}}')">
                         Prepare Design
                     </button>
                     <button class="btn btn-outline-danger" onclick="deleteImage('{{crop.id}}')">
@@ -277,7 +277,7 @@
 <script>
     /* --- API LOGIC --- */
 
-    function apiProcess(fileId, filename, band, file_path) {
+    function apiProcess(reportId, fileId, filename, band, file_path) {
     const resultBox = document.getElementById("result_" + fileId);
     const actionIcons = document.getElementById("actions_" + fileId); // Get the icon container
     const processBtn = document.getElementById("btn_" + fileId);
@@ -300,6 +300,7 @@
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
+            report_id: reportId,
             crop_id: fileId,
             reportname: filename,
             bandname: band,
