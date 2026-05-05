@@ -231,7 +231,7 @@
                        <div class="xml-box-container">
                         <div class="xml-actions" id="actions_{{crop.id}}" style="display: none;">
                             <i class="fas fa-copy" onclick="copyXML('{{crop.id}}')" title="Copy XML"></i>
-                            <i class="fas fa-save" onclick="saveXML('{{report.id}}','{{crop.id}}','{{crop.bandname}}')" title="Save to File"></i>
+                            <i class="fas fa-save" onclick="saveXML('{{crop.id}}','{{crop.bandname}}')" title="Save to File"></i>
                         </div>
                     
                         <textarea id="result_{{crop.id}}" class="result-box" readonly></textarea>
@@ -339,14 +339,14 @@
         });
     }
 
-    function saveXML(reportId,id, band) {
+    function saveXML(id, band) {
         const xml = document.getElementById("result_" + id).value;
         if(!xml || xml.startsWith("Analyzing")) return;
 
         fetch("/prepare/save-xml", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ report_id: reportId, crop_id: id, band: band, xml: xml })
+            body: JSON.stringify({ crop_id: id, band: band, xml: xml })
         })
         .then(res => res.json())
         .then(data => {
@@ -431,6 +431,23 @@
         // 
     }
 
+        // For Compile file Downloaded //
+
+        // function compile(reportId) {
+        // fetch(`/compile/${reportId}`)
+        // .then(res => res.blob())
+        // .then(blob => {
+
+        //     const url = window.URL.createObjectURL(blob);
+        //     const a = document.createElement("a");
+
+        //     a.href = url;
+        //     a.download = "report.jrxml";
+        //     a.click();
+
+        // })
+        // .catch(() => alert("Download failed"));
+        // }
 
 </script>
 
