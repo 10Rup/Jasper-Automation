@@ -1,9 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+import os
+from dotenv import load_dotenv
 
-DATABASE_URL = "postgresql://postgres:root@localhost/jasper_automation"
+load_dotenv()
+database  = os.getenv("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(database)
 
 SessionLocal = sessionmaker(
     autocommit=False,
