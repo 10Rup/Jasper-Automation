@@ -80,14 +80,14 @@ async def image_to_xml(request: Request, db: Session = Depends(get_db)):
             FIELD USAGE RULES:
             1. If any label in the image represents dynamic data (marks, totals, values, numbers), you MUST use <textField>
             2. Use this format strictly:
-            <textField>
-                <reportElement x="" y="" width="" height=""/>
-                <box><pen lineWidth="1.0" lineColor="#000000"/></box>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{{FIELD_NAME}}]]></textFieldExpression>
-            </textField>
+                <textField>
+                    <reportElement x="" y="" width="" height=""/>
+                    <box><pen lineWidth="1.0" lineColor="#000000"/></box>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{{FIELD_NAME}}]]></textFieldExpression>
+                </textField>
 
             3. Match labels with fields intelligently:
             - "TOTAL THEO MARKS" → TOTAL_THEO_MARKS

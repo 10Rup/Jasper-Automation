@@ -42,10 +42,10 @@ def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)
     if report_type =='excel':
         files = db.query(Uploadfile).filter(Uploadfile.filetype=='xls', Uploadfile.deleted_at==None).all()
 
-    elif report_type =='image':
-        files = db.query(Uploadfile).filter(Uploadfile.filetype.in_(['png','jpeg']), Uploadfile.deleted_at==None).all()
+    elif report_type =='pdf-img':
+        files = db.query(Uploadfile).filter(Uploadfile.filetype.in_([".png", ".jpg", ".jpeg",".pdf"]), Uploadfile.deleted_at==None).all()
     
-    elif report_type == 'Combine':
+    elif report_type == 'compile':
         files = db.query(CompileReport).all()
         html_template = 'compile.html'
         return templates.TemplateResponse(

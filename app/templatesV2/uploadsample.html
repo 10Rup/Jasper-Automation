@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+{% block styles %}
+  <style>
+    .main {
+        margin-left: 260px;
+        padding: 20px;
+      }
+      /* UPLOAD BOX */
+      .upload-section {
+        background: white;
+        padding: 30px;
+        margin-top: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      }
+
+      /* DROP AREA */
+      .file-input-label {
+        display: block;
+        padding: 60px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .file-input-label:hover {
+        border-color: #6d28d9;
+        background: #f5f3ff;
+      }
+
+      .upload-icon {
+        font-size: 45px;
+        margin-bottom: 10px;
+        color: #6d28d9;
+      }
+
+      /* BUTTON */
+      #uploadButton {
+        margin-top: 20px;
+        background: linear-gradient(135deg,#6d28d9,#9333ea);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+      }
+
+      #uploadButton:hover {
+        opacity: 0.9;
+      }
+
+      /* FILE GRID */
+      .files-container {
+        margin-top: 30px;
+      }
+
+      .files-grid {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      .file-card {
+        background: white;
+        
+        padding: 15px;
+        border-radius: 12px;
+        width: auto;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      }
+      .reportname{
+        padding: 5px;
+        width: 100%;
+        /* box-shadow: 0 5px 15px rgba(0,0,0,0.05); */
+      }
+
+  </style>
+
+{% endblock %}
+<!-- MAIN -->
+
+<main class="main">
+
+<header class="header">
+  <h2>Upload Files</h2>
+  <div class="avatar">REPORT TEAM</div>
+</header>
+
+<section class="upload-section">
+  <form action="/upload/add-sample" method="post" enctype="multipart/form-data">
+
+  <label for="reportname">Report Name:</label><br>
+  <input id="reportname" class="reportname" name="reportname" placeholder="Report Name" required><br><br>
+
+  <input type="file" id="samplefile" name ="samplefile" hidden required>
+
+  <label for="samplefile" class="file-input-label" id="dropArea">
+    <div class="upload-icon">☁️</div>
+    <p>Drag & Drop files or Click to Upload</p>
+  </label>
+
+  <button type="submit" id="uploadButton" >Upload Files</button>
+</form>
+</section>
+
+<div class="files-container">
+  <h3>Uploaded Files</h3>
+  <div class="files-grid" id="filesGrid"></div>
+</div>
+
+</main>
+
+<script>
+
+let files = [];
+
+// SELECT
+samplefile.addEventListener("change", e => {
+  files = [...e.target.files];
+  console.log(files[0].name)
+  const filedata = files[0].name.split(".");
+  const ext = filedata.pop();
+  const reportname = filedata.join(".");
+  
+  if(ext!="pdf" && ext!="xls" && ext!="xlsx" && ext!="png" && ext!="jpeg"){
+    renderFiles(false);
+  }
+  else{
+    renderFiles(true);
+  };
+  
+  
+});
+
+// DRAG
+const dropArea = document.getElementById("dropArea");
+
+dropArea.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropArea.classList.add("drag-over");
+});
+
+dropArea.addEventListener("dragleave", () => {
+  dropArea.classList.remove("drag-over");
+});
+
+dropArea.addEventListener("drop", e => {
+  e.preventDefault();
+  dropArea.classList.remove("drag-over");
+
+  files = [...e.dataTransfer.files];
+  renderFiles();
+});
+
+// RENDER
+function renderFiles(isvalid) {
+  const grid = document.getElementById("filesGrid");
+  grid.innerHTML = "";
+
+  if(isvalid){
+    files.forEach(file => {
+      grid.innerHTML = `
+        <div class="file-card">
+          <p>📄 ${file.name}</p>
+          <small>${(file.size/1024).toFixed(1)} KB</small>
+        </div>
+      `;
+
+
+      const uploadbtn = document.getElementById("uploadButton");
+      uploadbtn.disabled = false;
+
+
+      const filedata = file.name.split(".");
+      const ext = filedata.pop();
+      const reportname = filedata.join(".");
+      console.log(ext, reportname);
+
+      report_name = document.getElementById("reportname");
+      report_name.value = reportname;
+    });
+  }
+  else{
+    const uploadbtn = document.getElementById("uploadButton");
+    uploadbtn.disabled = true;
+    grid.innerHTML = `
+        <div class="file-card">
+          <p>📄 Invalid File Type</p>
+        </div>
+      `;
+    report_name = document.getElementById("reportname");
+    report_name.value ="Invalid report selection";
+  }
+    
+
+  
+} 
+
+
+// UPLOAD
+uploadButton.onclick = () => {
+  if(files.length === 0){
+    alert("No files selected");
+    return;
+  }
+
+  alert("Uploading " + files.length + " files...");
+};
+
+</script>
+
+
+{% endblock %}

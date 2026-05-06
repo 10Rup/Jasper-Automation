@@ -1,24 +1,32 @@
 from fastapi import FastAPI, Request  # type: ignore
 from .database import engine
 from .models import Base
-from .routes import home, api, upload, report, process, prepare, jrxml
+from .routes import page_routes
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.staticfiles import StaticFiles
 
+
 app = FastAPI()
+
 app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_KEY")
 app.mount("/images", StaticFiles(directory="app/images"), name="images")
-app.mount("/cropimages", StaticFiles(directory="app/cropped_images"), name="cropped_images")
-app.mount('/statics', StaticFiles(directory='app/assets/static'), name='statics')
+app.mount("/cropped_images", StaticFiles(directory="app/cropped_images"), name="cropped_images")
+
 
 Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates("app/templates")
 
-app.include_router(home.router)
-app.include_router(api.router)
-app.include_router(upload.router)
-app.include_router(report.router)
-app.include_router(process.router)
-app.include_router(prepare.router)
-app.include_router(jrxml.router)
+
+
+app.include_router(page_routes.router)
+
+
+# app.include_router(admin.router)
+
+
+@app.get("/")
+def home(request: Request):
+    return templates.TemplateResponse(request,
+        'home.html'
+    )
