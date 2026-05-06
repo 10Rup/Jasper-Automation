@@ -31,16 +31,6 @@
         color: #000000;
     }
 
-    .avatar {
-        font-size: 0.75rem;
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        color: #60a5fa;
-        padding: 6px 16px;
-        border-radius: 9999px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-    }
 
     /* UPLOAD BOX */
     .upload-section {
@@ -50,9 +40,8 @@
         border: 1px solid #1e293b;
         border-radius: 1rem;
         padding: 32px;
-        max-width: 650px;
+        max-width: 750px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        
     }
 
     .section-desc {
@@ -93,7 +82,7 @@
     /* SELECT DROPDOWNS */
     .dropdown-group {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 16px;
         margin-bottom: 20px;
     }
@@ -131,6 +120,11 @@
         cursor: pointer;
         background: rgba(2, 6, 23, 0.4);
         transition: all 0.25s ease-in-out;
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .file-input-label:hover {
@@ -176,42 +170,51 @@
         cursor: not-allowed;
         box-shadow: none;
     }
-
-    /* FILE GRID */
+/* FILE GRID */
     .files-container {
-        /* margin-top: 35px; */
-        margin: 0,auto;
-        max-width: 650px;
-    }
-
-    .files-container h3 {
-        font-size: 1.125rem;
-        font-weight: 600;
-        color: #94a3b8;
-        margin-bottom: 15px;
+        margin-top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .file-card {
-        background: rgba(30, 41, 59, 0.7);
+        background: rgba(30, 41, 59, 0.9);
         border: 1px solid #334155;
-        padding: 16px 20px;
+        padding: 20px 24px;
         border-radius: 0.75rem;
-        width: 100%;
+        width: 90%;
+        max-width: 550px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        margin: 0 auto;
     }
 
     .file-card-details {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 20px;
+        width: 85%; /* Ensures there's enough room between text and button */
+    }
+
+    .file-card-details > div {
+        flex: 1;
+        min-width: 0; /* Prevents text overflow */
+    }
+
+    .file-card-details p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .file-card-details i {
         font-size: 2rem;
         color: #10b981;
+        flex-shrink: 0;
     }
 
     .delete-btn {
@@ -219,10 +222,12 @@
         background: transparent;
         border: none;
         cursor: pointer;
-        font-size: 1rem;
-        padding: 6px;
+        font-size: 1.2rem;
+        padding: 8px;
         border-radius: 6px;
         transition: all 0.2s;
+        margin-left: 10px;
+        flex-shrink: 0;
     }
 
     .delete-btn:hover {
@@ -250,44 +255,50 @@
       </div>
 
       <div class="dropdown-group">
-        <div>
-          <label for="pageSize">Page Size</label>
-          <select id="pageSize" name="pageSize" class="custom-select">
-            <option value="a4">A4 (210 × 297 mm)</option>
-            <option value="a3">A3 (297 × 420 mm)</option>
-            <option value="letter">Letter (8.5 × 11 in)</option>
-            <option value="legal">Legal (8.5 × 14 in)</option>
-          </select>
-        </div>
-        <div>
-          <label for="orientation">Orientation</label>
-          <select id="orientation" name="orientation" class="custom-select">
-            <option value="portrait">Portrait</option>
-            <option value="landscape">Landscape</option>
-          </select>
-        </div>
+          <div>
+            <label for="pagesize">Page Size</label>
+            <select id="pagesize" name="pagesize" class="custom-select">
+              <option value="A4">A4 (210 × 297 mm)</option>
+              <option value="A3">A3 (297 × 420 mm)</option>
+              <option value="Letter">Letter (8.5 × 11 in)</option>
+              <option value="Legal">Legal (8.5 × 14 in)</option>
+            </select>
+          </div>
+          <div>
+            <label for="orientation">Orientation</label>
+            <select id="orientation" name="orientation" class="custom-select">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <div>
+            <label for="report_type">Report Type</label>
+            <select id="report_type" name="report_type" class="custom-select">
+              <option value="pdf">PDF</option>
+              <option value="xls">EXCEL</option>
+              <option value="html">HTML</option>
+            </select>
+          </div>
       </div>
 
       <div>
         <label>Upload Data Source</label>
-        <div >
+        <div>
           <input type="file" id="samplefile" name="samplefile" hidden required accept=".csv,.json,.xlsx,.pdf,.png,.jpeg">
-            <label for="samplefile" class="file-input-label" id="dropArea">
+          <label for="samplefile" class="file-input-label" id="dropArea">
+            <div id="uploadAreaContent" style="text-align: center; width: 100%;">
               <div class="upload-icon">☁️</div>
               <p>Drag & Drop files or Click to Upload</p>
               <p class="upload-hint">Supports PDF, XLS, PNG, JPEG, CSV, JSON</p>
-            </label>
-          </div>
+            </div>
+            <div class="files-container" id="filesGrid"></div>
+          </label>
+        </div>
       </div>
 
       <button type="submit" id="uploadButton">Upload Files</button> 
     </form>
   </section>
-
-  <div class="files-container">
-    <h3>Uploaded Files</h3>
-    <div class="files-grid" id="filesGrid"></div>
-  </div>
 
 </main>
 
@@ -295,6 +306,7 @@
   let files = [];
   const dropArea = document.getElementById("dropArea");
   const fileInput = document.getElementById("samplefile");
+  const uploadAreaContent = document.getElementById("uploadAreaContent");
 
   // SELECT
   fileInput.addEventListener("change", e => {
@@ -349,17 +361,20 @@
     grid.innerHTML = "";
     const uploadbtn = document.getElementById("uploadButton");
 
+    // Hide the default static text when an item is added
+    uploadAreaContent.style.display = "none";
+
     if (isvalid && file) {
       grid.innerHTML = `
-        <div class="file-card">
+        <div class="file-card justify-content-between">
           <div class="file-card-details">
             <i class="fa-solid fa-file-csv"></i>
             <div>
-              <p style="font-weight: 500; font-size: 0.875rem;">${file.name}</p>
+              <p style="font-weight: 500; font-size: 0.875rem; color: #e2e8f0;">${file.name}</p>
               <small style="color: #94a3b8;">${(file.size / 1024).toFixed(1)} KB</small>
             </div>
           </div>
-          <button type="button" class="delete-btn" onclick="removeFile()">&#128465;</button>
+          <button type="button" class="delete-btn" onclick="removeFile(event)">&#128465;</button>
         </div>
       `;
 
@@ -368,14 +383,14 @@
     } else {
       uploadbtn.disabled = true;
       grid.innerHTML = `
-        <div class="file-card" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+        <div class="file-card justify-content-between" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
           <div class="file-card-details">
             <span style="color: #ef4444;">⚠️</span>
             <div>
               <p style="color: #ef4444; font-weight: 500; font-size: 0.875rem;">Invalid File Type</p>
             </div>
           </div>
-          <button type="button" class="delete-btn" onclick="removeFile()">&#128465;</button>
+          <button type="button" class="delete-btn" onclick="removeFile(event)">&#128465;</button>
         </div>
       `;
       document.getElementById("reportname").value = "Invalid report selection";
@@ -383,23 +398,25 @@
   }
 
   // REMOVE
-  function removeFile() {
+  function removeFile(e) {
+    e.stopPropagation(); // Stop event bubbling to the label click event
     files = [];
     fileInput.value = "";
     document.getElementById("reportname").value = "";
     document.getElementById("filesGrid").innerHTML = "";
+    uploadAreaContent.style.display = "block";
     document.getElementById("uploadButton").disabled = true;
   }
 
   // SUBMIT
-  document.getElementById("uploadButton").onclick = (e) => {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', (e) => {
     if (files.length === 0) {
       e.preventDefault();
       alert("No files selected");
       return;
     }
-    alert("Uploading " + files.length + " files...");
-  };
+  });
 </script>
 
 {% endblock %}

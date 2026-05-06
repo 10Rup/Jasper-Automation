@@ -38,7 +38,7 @@ def api_settings(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post('/add-sample')
-async def report_sample_upload(request: Request, reportname: str = Form(...), samplefile: UploadFile = File(...), db: Session = Depends(get_db)):
+async def report_sample_upload(request: Request, reportname: str = Form(...), report_type: str = Form(...),  samplefile: UploadFile = File(...), pagesize: str = Form(...), orientation: str = Form(...), db: Session = Depends(get_db)):
     
     pdf_bytes = await samplefile.read()
     osModel = platform.system()
@@ -46,20 +46,20 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
     filename = samplefile.filename
     name, ext = os.path.splitext(samplefile.filename)
    
-    # pdf to image process
+    # PDF to Image Converting
     if ext==".pdf":
         if osModel != "Windows":
             images = convert_from_bytes(pdf_bytes, poppler_path="/usr/bin")
+
         else:
             images = convert_from_bytes(pdf_bytes)
+
         image_path = os.path.join(IMAGE_DIR, f"{reportname}.png")
         images[0].save(image_path, "PNG")
         # new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'{reportname}.png', created_at=datetime.now(timezone.utc))
-        new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext, filepath=f'{reportname}.png', created_at=datetime.now(timezone.utc))
+        new_file = Uploadfile(displayname=reportname, filename=filename, filetype=report_type, pagesize=pagesize, pagedimention=orientation, filepath=f'{reportname}.png', created_at=datetime.now(timezone.utc))
         db.add(new_file)
         db.commit()
-
-
 
     # PNG / JPEG → save directly
     elif ext in [".png", ".jpg", ".jpeg"]:
@@ -67,14 +67,13 @@ async def report_sample_upload(request: Request, reportname: str = Form(...), sa
 
         with open(image_path, "wb") as f:
             f.write(pdf_bytes)
-
     
-        new_file = Uploadfile(displayname=reportname, filename=filename, filetype=ext.replace(".",""), filepath=f'{reportname}{ext}', created_at=datetime.now(timezone.utc))
+        new_file = Uploadfile(displayname=reportname, filename=filename, filetype=report_type, pagesize=pagesize, pagedimention=orientation, filepath=f'{reportname}{ext}', created_at=datetime.now(timezone.utc))
         db.add(new_file)
         db.commit()
 
     
     return RedirectResponse(
-        url='/reports',
+        url='/reports/',
         status_code=303
     )

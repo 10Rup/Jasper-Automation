@@ -43,7 +43,8 @@ def pdfreports(request: Request, report_type: str, db: Session = Depends(get_db)
         files = db.query(Uploadfile).filter(Uploadfile.filetype=='xls', Uploadfile.deleted_at==None).all()
 
     elif report_type =='pdf-img':
-        files = db.query(Uploadfile).filter(Uploadfile.filetype.in_([".png", ".jpg", ".jpeg",".pdf"]), Uploadfile.deleted_at==None).all()
+        # files = db.query(Uploadfile).filter(Uploadfile.filetype.in_([".png", ".jpg", ".jpeg",".pdf"]), Uploadfile.deleted_at==None).all()
+        files = db.query(Uploadfile).filter(Uploadfile.filetype.in_(["pdf"]), Uploadfile.deleted_at==None).all()
     
     elif report_type == 'compile':
         files = db.query(CompileReport).all()
@@ -101,12 +102,3 @@ def delete_report(request: Request, report_id: int, db: Session = Depends(get_db
     db.commit()
     return {'status':'success', 'message':'Report Deleted Successfullt.'}
 
-        
-# @router.post('/process-query/{report_id}')
-# def process_query(request: Request, report_id: int, db: Session = Depends(get_db)):
-    
-#     query = db.query(Uploadfile).filter(Uploadfile.id == report_id, Uploadfile.deleted_at == None).first()
-
-#     print(query.report_query)
-
-#     return

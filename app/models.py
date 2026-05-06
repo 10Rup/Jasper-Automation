@@ -18,6 +18,8 @@ class Uploadfile(Base):
     filename = Column(String,index=True)
     filetype = Column(String,index=True)
     filepath = Column(String, nullable=False)
+    pagesize = Column(String)
+    pagedimention = Column(String)
     report_query = Column(Text, default="")
     fields = Column(Text, default="")
     queryString = Column(Text, default="")
