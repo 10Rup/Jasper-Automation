@@ -13,7 +13,8 @@ from ..database import SessionLocal
 from ..models import ApiMaster, Uploadfile, CropImages, XmlCode, CompileReport
 from datetime import datetime, timezone
 
-from ..services import ollmaService
+from ..services import ollmaService, pdfPharse
+
 
 
 router = APIRouter(prefix='/ollama', tags=['Jrxml'])
@@ -33,19 +34,128 @@ def get_db():
 
 @router.get('/testing/{report_id}')
 def testing(report_id: int, db: Session = Depends(get_db)):
-    report = db.query(Uploadfile).filter(Uploadfile.id == report_id).first()
-    image_Url = os.path.join(IMAGE_DIR, f'{report.filepath}')
-    image_path = Image.open(image_Url)
-    prompt = """
-    You are a professional Jasper Report Developer,
-    one image is shared to you use it and create a jrxml report.
-    Provide cleane and accurate code,
-    if have any doubt then send the doubt in the response for us to read and understand it and resolve the issue fast for next request to generate the report code.
+    # report = db.query(Uploadfile).filter(Uploadfile.id == report_id).first()
+    # image_Url = os.path.join(IMAGE_DIR, f'{report.filepath}')
+    # image_path = Image.open(image_Url)
+    pdf_path = "app/templates/pdf/provitional_report_igu.pdf"
+    print(pdf_path)
 
     
+    # result = ollmaService.ollamaClient(prompt1, image_Url)
+    layout_data = pdfPharse.readPdf(pdf_path)
+
+    prompt = f"""
+        ROLE:
+        You are an expert JasperReports JRXML generator.
+
+        TASK:
+        Generate valid JRXML.
+
+        LAYOUT_DATA:
+        {layout_data}
+
+        RULES:
+
+        1. OUTPUT
+        - Return ONLY valid JRXML
+        - No markdown
+        - No comments
+        - No explanations
+        - No UUID
+
+        2. ROOT STRUCTURE
+        Output format MUST be:
+
+        <summary>
+            <band height="HEIGHT">
+                ...
+            </band>
+        </summary>
+
+        3. ELEMENT RULES
+
+        Use:
+        - <staticText> for labels/headings
+        - <textField> for dynamic values
+
+        Dynamic values include:
+        - marks
+        - totals
+        - percentages
+        - names
+        - numbers
+        - values
+
+        4. FIELD MAPPING
+
+        If text matches a field name semantically:
+        Example:
+        - TOTAL MARKS -> TOTAL_MARKS
+        - STUDENT NAME -> STUDENT_NAME
+
+        Use:
+
+        <textField>
+            <reportElement x="" y="" width="" height=""/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{{FIELD_NAME}}]]></textFieldExpression>
+        </textField>
+
+        If no field exists:
+        Use <staticText>
+
+        5. STYLING
+        - Default font size = 10
+        - Use textAlignment="Center"
+        - Use verticalAlignment="Middle"
+        - Keep layout inside A4 width
+        - Use boxes only when visually required
+
+        6. BOX FORMAT
+
+        Use ONLY this format:
+
+        <box>
+            <topPen lineWidth="1.0" lineColor="#000000"/>
+            <leftPen lineWidth="1.0" lineColor="#000000"/>
+            <bottomPen lineWidth="1.0" lineColor="#000000"/>
+            <rightPen lineWidth="1.0" lineColor="#000000"/>
+        </box>
+
+        7. IMAGE FORMAT
+
+        If signature/logo exists:
+
+        <image hAlign="Center" vAlign="Middle" onErrorType="Blank">
+            <reportElement x="" y="" width="" height=""/>
+            <imageExpression><![CDATA["IMAGE_PATH"]]></imageExpression>
+        </image>
+
+        8. FORBIDDEN
+        Do NOT use:
+        - textAdjust
+        - topIndent
+        - <text value="">
+        - forecolor inside <font>
+
+        9. IMPORTANT
+        - Generate accurate x/y coordinates
+        - Preserve table alignment
+        - Preserve visual structure
+        - Keep elements non-overlapping
+
     """
 
-    prompt1 = 'wwhich model of yours is good for reading image file and using it to create a jrxml report.'
-    p2 = 'i need the ollama api model name that can process image and then give me the jrxml code and if the api is cloud base then its very good'
-    result = ollmaService.ollamaClient(prompt1, image_Url)
-    return result
+    system_prompt = """
+        You are an expert JasperReports JRXML generator.
+        Generate only valid JRXML.
+        Never output markdown.
+    """
+    result = ollmaService.vectorOllama(prompt, system_prompt)
+    
+    with open("app/generated_reports/output.xml", "w", encoding="utf-8") as f:
+        f.write(result)
+    # print(result)
+    return "done"
