@@ -98,7 +98,7 @@ def delete_report(request: Request, report_id: int, db: Session = Depends(get_db
     if not report:
         return {'status':'error', 'message':'Report is not deleted'}
     
-    report.deleted_at = True
+    report.deleted_at = datetime.now(timezone.utc)
     db.commit()
     return {'status':'success', 'message':'Report Deleted Successfullt.'}
 

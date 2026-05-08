@@ -62,7 +62,7 @@
                     {% endif %}
                 </td>
                 <td>
-                     {% if file.is_processed %}
+                     {% if file.is_compiled %}
                         <button class="btn-compile btn btn-success btn-disabled" disabled>
                             Compiled
                         </button>
@@ -74,7 +74,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if file.is_processed %}
+                    {% if file.is_compiled %}
                         <a href="/jrxmls/download/{{file.download_filepath}}" class="btn-download">
                             <i class="fas fa-download"></i> Download
                         </a>
@@ -102,7 +102,7 @@
 
         fetch(`/jrxmls/generate/${fileId}`, {
             method: "POST",
-            // headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' }
             // body: JSON.stringify({
             //     status: 'compiling',
             //     filename: filename
@@ -126,11 +126,7 @@
         // });
     }
 
-    /* PREVIEW MODAL LOGIC */
-    // function preview(img) {
-    //     // You can keep your existing preview logic here if needed
-    //     console.log("Previewing:", img);
-    // }
+    
 </script>
 
 {% endblock %}

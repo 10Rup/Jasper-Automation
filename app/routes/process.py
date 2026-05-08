@@ -30,17 +30,6 @@ def get_db():
         db.close()
 
 
-
-# @router.get('/')
-# def reports(request: Request):
-
-#     return templates.TemplateResponse(
-#         request,
-#         'processdemo.html'
-#     )
-
-
-
 @router.get('/{report_id}')
 def pdfreports(request: Request, report_id: int, db: Session = Depends(get_db)):
 
@@ -111,7 +100,7 @@ async def save_region(request: Request, db: Session = Depends(get_db)):
 
 @router.get('/{report_id}/cropped')
 def cropped(request: Request,report_id: int, db: Session = Depends(get_db)):
-    crops = db.query(CropImages).filter(CropImages.uploadfile_id == report_id).all()
+    crops = db.query(CropImages).filter(CropImages.uploadfile_id == report_id, CropImages.deleted_at==None).all()
     report = db.query(Uploadfile).filter(Uploadfile.id == report_id, Uploadfile.deleted_at==None).first()
 
     response = templates.TemplateResponse(
@@ -125,3 +114,15 @@ def cropped(request: Request,report_id: int, db: Session = Depends(get_db)):
     )
 
     return response
+
+
+
+@router.delete('/{report_id}/delete/{crop_id}')
+def delete_crop_image(report_id: int, crop_id: int, db: Session = Depends(get_db)):
+
+    record = db.query(CropImages).filter(CropImages.id == crop_id, CropImages.uploadfile_id == report_id, CropImages.deleted_at == None).first()
+    
+    record.deleted_at = datetime.now(timezone.utc)
+    db.commit()
+
+    return {'status':'success'}

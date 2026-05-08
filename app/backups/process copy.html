@@ -89,17 +89,16 @@
 
             /* CANVAS CENTER */
             .canvas-container {
-                margin-top: 10px;
-                display: flex;
-                justify-content: center;
-                padding: 10px;
+            margin-top: 10px; /* 20px gap from header */
+            display: flex;
+            justify-content: center;  /* center align */
             }
 
             /* CANVAS STYLE */
             canvas {
-                background: rgb(224, 224, 224);
-                border-radius: 10px;
-                display: block;
+            background: rgb(224, 224, 224);
+            border-radius: 10px;
+            padding: 10px;
             }
 
             /* FOOTER */
@@ -152,12 +151,10 @@
     <label>Select Band :</label>
     <select id="band">
       <option value="title">Title</option>
-      <option value="pageHeader">Page Header</option>
-      <option value="columnHeader">Column Header</option>
       <option value="detail">Detail</option>
-      <option value="columnFooter">Column Footer</option>
+      <option value="pageHeader">Page Header</option>
       <option value="pageFooter">Page Footer</option>
-      <option value="summary">Summary</option>
+      <option value="columnHeader">Column Header</option>
     </select>
   </div>
 
@@ -246,9 +243,8 @@
 
         // --- Interaction 2: Mouse Down (New, Edit, Resize) ---
         canvas.addEventListener("mousedown", e => {
-            const pos = getMousePos(e);
-            const mx = pos.x;
-            const my = pos.y;
+            const mx = e.offsetX;
+            const my = e.offsetY;
 
             // A. Check for Resizing existing selected box
             if (selectedRect) {
@@ -285,9 +281,8 @@
 
         // --- Interaction 3: Mouse Move (Move, Resize, Draw Preview) ---
         canvas.addEventListener("mousemove", e => {
-            const pos = getMousePos(e);
-            const mx = pos.x;
-            const my = pos.y;
+            const mx = e.offsetX;
+            const my = e.offsetY;
 
             // Update Cursor UI feedback
             if (selectedRect) {
@@ -324,14 +319,12 @@
 
         // --- Interaction 4: Mouse Up (Save/Finalize) ---
         canvas.addEventListener("mouseup", e => {
-            const pos = getMousePos(e);
-
             if (isDrawing) {
                 let rect = {
                     x: startX,
                     y: startY,
-                    width: pos.x - startX,
-                    height: pos.y - startY,
+                    width: e.offsetX - startX,
+                    height: e.offsetY - startY,
                     band: bandSelect.value
                 };
                 if (Math.abs(rect.width) > 5 && Math.abs(rect.height) > 5) {
@@ -398,15 +391,6 @@
                 width: Math.abs(r.width),
                 height: Math.abs(r.height),
                 band: r.band
-            };
-        }
-
-        function getMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
             };
         }
 

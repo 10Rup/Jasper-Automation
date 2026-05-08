@@ -196,7 +196,7 @@
         <select id="apiname">
             <option value="geminie">API Gemini</option>
             <option value="openapi">OpenAI</option>
-            <option value="other">Custom API</option>
+            <option value="other">Other API</option>
         </select>
     </div>
 </div>
@@ -218,7 +218,7 @@
                             onclick="apiProcess('{{report.id}}','{{crop.id}}', '{{report.displayname}}', '{{crop.bandname}}','{{crop.filepath}}')">
                         Prepare Design
                     </button>
-                    <button class="btn btn-outline-danger" onclick="deleteImage('{{crop.id}}')">
+                    <button class="btn btn-outline-danger" onclick="deleteImage('{{report.id}}','{{crop.id}}')">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -355,11 +355,22 @@
         .catch(() => alert("Save failed"));
     }
 
-    function deleteImage(id) {
-        if (confirm("Are you sure you want to delete this crop?")) {
+    function deleteImage(reportId, cropId) {
+        if (confirm(`Are you sure you want to delete this crop?`)) {
             // Your delete logic here
-            document.getElementById("container_" + id).remove();
-            alert("Deleted from view (Backend call needs implementation)");
+            fetch(`/process/${reportId}/delete/${cropId}`,{
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status == "success"){
+                    alert("File Deleted Successfully!");
+                    location.reload();
+                }
+            })
+            .catch(() => alert("Delete failed!!!"));
+
         }
     }
 

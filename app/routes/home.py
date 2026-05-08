@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
-from ..models import ApiMaster, Uploadfile, CropImages
+from ..models import ApiMaster, Uploadfile, CropImages, CompileReport
 from datetime import datetime, timezone
 
 
@@ -20,11 +20,19 @@ def get_db():
 
 
 @router.get('/')
-def home(request: Request):
+def home(request: Request, db: Session = Depends(get_db)):
 
+    automantion = db.query(func.count(CompileReport.id).label('total')).filter(CompileReport.deleted_at==None, CompileReport.is_compiled==True).group_by(CompileReport.is_compiled).first()
+
+    apis = db.query(func.count(ApiMaster.id).label('total')).first()
+    # print(automantion.total)
     return templates.TemplateResponse(
         request,
-        'home.html'
+        'home.html',
+        {
+            'automated': automantion.total,
+            'api_count': apis.total
+        }
     )
 
 

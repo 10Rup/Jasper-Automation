@@ -35,19 +35,19 @@ def compile_report(data: dict, request: Request, report_id: int, db: Session = D
     file_name = data.get('filename')
     report = db.query(CompileReport).filter(CompileReport.uploadfile_id == report_id, CompileReport.is_processed== True).first()
     if report:
-        return {'status':'Report Already Compiled', 'redirect':'/reports/Combine'}
+        return {'status':'Report Already Compiled', 'redirect':'/reports/compile'}
 
     new_report = CompileReport(uploadfile_id = report_id, filename = file_name, is_processed = True, created_at=datetime.now(timezone.utc) )
     db.add(new_report)
     db.commit()
-    return {'status':'Report Compiled', 'redirect':'/reports/Combine'}
+    return {'status':'Report Compiled', 'redirect':'/reports/compile'}
  
 
 
 @router.post('/generate/{report_id}')
 def generate_jrxml(report_id: int, db: Session = Depends(get_db)):
 
-    xml_path = "app/templates/baseA4Report.jrxml"
+    xml_path = "app/templates/jrxml/baseA4Report.jrxml"
 
     record = db.query(Uploadfile)\
         .filter(Uploadfile.id == report_id, Uploadfile.deleted_at == None)\
@@ -77,10 +77,17 @@ def generate_jrxml(report_id: int, db: Session = Depends(get_db)):
 
     # 4. Save file
     os.makedirs(OUTPUT_DIR, exist_ok=True)
-    file_path = os.path.join(OUTPUT_DIR, f"report_{report_id}.jrxml")
+    download_path_name = f"report_{report_id}.jrxml"
+    file_path = os.path.join(OUTPUT_DIR,download_path_name )
 
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(final_xml)
+
+
+    record_sts = db.query(CompileReport).filter(CompileReport.uploadfile_id==report_id, CompileReport.deleted_at == None).first()
+    record_sts.is_compiled = True
+    record_sts.download_filepath=download_path_name
+    db.commit()
 
     return {
         "status": "success",
@@ -88,6 +95,18 @@ def generate_jrxml(report_id: int, db: Session = Depends(get_db)):
     }
 
 
+@router.get("/download/{filename}")
+def download_file(filename: str):
+    file_path = os.path.join(OUTPUT_DIR, filename)
+
+    if not os.path.exists(file_path):
+        return {"error": "File not found"}
+
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type="application/octet-stream"
+    )
 
 # update_bands_from_db("report.xml", db_data)
 # band_name = record["band_name"]

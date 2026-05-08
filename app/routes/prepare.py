@@ -133,7 +133,7 @@ async def image_to_xml(request: Request, db: Session = Depends(get_db)):
                 - Use a reasonable height based on content (e.g., 50–200)
                 - Use font size to 10 by default else increase or decrease according to requirement.
 
-            12. Keep layout within A4 bounds (Strickly).
+            12. Keep layout within {report.pagesize} bounds (Strickly).
 
             13. DO NOT use:
                 - <text value="text" />
@@ -227,23 +227,6 @@ def save_xml(data: dict, request: Request, db: Session = Depends(get_db)):
     db.commit()
     return {'status': 'success', 'message':'Xml Code Updated Successfully!'}
 
-    # xml_code = db.query(XmlCode).filter(XmlCode.crop_id == crop_id).first()
-
-    # if xml_code:
-    #     xml_code.codes = xml
-    #     db.commit()
-    #     return {'status': 'success', 'message':'Xml Code Updated Successfully!'}
-
-    # else:
-    #     new_code = XmlCode(crop_id = crop_id, bandname = band, codes = xml )
-    #     db.add(new_code)
-    #     db.commit()
-    #     return {'status': 'success', 'message':'Xml Code Saved Successfully!'}
-
-    # return {'status': 'error', 'message':'Some Issue in Saving Xml Code!'}
-
-
-
 @router.post('/query/{report_id}')
 def generate_query(report_id: int, db: Session = Depends(get_db)):
 
@@ -296,9 +279,7 @@ def generate_query(report_id: int, db: Session = Depends(get_db)):
 
         columns = json.loads(raw_text)
 
-
         code = build_fields_from_db(query,columns)
-
 
         if columns:
             record.queryString = code
