@@ -70,3 +70,14 @@ class CompileReport(Base):
     download_filepath = Column(Text, default="")
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
+
+
+# Table structure for Query Generation
+class TableDetails(Base):
+    __tablename__='tabledetails'
+    id = Column(Integer, primary_key=True)
+    tablename = Column(String, nullable=False, index=True)
+    columnlist = Column(Text, nullable=True)
+    indexlist = Column(Text, nullable=True)
+    discription = Column(String, default="")
+    isactive = Column(Boolean, default=True)
