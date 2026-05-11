@@ -22,7 +22,7 @@ def get_db():
 @router.get('/')
 def home(request: Request, db: Session = Depends(get_db)):
 
-    automantion = db.query(func.count(CompileReport.id).label('total')).filter(CompileReport.deleted_at==None, CompileReport.is_compiled==True).group_by(CompileReport.is_compiled).first()
+    automantion = db.query(func.count(CompileReport.id).label('total')).filter(CompileReport.deleted_at==None, CompileReport.is_compiled==True).first()
 
     apis = db.query(func.count(ApiMaster.id).label('total')).first()
     # print(automantion.total)
