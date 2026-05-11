@@ -102,3 +102,16 @@ def delete_report(request: Request, report_id: int, db: Session = Depends(get_db
     db.commit()
     return {'status':'success', 'message':'Report Deleted Successfullt.'}
 
+
+
+@router.get('/table/structure')
+def table_structure(request: Request, db: Session = Depends(get_db)):
+
+
+
+    return HTMLResponse(
+        """
+        <h2>Table Structure</h2>
+        
+        """
+    )
