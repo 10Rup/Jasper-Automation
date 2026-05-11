@@ -69,7 +69,6 @@
     border-collapse:collapse;
     overflow:hidden;
     border-radius:18px;
-    
 }
 
 .custom-table thead{
@@ -89,90 +88,44 @@
     vertical-align:top;
 }
 
-/* ================= DATABASE TAG ================= */
+/* ================= DATABASE BADGE ================= */
 
 .db-badge{
     display:inline-block;
     background:#ede9fe;
     color:#6d28d9;
-    padding:6px 14px;
+    padding:7px 16px;
     border-radius:30px;
     font-size:13px;
     font-weight:700;
-    margin-bottom:10px;
 }
 
-/* ================= TABLE NAME ================= */
+/* ================= TABLE LINK ================= */
 
 .table-link{
     font-size:18px;
     font-weight:700;
     color:#0f172a;
+    cursor:pointer;
     transition:0.3s;
 }
 
-
-/* ================= COLUMN BOX ================= */
-
-.column-scroll{
-    max-height:160px;
-    overflow-y:auto;
-    background:#f8fafc;
-    border-radius:14px;
-    padding:12px;
-    border:1px solid #e2e8f0;
-}
-
-/* ================= SCROLLBAR ================= */
-
-.column-scroll::-webkit-scrollbar{
-    width:6px;
-}
-
-.column-scroll::-webkit-scrollbar-thumb{
-    background:#cbd5e1;
-    border-radius:20px;
-}
-
-/* ================= COLUMN ITEM ================= */
-
-.column-item{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:white;
-    padding:12px 14px;
-    border-radius:12px;
-    margin-bottom:12px;
-    border:1px solid #e2e8f0;
-}
-
-.column-name{
-    font-weight:600;
-    color:#334155;
-}
-
-.column-type{
-    background:#ede9fe;
+.table-link:hover{
     color:#6d28d9;
-    padding:7px 14px;
-    border-radius:30px;
-    font-size:13px;
-    font-weight:700;
 }
+
+/* ================= ACTIONS ================= */
 
 .action-group{
     display:flex;
     justify-content:flex-end;
     align-items:center;
-    gap:40px;
+    gap:14px;
     width:100%;
 }
 
 .custom-table td:last-child{
-    width:300px;
-    text-align:center;
-    margin-right:20px;
+    width:340px;
 }
 
 .btn{
@@ -184,11 +137,14 @@
     font-weight:600;
     cursor:pointer;
     transition:0.3s;
+    text-align:center;
+    text-decoration:none;
 }
 
 .btn:hover{
     transform:translateY(-2px);
 }
+
 .btn-view{
     background:#0ea5e9;
 }
@@ -289,72 +245,6 @@
     font-weight:700;
 }
 
-/* ================= EDIT MODAL ================= */
-
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-}
-
-.full-width{
-    grid-column:1/-1;
-}
-
-.input-box,
-.select-box{
-    width:100%;
-    padding:14px 16px;
-    border-radius:12px;
-    border:1px solid #dbeafe;
-    background:#f8fafc;
-}
-
-.input-box:focus,
-.select-box:focus{
-    outline:none;
-    border-color:#7c3aed;
-    background:white;
-}
-
-/* ================= EDIT COLUMN ================= */
-
-.edit-column{
-    display:flex;
-    gap:12px;
-    margin-bottom:12px;
-}
-
-.edit-column input{
-    flex:1;
-}
-
-.edit-column select{
-    width:220px;
-}
-
-.remove-btn{
-    width:48px;
-    border:none;
-    border-radius:10px;
-    background:#ef4444;
-    color:white;
-}
-
-/* ================= FOOTER ================= */
-
-.modal-footer{
-    border:none;
-}
-
-.save-btn{
-    background:linear-gradient(135deg,#6d28d9,#9333ea);
-    color:white;
-    border:none;
-    padding:12px 24px;
-    border-radius:12px;
-}
-
 </style>
 
 {% endblock %}
@@ -365,7 +255,8 @@
 
 <main class="main">
 
-    <!-- PAGE HEADER -->
+    <!-- HEADER -->
+
     <header class="header">
 
         <h2>Table Structure List</h2>
@@ -377,6 +268,7 @@
     </header>
 
     <!-- MAIN CARD -->
+
     <section class="table-card">
 
         <div class="top-bar">
@@ -393,13 +285,14 @@
 
             </div>
 
-            <a href="/table/add" class="add-btn">
+            <a href="/tables/add-table/" class="add-btn">
                 + Add New Table
             </a>
 
         </div>
 
         <!-- TABLE -->
+
         <table class="custom-table">
 
             <thead>
@@ -415,50 +308,71 @@
 
             <tbody>
 
-                <!-- ROW -->
+                {% for table in tables %}
+
                 <tr>
 
-                    <td>1</td>
+                    <!-- SNO -->
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
 
                     <!-- DATABASE -->
+
                     <td>
 
                         <span class="db-badge">
-                            jasper_db
+                            {{ table.database_name }}
                         </span>
 
                     </td>
 
                     <!-- TABLE NAME -->
+
                     <td>
 
-                        <span class="table-link" >
-                            student_master
+                        <span
+                            class="table-link"
+                            data-bs-toggle="modal"
+                            data-bs-target="#viewModal{{table.id}}"
+                        >
+                            {{ table.table_name }}
                         </span>
 
                     </td>
-                    <!-- ACTION -->
+
+                    <!-- ACTIONS -->
+
                     <td>
 
                         <div class="action-group">
 
+                            <!-- VIEW -->
+
                             <button
                                 class="btn btn-view"
                                 data-bs-toggle="modal"
-                                data-bs-target="#viewModal"
+                                data-bs-target="#viewModal{{table.id}}"
                             >
                                 View
                             </button>
 
-                            <button
+                            <!-- EDIT -->
+
+                            <a
+                                href="/table/edit/{{table.id}}"
                                 class="btn btn-edit"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editModal"
                             >
                                 Edit
-                            </button>
+                            </a>
 
-                            <button class="btn btn-delete">
+                            <!-- DELETE -->
+
+                            <button
+                                class="btn btn-delete"
+                                onclick="deleteTable('{{table.id}}')"
+                            >
                                 Delete
                             </button>
 
@@ -467,6 +381,8 @@
                     </td>
 
                 </tr>
+
+                {% endfor %}
 
             </tbody>
 
@@ -477,15 +393,23 @@
 </main>
 
 
-<!-- ================= VIEW MODAL ================= -->
 
-<div class="modal fade" id="viewModal" tabindex="-1">
+<!-- ================= DYNAMIC MODALS ================= -->
+
+{% for table in tables %}
+
+<div
+    class="modal fade"
+    id="viewModal{{table.id}}"
+    tabindex="-1"
+>
 
     <div class="modal-dialog modal-xl modal-dialog-centered">
 
         <div class="modal-content">
 
             <!-- HEADER -->
+
             <div class="modal-header">
 
                 <h5 class="modal-title">
@@ -501,10 +425,14 @@
             </div>
 
             <!-- BODY -->
+
             <div class="modal-body">
 
-                <!-- INFO -->
+                <!-- TOP INFO -->
+
                 <div class="view-info">
+
+                    <!-- DATABASE -->
 
                     <div class="info-card">
 
@@ -513,10 +441,12 @@
                         </div>
 
                         <div class="info-value">
-                            jasper_db
+                            {{ table.database_name }}
                         </div>
 
                     </div>
+
+                    <!-- TABLE -->
 
                     <div class="info-card">
 
@@ -525,7 +455,7 @@
                         </div>
 
                         <div class="info-value">
-                            student_master
+                            {{ table.table_name }}
                         </div>
 
                     </div>
@@ -533,55 +463,24 @@
                 </div>
 
                 <!-- COLUMN LIST -->
+
                 <div class="modal-column-box">
 
-                    <div class="modal-column-item">
-
-                        <span class="modal-column-name">
-                            student_name
-                        </span>
-
-                        <span class="modal-column-type">
-                            VARCHAR
-                        </span>
-
-                    </div>
+                    {% for column in table.columns %}
 
                     <div class="modal-column-item">
 
                         <span class="modal-column-name">
-                            email
+                            {{ column.column_name }}
                         </span>
 
                         <span class="modal-column-type">
-                            TEXT
+                            {{ column.column_type }}
                         </span>
 
                     </div>
 
-                    <div class="modal-column-item">
-
-                        <span class="modal-column-name">
-                            mobile
-                        </span>
-
-                        <span class="modal-column-type">
-                            INTEGER
-                        </span>
-
-                    </div>
-
-                    <div class="modal-column-item">
-
-                        <span class="modal-column-name">
-                            address
-                        </span>
-
-                        <span class="modal-column-type">
-                            TEXT
-                        </span>
-
-                    </div>
+                    {% endfor %}
 
                 </div>
 
@@ -593,148 +492,32 @@
 
 </div>
 
+{% endfor %}
 
-<!-- ================= EDIT MODAL ================= -->
 
-<div class="modal fade" id="editModal" tabindex="-1">
 
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+<script>
 
-        <div class="modal-content">
+function deleteTable(tableId){
 
-            <!-- HEADER -->
-            <div class="modal-header">
+    if(confirm("Are you sure you want to delete this table?")){
 
-                <h5 class="modal-title">
-                    Edit Table Structure
-                </h5>
+        fetch(`/table/delete/${tableId}`,{
+            method:"DELETE"
+        })
+        .then(res => res.json())
+        .then(data => {
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
+            alert(data.message);
 
-            </div>
+            location.reload();
 
-            <!-- BODY -->
-            <div class="modal-body">
+        });
 
-                <div class="form-grid">
+    }
 
-                    <!-- DB -->
-                    <div>
+}
 
-                        <label>Database Name</label>
+</script>
 
-                        <input
-                            type="text"
-                            class="input-box"
-                            value="jasper_db"
-                        >
-
-                    </div>
-
-                    <!-- TABLE -->
-                    <div>
-
-                        <label>Table Name</label>
-
-                        <input
-                            type="text"
-                            class="input-box"
-                            value="student_master"
-                        >
-
-                    </div>
-
-                    <!-- COLUMNS -->
-                    <div class="full-width">
-
-                        <label>Columns</label>
-
-                        <div id="editColumns">
-
-                            <div class="edit-column">
-
-                                <input
-                                    type="text"
-                                    class="input-box"
-                                    value="student_name"
-                                >
-
-                                <select class="select-box">
-
-                                    <option selected>
-                                        VARCHAR
-                                    </option>
-
-                                    <option>TEXT</option>
-                                    <option>INTEGER</option>
-                                    <option>BOOLEAN</option>
-
-                                </select>
-
-                                <button class="remove-btn">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                            </div>
-
-                            <div class="edit-column">
-
-                                <input
-                                    type="text"
-                                    class="input-box"
-                                    value="email"
-                                >
-
-                                <select class="select-box">
-
-                                    <option>VARCHAR</option>
-
-                                    <option selected>
-                                        TEXT
-                                    </option>
-
-                                    <option>INTEGER</option>
-                                    <option>BOOLEAN</option>
-
-                                </select>
-
-                                <button class="remove-btn">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- FOOTER -->
-            <div class="modal-footer">
-
-                <button
-                    class="btn btn-delete"
-                    data-bs-dismiss="modal"
-                >
-                    Cancel
-                </button>
-
-                <button class="save-btn">
-                    Save Changes
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div
 {% endblock %}
