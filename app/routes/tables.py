@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 
 
 
-router = APIRouter(prefix='/tables', tags=['Jrxml'])
+router = APIRouter(prefix='/tables', tags=['Table'])
 templates = Jinja2Templates("app/templates")
 IMAGE_DIR = 'app/images'
 CROP_IMAGE_DIR = 'app/cropped_images'
