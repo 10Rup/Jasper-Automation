@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Add Dashboard</title>
+
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- GridStack CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/gridstack@10.1.1/dist/gridstack.min.css"
+        rel="stylesheet"
+    />
+
+    <!-- GridStack JS -->
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@10.1.1/dist/gridstack-all.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container{
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-section{
+            width: 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .dashboard-section{
+            flex: 1;
+        }
+
+        .grid-stack{
+            background: #ddd;
+            min-height: 700px;
+            padding: 10px;
+        }
+
+        .grid-stack-item-content{
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .graph{
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<h1>Add Dashboard</h1>
+
+<div class="container">
+
+    <!-- LEFT PANEL -->
+    <div class="form-section">
+
+        <label>Chart Type</label>
+
+        <br><br>
+
+        <select id="chart_type">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+        </select>
+
+        <br><br>
+
+        <button onclick="addWidget()">
+            Add Widget
+        </button>
+
+    </div>
+
+
+    <!-- DASHBOARD -->
+    <div class="dashboard-section">
+
+        <div class="grid-stack"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Initialize GridStack
+    let grid = GridStack.init({
+        float: true,
+        cellHeight: 80,
+        margin: 10
+    });
+
+
+    let widgetCounter = 0;
+
+
+    function addWidget(){
+
+        let chartType = document.getElementById("chart_type").value;
+
+        let graphId = "graph-" + widgetCounter;
+
+        widgetCounter++;
+
+        // Create Widget
+        let widget = document.createElement('div');
+        widget.setAttribute("gs-id", widgetCounter);
+
+        widget.innerHTML = `
+            <div class="grid-stack-item-content">
+                <div id="${graphId}" class="graph"></div>
+            </div>
+        `;
+
+        // Add widget to grid
+        grid.addWidget(widget, {
+            w: 5,
+            h: 4
+        });
+
+        // Generate graph
+        generateGraph(graphId, chartType);
+    }
+
+
+    function generateGraph(graphId, chartType){
+
+        let data;
+
+        if(chartType === "bar"){
+
+            data = [{
+                x: ['Jan', 'Feb', 'Mar'],
+                y: [10, 20, 30],
+                type: 'bar'
+            }];
+        }
+
+        else if(chartType === "line"){
+
+            data = [{
+                x: ['Jan', 'Feb', 'Mar'],
+                y: [10, 20, 30],
+                type: 'scatter'
+            }];
+        }
+
+        else if(chartType === "pie"){
+
+            data = [{
+                values: [10, 20, 30],
+                labels: ['A', 'B', 'C'],
+                type: 'pie'
+            }];
+        }
+
+        Plotly.newPlot(
+            graphId,
+            data,
+            {
+                margin: {
+                    t: 40
+                },
+                autosize: true
+            },
+            {
+                responsive: true
+            }
+        );
+
+    }
+
+
+    // Resize Plotly graph automatically
+    grid.on('resizestop', function(event, el) {
+
+        let plot = el.querySelector('.graph');
+
+        if(plot){
+            Plotly.Plots.resize(plot);
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

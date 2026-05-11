@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Add Dashboard</title>
+
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <!-- Interact JS -->
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        .container{
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-section{
+            width: 300px;
+        }
+
+        .graph-wrapper{
+            width: 600px;
+            height: 400px;
+            border: 2px solid #ccc;
+            resize: both;
+            overflow: auto;
+            padding: 10px;
+        }
+
+        #graph{
+            width: 100%;
+            height: 100%;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<h1>Add Dashboard</h1>
+
+<div class="container">
+
+    <!-- FORM -->
+    <div class="form-section">
+
+        <label>Chart Type</label>
+        <select id="chart_type">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+        </select>
+
+        <br><br>
+
+        <button onclick="generateGraph()">
+            Generate Graph
+        </button>
+
+    </div>
+
+
+    <!-- GRAPH -->
+    <div class="graph-wrapper" id="resize-box">
+
+        <div id="graph"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+function generateGraph(){
+
+    let chartType = document.getElementById("chart_type").value;
+
+    let data;
+
+    if(chartType === "bar"){
+
+        data = [{
+            x: ['Jan', 'Feb', 'Mar'],
+            y: [10, 20, 30],
+            type: 'bar'
+        }];
+
+    }
+
+    else if(chartType === "line"){
+
+        data = [{
+            x: ['Jan', 'Feb', 'Mar'],
+            y: [10, 20, 30],
+            type: 'scatter'
+        }];
+
+    }
+
+    else if(chartType === "pie"){
+
+        data = [{
+            values: [10, 20, 30],
+            labels: ['A', 'B', 'C'],
+            type: 'pie'
+        }];
+
+    }
+
+    Plotly.newPlot(
+        'graph',
+        data,
+        {
+            autosize: true
+        },
+        {
+            responsive: true
+        }
+    );
+
+}
+
+generateGraph();
+
+
+/* RESIZE SUPPORT */
+
+interact('#resize-box')
+  .resizable({
+    edges: {
+        left: true,
+        right: true,
+        bottom: true,
+        top: true
+    },
+
+    listeners: {
+      move (event) {
+
+        let target = event.target;
+
+        let x = (parseFloat(target.getAttribute('data-x')) || 0);
+        let y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+        target.style.width = `${event.rect.width}px`;
+        target.style.height = `${event.rect.height}px`;
+
+        x += event.deltaRect.left;
+        y += event.deltaRect.top;
+
+        target.style.transform =
+          `translate(${x}px, ${y}px)`;
+
+        target.setAttribute('data-x', x);
+        target.setAttribute('data-y', y);
+
+        Plotly.Plots.resize(
+            document.getElementById('graph')
+        );
+      }
+    },
+
+    modifiers: [
+      interact.modifiers.restrictSize({
+        min: { width: 300, height: 300 }
+      })
+    ],
+
+    inertia: true
+  });
+
+</script>
+
+</body>
+</html>
