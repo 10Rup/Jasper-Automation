@@ -35,5 +35,29 @@ def home(request: Request):
 
     return templates.TemplateResponse(
         request,
+        'tables.html'
+    )
+
+@router.get('/add-table')
+def home(request: Request):
+
+    return templates.TemplateResponse(
+        request,
         'addtable.html'
     )
+
+
+@router.get('/edit-table')
+def home(request: Request):
+
+    return templates.TemplateResponse(
+        request,
+        'edittable.html'
+    )
+    
+    
+
+@router.post('/save-table')
+def home(request: Request):
+
+    return {"staus":"Success", "message" : "Your data saved"}
