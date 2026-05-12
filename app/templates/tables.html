@@ -323,7 +323,7 @@
                     <td>
 
                         <span class="db-badge">
-                            {{ table.database_name }}
+                            {{ table.dbname }}
                         </span>
 
                     </td>
@@ -337,7 +337,7 @@
                             data-bs-toggle="modal"
                             data-bs-target="#viewModal{{table.id}}"
                         >
-                            {{ table.table_name }}
+                            {{ table.name }}
                         </span>
 
                     </td>
@@ -361,7 +361,7 @@
                             <!-- EDIT -->
 
                             <a
-                                href="/table/edit/{{table.id}}"
+                                href="/tables/edit-table/{{table.id}}"
                                 class="btn btn-edit"
                             >
                                 Edit
@@ -441,7 +441,7 @@
                         </div>
 
                         <div class="info-value">
-                            {{ table.database_name }}
+                            {{ table.dbname }}
                         </div>
 
                     </div>
@@ -455,7 +455,7 @@
                         </div>
 
                         <div class="info-value">
-                            {{ table.table_name }}
+                            {{ table.name }}
                         </div>
 
                     </div>

@@ -32,10 +32,32 @@ def get_db():
 
 @router.get('/')
 def home(request: Request):
-
+    tables = [
+        {
+            'id': 1,
+            'dbname': 'Database 1',
+            'name': 'Table 1',
+            'description': 'This is the first table.'
+        },
+        {
+            'id': 2,
+            'dbname': 'Database 1',
+            'name': 'Table 2',
+            'description': 'This is the second table.'
+        },
+        {
+            'id': 3,
+            'dbname': 'Database 1',
+            'name': 'Table 3',
+            'description': 'This is the third table.'
+        }
+    ]
     return templates.TemplateResponse(
         request,
-        'tables.html'
+        'tables.html',
+        {
+            'tables': tables
+        }
     )
 
 @router.get('/add-table')
@@ -47,7 +69,7 @@ def home(request: Request):
     )
 
 
-@router.get('/edit-table')
+@router.get('/edit-table/{table_id}')
 def home(request: Request):
 
     return templates.TemplateResponse(
