@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "/base.html" %}
 
 {% block styles %}
 
@@ -323,7 +323,7 @@
                     <td>
 
                         <span class="db-badge">
-                            {{ table.dbname }}
+                            {{ table.databasename }}
                         </span>
 
                     </td>
@@ -337,7 +337,7 @@
                             data-bs-toggle="modal"
                             data-bs-target="#viewModal{{table.id}}"
                         >
-                            {{ table.name }}
+                            {{ table.tablename }}
                         </span>
 
                     </td>
@@ -455,7 +455,7 @@
                         </div>
 
                         <div class="info-value">
-                            {{ table.name }}
+                            {{ table.tablename }}
                         </div>
 
                     </div>
@@ -466,16 +466,16 @@
 
                 <div class="modal-column-box">
 
-                    {% for column in table.columns %}
+                    {% for column in table.columnlist %}
 
                     <div class="modal-column-item">
 
                         <span class="modal-column-name">
-                            {{ column.column_name }}
+                            {{ column}}
                         </span>
 
                         <span class="modal-column-type">
-                            {{ column.column_type }}
+                            {{ column }}
                         </span>
 
                     </div>

@@ -1,9 +1,12 @@
-from fastapi import FastAPI, Request  # type: ignore
+from fastapi import FastAPI, Request
+
+ # type: ignore
 from .database import engine
 from .models import Base
-from .routes import home, api, upload, report, process, prepare, jrxml, tables, test
+from .routes import home, api, upload, report, process, prepare, jrxml, test
 
 from app.routes.dashboard import home as homeDash
+from app.routes.tables import tables 
 
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -26,6 +29,11 @@ app.include_router(process.router)
 app.include_router(prepare.router)
 app.include_router(jrxml.router)
 app.include_router(test.router)
+
+
+
+
+# Table
 app.include_router(tables.router)
 
 

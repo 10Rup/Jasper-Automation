@@ -140,6 +140,8 @@
 
         // Generate graph
         generateGraph(graphId, chartType);
+        let layout = grid.save();
+        console.log(layout)
     }
 
 
@@ -187,6 +189,33 @@
                 responsive: true
             }
         );
+
+    }
+
+
+    // save grid layout
+    async function saveLayout(){
+
+        let layout = grid.save();
+
+        console.log(layout);
+
+        await fetch('/save-dashboard-layout', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+                dashboard_id: 1,
+                layout: layout
+            })
+
+        });
+
+        alert("Layout Saved");
 
     }
 

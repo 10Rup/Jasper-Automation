@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends '/base.html' %}
 
 
 {% block styles %}
@@ -204,8 +204,6 @@ textarea{
 
 {% endblock %}
 
-
-
 {% block content %}
 
 <main class="main">
@@ -232,17 +230,17 @@ textarea{
             Configure database, table structure and column information for Jasper Automation.
         </p>
 
-        <form id="tableForm">
+        <form id="tableForm" action="/tables/save-table" method="post">
 
             <div class="form-grid">
 
                 <!-- DATABASE -->
                 <div>
 
-                    <label>Database Name</label>
+                    <label for="dbname">Database Name</label>
 
                     <input
-                        type="text"
+                        type="text" id="dbname" name="dbname"
                         class="input-box"
                         placeholder="Enter Database Name"
                     >
@@ -252,23 +250,24 @@ textarea{
                 <!-- TABLE -->
                 <div>
 
-                    <label>Table Name</label>
+                    <label for="tbname">Table Name</label>
 
                     <input
-                        type="text"
+                    id="tbname" name="tbname"
+                        type="text" 
                         class="input-box"
                         placeholder="Enter Table Name"
                     >
 
                 </div>
 
-                <!-- DESCRIPTION -->
+                DESCRIPTION
                 <div class="full-width">
 
-                    <label>Description</label>
+                    <label for="descpt">Description</label>
 
                     <textarea
-                        rows="4"
+                        rows="4" id="descpt" name="descpt"
                         placeholder="Write description about this table..."
                     ></textarea>
 
@@ -315,13 +314,13 @@ textarea{
                 <!-- BULK -->
                 <div class="full-width" id="bulkSection">
 
-                    <label>
+                    <label for="columnslistbulk">
                         Bulk Add Columns
                     </label>
 
                     <textarea
                         rows="5"
-                        id="bulkColumns"
+                        id="columnslistbulk" name='columnlist'
                         placeholder="name,email,phone,address"
                     ></textarea>
 
@@ -330,13 +329,14 @@ textarea{
                 <!-- MANUAL -->
                 <div class="full-width hidden" id="manualSection">
 
-                    <label>Manual Add Columns</label>
+                    <label for="columnsManual">Manual Add Columns</label>
 
                     <div class="columns-wrapper" id="columnsWrapper">
 
                         <div class="column-row">
 
                             <input
+                                id="columnsManual" name="columnsManual"
                                 type="text"
                                 class="input-box"
                                 placeholder="Column Name"
@@ -406,9 +406,16 @@ textarea{
 </main>
 
 <script>
+// save Form data
+// function saveForm(){
+//        const data =document.getElementById("columnsJson").value;
+//        console.log(data);
+// }
+
+
+
 
 /* ================= TOGGLE ================= */
-
 function toggleColumnMode(){
 
     const selected =
@@ -497,15 +504,15 @@ function resetForm(){
 
 /* ================= SUBMIT ================= */
 
-document
-.getElementById("tableForm")
-.addEventListener("submit", function(e){
+// document
+// .getElementById("tableForm")
+// .addEventListener("submit", function(e){
 
-    e.preventDefault();
+//     e.preventDefault();
 
-    alert("Table Structure Saved Successfully");
+//     alert("Table Structure Saved Successfully");
 
-});
+// });
 
 </script>
 

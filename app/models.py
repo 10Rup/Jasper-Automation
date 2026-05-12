@@ -76,6 +76,7 @@ class CompileReport(Base):
 class TableDetails(Base):
     __tablename__='tabledetails'
     id = Column(Integer, primary_key=True)
+    databasename = Column(String, nullable=False, index=True)
     tablename = Column(String, nullable=False, index=True)
     columnlist = Column(Text, nullable=True)
     indexlist = Column(Text, nullable=True)

@@ -1,15 +1,16 @@
 import os
 import platform
 import xml.etree.ElementTree as ET
+import json
 
 from fastapi import APIRouter, Query, Request, Depends, Form, File, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pdf2image import convert_from_bytes
-from sqlalchemy import func
+from sqlalchemy import JSON, func
 from sqlalchemy.orm import Session
-from ..database import SessionLocal
-from ..models import ApiMaster, Uploadfile, CropImages, XmlCode, CompileReport
+from ...database import SessionLocal
+from ...models import ApiMaster, Uploadfile, CropImages, XmlCode, CompileReport, TableDetails
 from datetime import datetime, timezone
 
 
@@ -31,30 +32,12 @@ def get_db():
 
 
 @router.get('/')
-def home(request: Request):
-    tables = [
-        {
-            'id': 1,
-            'dbname': 'Database 1',
-            'name': 'Table 1',
-            'description': 'This is the first table.'
-        },
-        {
-            'id': 2,
-            'dbname': 'Database 1',
-            'name': 'Table 2',
-            'description': 'This is the second table.'
-        },
-        {
-            'id': 3,
-            'dbname': 'Database 1',
-            'name': 'Table 3',
-            'description': 'This is the third table.'
-        }
-    ]
+def home(request: Request, db: Session = Depends(get_db)):
+    tables = db.query(TableDetails).all()
+    
     return templates.TemplateResponse(
         request,
-        'tables.html',
+        'tables/home.html',
         {
             'tables': tables
         }
@@ -63,23 +46,32 @@ def home(request: Request):
 @router.get('/add-table')
 def home(request: Request):
 
+    
     return templates.TemplateResponse(
         request,
-        'addtable.html'
+        'tables/add.html'
     )
 
 
 @router.get('/edit-table/{table_id}')
-def home(request: Request):
+def edit_table(request: Request):
 
     return templates.TemplateResponse(
         request,
-        'edittable.html'
+        'tables/edit.html'
     )
     
     
 
 @router.post('/save-table')
-def home(request: Request):
+def save_table_data(request: Request, columnlist: str = Form(...), dbname: str = Form(...), tbname: str = Form(...), descpt: str = Form(...), db: Session = Depends(get_db)):
 
-    return {"staus":"Success", "message" : "Your data saved"}
+    columnlist = [col.strip() for col in columnlist.split(',') if col.strip()]
+    table = TableDetails(databasename = dbname, tablename = tbname, columnlist = columnlist, discription = descpt)
+    db.add(table)
+    db.commit()
+
+    return RedirectResponse(
+        url='/tables/',
+        status_code=303
+    )
