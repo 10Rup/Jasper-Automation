@@ -2,6 +2,8 @@ import os
 import platform
 import xml.etree.ElementTree as ET
 import json
+import shutil
+
 
 from fastapi import APIRouter, Query, Request, Depends, Form, File, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse, JSONResponse
@@ -20,7 +22,7 @@ router = APIRouter(prefix='/tables', tags=['Table'])
 templates = Jinja2Templates("app/templates")
 IMAGE_DIR = 'app/images'
 CROP_IMAGE_DIR = 'app/cropped_images'
-OUTPUT_DIR = "app/generated_reports"
+UPLOAD_DIR = "app/TableStructure"
 
 def get_db():
     db = SessionLocal()
@@ -70,6 +72,51 @@ def save_table_data(request: Request, columnlist: str = Form(...), dbname: str =
     table = TableDetails(databasename = dbname, tablename = tbname, columnlist = columnlist, discription = descpt)
     db.add(table)
     db.commit()
+
+    return RedirectResponse(
+        url='/tables/',
+        status_code=303
+    )
+
+
+
+@router.get('/upload-table')
+def upload_table(request: Request):
+
+
+    return templates.TemplateResponse(
+        request, 
+        'tables/upload.html'
+    )
+
+
+
+
+@router.post('/upload-table/save')
+def upload_table(request: Request, tablename: str = Form(...), tablefile: UploadFile = File(...), db: Session = Depends(get_db)):
+
+
+    name, ext = os.path.splitext(tablefile.filename)
+
+    table = db.query(TableDetails).filter(TableDetails.tablename == name).first()
+    
+    if table:
+        return {'status':'error', 'message':'table already uploaded'}
+
+
+    # create folder and save to database
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+    save_path = os.path.join(UPLOAD_DIR, tablefile.filename)
+
+    with open(save_path, "wb") as buffer:
+        shutil.copyfileobj(tablefile.file, buffer)
+
+    new_table = TableDetails(tablename=tablename, databasename="demo", filepath=tablefile.filename)
+    db.add(new_table)
+    db.commit()
+
+    
 
     return RedirectResponse(
         url='/tables/',

@@ -157,5 +157,5 @@ def testing(report_id: int, db: Session = Depends(get_db)):
     
     with open("app/generated_reports/output.xml", "w", encoding="utf-8") as f:
         f.write(result)
-    # print(result)
+
     return "done"

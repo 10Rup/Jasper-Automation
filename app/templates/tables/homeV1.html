@@ -462,6 +462,27 @@
 
                 </div>
 
+                <!-- COLUMN LIST -->
+
+                <div class="modal-column-box">
+
+                    {% for column in table.columnlist %}
+
+                    <div class="modal-column-item">
+
+                        <span class="modal-column-name">
+                            {{ column}}
+                        </span>
+
+                        <span class="modal-column-type">
+                            {{ column }}
+                        </span>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
 
             </div>
 
