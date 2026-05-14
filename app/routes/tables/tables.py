@@ -93,7 +93,7 @@ def upload_table(request: Request):
 
 
 @router.post('/upload-table/save')
-def upload_table(request: Request, tablename: str = Form(...), tablefile: UploadFile = File(...), db: Session = Depends(get_db)):
+def upload_table(request: Request, tablename: str = Form(...), dbname: str = Form(...), tablefile: UploadFile = File(...), db: Session = Depends(get_db)):
 
 
     name, ext = os.path.splitext(tablefile.filename)
@@ -112,7 +112,7 @@ def upload_table(request: Request, tablename: str = Form(...), tablefile: Upload
     with open(save_path, "wb") as buffer:
         shutil.copyfileobj(tablefile.file, buffer)
 
-    new_table = TableDetails(tablename=tablename, databasename="demo", filepath=tablefile.filename)
+    new_table = TableDetails(tablename=tablename, databasename=dbname, filepath=tablefile.filename)
     db.add(new_table)
     db.commit()
 

@@ -88,6 +88,10 @@
             Add Widget
         </button>
 
+        <button onclick="saveLayout()">
+            Save Layout
+        </button>
+
     </div>
 
 
@@ -113,7 +117,7 @@
 
     let widgetCounter = 0;
 
-
+   
     function addWidget(){
 
         let chartType = document.getElementById("chart_type").value;
@@ -140,8 +144,7 @@
 
         // Generate graph
         generateGraph(graphId, chartType);
-        let layout = grid.save();
-        console.log(layout)
+        
     }
 
 
@@ -200,7 +203,7 @@
 
         console.log(layout);
 
-        await fetch('/save-dashboard-layout', {
+        await fetch('/dashboard/save-layout', {
 
             method: 'POST',
 

@@ -3,10 +3,17 @@ from fastapi import FastAPI, Request
  # type: ignore
 from .database import engine
 from .models import Base
+from .dashboard_models import Base as DashboardBase
+
+
+
+
 from .routes import home, api, upload, report, process, prepare, jrxml, test
 
 from app.routes.dashboard import home as homeDash
 from app.routes.tables import tables 
+from app.routes.tests import ai_test 
+
 
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -19,6 +26,7 @@ app.mount("/cropimages", StaticFiles(directory="app/cropped_images"), name="crop
 app.mount('/statics', StaticFiles(directory='app/assets/static'), name='statics')
 
 Base.metadata.create_all(bind=engine)
+DashboardBase.metadata.create_all(bind=engine)
 templates = Jinja2Templates("app/templates")
 
 app.include_router(home.router)
@@ -37,6 +45,8 @@ app.include_router(test.router)
 app.include_router(tables.router)
 
 
+
+app.include_router(ai_test.router)
 
 
 
