@@ -56,11 +56,44 @@ def home(request: Request):
 @router.get('/add')
 def addGraph(request: Request):
 
+    data = {
+        "Name": ["Rup", "Amit", "Rup", "Neha", "Amit"],
+        "Subject": ["Math", "Science", "English", "Math", "English"],
+        "Marks": [90, 80, 70, 95, 85],
+        "Fees": [1000, 1200, 1100, 1000, 1300]
+    }
+
+    dfdata = pd.DataFrame(data)
+
     return templates.TemplateResponse(
         request,
-        'dashboard/add_dashboard.html'
+        'dashboard/add_dashboard.html',
+
+        {
+            'dataset': dfdata,
+            'columns': dfdata.columns
+        }
         
     )
+
+
+@router.post('/chart-data')
+def chart_data(request: Request, db: Session = Depends(get_db)):
+    data = {
+        "Name": ["Rup", "Amit", "Rup", "Neha", "Amit"],
+        "Subject": ["Math", "Science", "English", "Math", "English"],
+        "Marks": [90, 80, 70, 95, 85],
+        "Fees": [1000, 1200, 1100, 1000, 1300]
+    }
+
+    df = pd.DataFrame(data)
+
+
+
+    return 
+
+
+
 
 
 

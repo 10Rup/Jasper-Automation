@@ -84,6 +84,29 @@
 
         <br><br>
 
+
+
+        <div>
+            <label>X-Axis</label>
+            <br>
+            <select id="x_axis">
+                {%for col in columns%}
+                <option value={{col}}>{{col}}</option>
+                {%endfor%}
+            </select>
+            <br><br>
+        </div>
+
+        <div>
+            <label>Y-Axis</label>
+            <br>
+            <select id="y_axis">
+                {%for col in columns%}
+                <option value={{col}}>{{col}}</option>
+                {%endfor%}
+            </select>
+            <br><br>
+        </div>
         <button onclick="addWidget()">
             Add Widget
         </button>
