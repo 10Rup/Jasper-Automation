@@ -137,8 +137,10 @@ async def image_to_xml(request: Request, db: Session = Depends(get_db)):
             13. DO NOT use:
                 - <text value="text" />
                 - textAdjust
+                - textExpression
                 - forecolor inside <font/> tag
                 - topIndent
+                - textFieldExpression with staticText
 
 
 

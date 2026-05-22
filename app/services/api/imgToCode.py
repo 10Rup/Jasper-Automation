@@ -89,8 +89,10 @@ def img_code(band,fields,config,imgPath, apiKey):
             13. DO NOT use:
                 - <text value="text" />
                 - textAdjust
+                - textExpression
                 - forecolor inside <font/> tag
                 - topIndent
+                - textFieldExpression with staticText
 
 
 
