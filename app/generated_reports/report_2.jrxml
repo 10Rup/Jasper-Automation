@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
+<title>
+        <band height="79" splitType="Stretch"/>
+        </title>
+<pageHeader>
+    <band height="280">
+        <staticText>
+            <reportElement x="0" y="0" width="555" height="30"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="16" isBold="true"/>
+            </textElement>
+            <text><![CDATA[UNIVERSITY OF CALCUTTA]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="30" width="555" height="25"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="false"/>
+            </textElement>
+            <text><![CDATA[MBA (Financial Management) Semester-III Examination, 2025 (Under Revised Syllabus)]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="65" width="160" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Date of Examination :]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="160" y="65" width="280" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11"/>
+            </textElement>
+            <text><![CDATA[23-FEBRUARY -2026 ( MONDAY )]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="95" width="70" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Venue :]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="70" y="95" width="485" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11"/>
+            </textElement>
+            <text><![CDATA[Room No. 412, Asutosh Building, C.U., College Street Campus, Kolkata - 700 073]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="125" width="70" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Time :]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="70" y="125" width="485" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11"/>
+            </textElement>
+            <text><![CDATA[From 12 noon to 1:30 p.m.]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="155" width="85" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Subject :]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="85" y="155" width="470" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11"/>
+            </textElement>
+            <text><![CDATA[Financial Market (Money Market)]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="185" width="105" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Paper Type :]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="105" y="185" width="450" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11"/>
+            </textElement>
+            <text><![CDATA[Theoretical]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="215" width="85" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Module :]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="85" y="215" width="470" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11"/>
+            </textElement>
+            <text><![CDATA[Paper - CC : 3.1 (Module - I)]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="245" width="180" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Number of Candidates :]]></text>
+        </staticText>
+    </band>
+</pageHeader>
+<columnHeader>
+        <band height="79" splitType="Stretch"/>
+        </columnHeader>
+<detail>
+        <band height="79" splitType="Stretch"/>
+        </detail>
+<columnFooter>
+        <band height="79" splitType="Stretch"/>
+        </columnFooter>
+<pageFooter>
+        <band height="79" splitType="Stretch"/>
+        </pageFooter>
+<summary>
+        <band height="79" splitType="Stretch"/>
+        </summary>
+</jasperReport>
