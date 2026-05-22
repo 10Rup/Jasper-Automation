@@ -65,7 +65,9 @@ def prepare_report(api_name: str, report_id : int, request: Request, db: Session
 
 
     # Initial JRXML bands with placeholders
-    queryString_band = (report.queryString if report.queryString else '')
+    queryString_band = (report.queryString if report.queryString else """<queryString>
+		<![CDATA[]]>
+	</queryString>""")
 
     title_band='''<title>
         <band height="79" splitType="Stretch"/>
