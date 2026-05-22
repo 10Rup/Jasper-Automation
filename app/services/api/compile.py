@@ -20,7 +20,7 @@ def compile_report(id,config,jrxmlCode):
 
     # 4. Update xml code with band codes
 
-    # final_xml += f'\n{jrxmlCode.queryString}'
+    final_xml += f'\n{jrxmlCode['queryString']}'
     final_xml += f'\n{jrxmlCode["title"]}'
     final_xml += f'\n{jrxmlCode["pageHeader"]}'
     final_xml += f'\n{jrxmlCode["columnHeader"]}'

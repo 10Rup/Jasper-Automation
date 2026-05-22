@@ -54,7 +54,7 @@ def prepare_report(api_name: str, report_id : int, request: Request, db: Session
         'reprot_type': report.filetype
     }
 
-    report_fields = "not available currently"
+    report_fields = report.fields
 
 
 
@@ -65,6 +65,8 @@ def prepare_report(api_name: str, report_id : int, request: Request, db: Session
 
 
     # Initial JRXML bands with placeholders
+    queryString_band = (report.queryString if report.queryString else '')
+
     title_band='''<title>
         <band height="79" splitType="Stretch"/>
         </title>'''
@@ -101,6 +103,7 @@ def prepare_report(api_name: str, report_id : int, request: Request, db: Session
 
 
     jrxml_bands = {
+        'queryString': queryString_band,
         'title': title_band,
         'pageHeader': pageHeader_band,
         'columnHeader': columnHeader_band,
