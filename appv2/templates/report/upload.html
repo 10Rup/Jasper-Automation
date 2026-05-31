@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>upload Page</title>
+</head>
+<body>
+    <main class="main">
+
+  <header class="header">
+    <h2>Upload Files</h2>
+    <div class="avatar">REPORT TEAM</div>
+  </header>
+
+  <section class="upload-section">
+    <p class="section-desc">Configure parameters and upload your dataset for instant analytics generation.</p>
+
+    <form action="/report/upload" method="post" enctype="multipart/form-data">
+
+      <div>
+        <label for="reportname">Report Name:</label>
+        <input id="reportname" class="reportname" name="reportname" placeholder="Report Name" required>
+      </div>
+
+      <div class="dropdown-group">
+          <div>
+            <label for="pagesize">Page Size</label>
+            <select id="pagesize" name="pagesize" class="custom-select">
+              <option value="A4">A4 (210 × 297 mm)</option>
+              <option value="A3">A3 (297 × 420 mm)</option>
+              <option value="Letter">Letter (8.5 × 11 in)</option>
+              <option value="Legal">Legal (8.5 × 14 in)</option>
+            </select>
+          </div>
+          <div>
+            <label for="orientation">Orientation</label>
+            <select id="orientation" name="orientation" class="custom-select">
+              <option value="portrait">Portrait</option>
+              <option value="landscape">Landscape</option>
+            </select>
+          </div>
+          <div>
+            <label for="report_type">Report Type</label>
+            <select id="report_type" name="report_type" class="custom-select">
+              <option value="pdf">PDF</option>
+              <option value="xls">EXCEL</option>
+              <option value="html">HTML</option>
+            </select>
+          </div>
+      </div>
+
+      <div>
+        <label>Upload Data Source</label>
+        <div>
+          <input type="file" id="samplefile" name="samplefile" hidden required accept=".csv,.json,.xlsx,.pdf,.png,.jpeg">
+          <label for="samplefile" class="file-input-label" id="dropArea">
+            <div id="uploadAreaContent" style="text-align: center; width: 100%;">
+              <div class="upload-icon">☁️</div>
+              <p>Drag & Drop files or Click to Upload</p>
+              <p class="upload-hint">Supports PDF, XLS, PNG, JPEG, CSV, JSON</p>
+            </div>
+            <div class="files-container" id="filesGrid"></div>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" id="uploadButton">Upload Files</button> 
+    </form>
+  </section>
+
+</main>
+
+    <script>
+  let files = [];
+  const dropArea = document.getElementById("dropArea");
+  const fileInput = document.getElementById("samplefile");
+  const uploadAreaContent = document.getElementById("uploadAreaContent");
+
+  // SELECT
+  fileInput.addEventListener("change", e => {
+    files = [...e.target.files];
+    if (files.length > 0) {
+      processFile(files[0]);
+    }
+  });
+
+  // DRAG & DROP
+  dropArea.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropArea.style.borderColor = "#6d28d9";
+    dropArea.style.background = "rgba(109, 40, 217, 0.1)";
+  });
+
+  dropArea.addEventListener("dragleave", () => {
+    dropArea.style.borderColor = "#475569";
+    dropArea.style.background = "rgba(2, 6, 23, 0.4)";
+  });
+
+  dropArea.addEventListener("drop", e => {
+    e.preventDefault();
+    dropArea.style.borderColor = "#475569";
+    dropArea.style.background = "rgba(2, 6, 23, 0.4)";
+
+    if (e.dataTransfer.files.length > 0) {
+      files = [e.dataTransfer.files[0]];
+      fileInput.files = e.dataTransfer.files;
+      processFile(files[0]);
+    }
+  });
+
+  // PROCESSING & VALIDATION
+  function processFile(file) {
+    const filedata = file.name.split(".");
+    const ext = filedata.pop().toLowerCase();
+    const reportname = filedata.join(".");
+
+    const validExtensions = ["pdf", "xls", "xlsx", "png", "jpeg", "csv", "json"];
+
+    if (!validExtensions.includes(ext)) {
+      renderFiles(false);
+    } else {
+      renderFiles(true, file, reportname);
+    }
+  }
+
+  // RENDER
+  function renderFiles(isvalid, file = null, reportname = "") {
+    const grid = document.getElementById("filesGrid");
+    grid.innerHTML = "";
+    const uploadbtn = document.getElementById("uploadButton");
+
+    // Hide the default static text when an item is added
+    uploadAreaContent.style.display = "none";
+
+    if (isvalid && file) {
+      grid.innerHTML = `
+        <div class="file-card justify-content-between">
+          <div class="file-card-details">
+            <i class="fa-solid fa-file-csv"></i>
+            <div>
+              <p style="font-weight: 500; font-size: 0.875rem; color: #e2e8f0;">${file.name}</p>
+              <small style="color: #94a3b8;">${(file.size / 1024).toFixed(1)} KB</small>
+            </div>
+          </div>
+          <button type="button" class="delete-btn" onclick="removeFile(event)">&#128465;</button>
+        </div>
+      `;
+
+      uploadbtn.disabled = false;
+      document.getElementById("reportname").value = reportname;
+    } else {
+      uploadbtn.disabled = true;
+      grid.innerHTML = `
+        <div class="file-card justify-content-between" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+          <div class="file-card-details">
+            <span style="color: #ef4444;">⚠️</span>
+            <div>
+              <p style="color: #ef4444; font-weight: 500; font-size: 0.875rem;">Invalid File Type</p>
+            </div>
+          </div>
+          <button type="button" class="delete-btn" onclick="removeFile(event)">&#128465;</button>
+        </div>
+      `;
+      document.getElementById("reportname").value = "Invalid report selection";
+    }
+  }
+
+  // REMOVE
+  function removeFile(e) {
+    e.stopPropagation(); // Stop event bubbling to the label click event
+    files = [];
+    fileInput.value = "";
+    document.getElementById("reportname").value = "";
+    document.getElementById("filesGrid").innerHTML = "";
+    uploadAreaContent.style.display = "block";
+    document.getElementById("uploadButton").disabled = true;
+  }
+
+  // SUBMIT
+  const form = document.querySelector('form');
+  form.addEventListener('submit', (e) => {
+    if (files.length === 0) {
+      e.preventDefault();
+      alert("No files selected");
+      return;
+    }
+  });
+</script>
+
+</body>
+</html>
