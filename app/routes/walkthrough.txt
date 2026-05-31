@@ -1,0 +1,8 @@
+
+
+routes -> 
+        report ->
+                report.py =>    prefix('reports')
+                                home-> path="/home", templates="reports/home.html"
+                                view-> path="/view", templates="reports/view.html"
+                                upload-> path="/upload", templates="upload/home.html"

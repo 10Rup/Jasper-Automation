@@ -104,15 +104,26 @@ def prepare_report(api_name: str, report_id : int, request: Request, db: Session
         </summary>'''
 
 
+    # jrxml_bands = {
+    #     'queryString': queryString_band,
+    #     'title': title_band,
+    #     'pageHeader': pageHeader_band,
+    #     'columnHeader': columnHeader_band,
+    #     'detail': detail_band,
+    #     'columnFooter': columnFooter_band,
+    #     'pageFooter': pageFooter_band,
+    #     'summary': summary_band
+    # }
+
     jrxml_bands = {
-        'queryString': queryString_band,
-        'title': title_band,
-        'pageHeader': pageHeader_band,
-        'columnHeader': columnHeader_band,
-        'detail': detail_band,
-        'columnFooter': columnFooter_band,
-        'pageFooter': pageFooter_band,
-        'summary': summary_band
+        'queryString': "",
+        'title': "",
+        'pageHeader': "",
+        'columnHeader': "",
+        'detail': "",
+        'columnFooter': "",
+        'pageFooter': "",
+        'summary': ""
     }
 
     

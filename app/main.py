@@ -12,7 +12,7 @@ from .routes import home, api, upload, report, process, prepare, jrxml, test
 
 from app.routes.dashboard import home as homeDash
 from app.routes.tables import tables 
-from app.routes.tests import ai_test, correction_ai
+from app.routes.tests import ai_test
 from app.routes.generate import prepare_report
 
 
@@ -49,7 +49,7 @@ app.include_router(tables.router)
 
 
 app.include_router(ai_test.router)
-app.include_router(correction_ai.router)
+# app.include_router(correction_ai.router)
 app.include_router(prepare_report.router)
 
 
