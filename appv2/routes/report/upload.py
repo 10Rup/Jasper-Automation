@@ -13,12 +13,16 @@ from datetime import datetime, timezone
 
 from ...services.report.upload import pdfToImg
 import os
+from dotenv import load_dotenv
+
+
+appname = os.getenv("APP_NAME")
 
 
 
 
 router = APIRouter(prefix='/report', tags=['Report'])
-templates = Jinja2Templates("appv2/templates/report")
+templates = Jinja2Templates(f"{appname}/templates/report")
 
 
 @router.get('/upload')
@@ -45,4 +49,7 @@ async def upload(request: Request, reportname: str = Form(...), report_type: str
     db.commit()
 
 
-    return {'msg':'report is uploaded]', 'path' : image_path}
+    return RedirectResponse(
+        url='/report/view',
+        status_code=303
+    )

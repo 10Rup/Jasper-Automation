@@ -7,12 +7,16 @@ from ..databases.db import conn
 from ..models.model import Upload
 from datetime import datetime, timezone
 
+import os
+from dotenv import load_dotenv
 
+
+appname = os.getenv("APP_NAME")
 
 
 
 router = APIRouter()
-templates = Jinja2Templates("appv2/templates/report")
+templates = Jinja2Templates(f"{appname}/templates")
 
 @router.get('/')
 def home(request: Request):

@@ -22,25 +22,13 @@ appname = os.getenv("APP_NAME")
 router = APIRouter(prefix='/report', tags=['Report'])
 templates = Jinja2Templates(f"{appname}/templates/report")
 
-@router.get('/')
-def home(request: Request):
+
+
+@router.get('/process/{report_id}')
+def process_report(request: Request, report_id: int, db: Session = Depends(conn)):
+
 
     return templates.TemplateResponse(
         request,
-        'home.html'
+        'process.html'
     )
-
-
-@router.get('/view')
-def upload(request: Request, db: Session = Depends(conn)):
-
-    reports = db.query(Upload).all()
-    return templates.TemplateResponse(
-        request,
-        'view.html',
-        {
-            'reports': reports,
-            'appname': appname
-        }
-    )
-
