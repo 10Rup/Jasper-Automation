@@ -27,8 +27,22 @@ templates = Jinja2Templates(f"{appname}/templates/report")
 @router.get('/process/{report_id}')
 def process_report(request: Request, report_id: int, db: Session = Depends(conn)):
 
+    report = db.query(Upload).filter(Upload.id == report_id).first()
 
     return templates.TemplateResponse(
         request,
-        'process.html'
+        'process.html',
+        {
+            'report': report,
+        }
     )
+
+
+@router.post("/process/save-region")
+async def save_region(request: Request):
+    
+    data = await request.json()
+
+
+    print(data)
+    return {'msg': data}
