@@ -14,7 +14,7 @@ from .models.model import Base
 
 
 from .routes import home
-from .routes.report import upload, view, process
+from .routes.report import upload, view, process, correction
 import os
 from dotenv import load_dotenv
 
@@ -45,3 +45,4 @@ app.include_router(home.router)
 app.include_router(upload.router)
 app.include_router(view.router)
 app.include_router(process.router)
+app.include_router(correction.router)

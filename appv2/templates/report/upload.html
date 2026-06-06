@@ -22,6 +22,15 @@
         <label for="reportname">Report Name:</label>
         <input id="reportname" class="reportname" name="reportname" placeholder="Report Name" required>
       </div>
+      <div>
+        <label>For Report Correction:</label>
+         <label>
+          <input type="radio" id="correction" name="correction" value="yes"> Yes
+        </label>
+        <label>
+          <input type="radio" id="correction" name="correction" value="no" checked> No
+        </label>
+      </div>
 
       <div class="dropdown-group">
           <div>
@@ -46,6 +55,7 @@
               <option value="pdf">PDF</option>
               <option value="xls">EXCEL</option>
               <option value="html">HTML</option>
+              <option value="jrxml">JRXML</option>
             </select>
           </div>
       </div>
@@ -53,12 +63,12 @@
       <div>
         <label>Upload Data Source</label>
         <div>
-          <input type="file" id="samplefile" name="samplefile" hidden required accept=".csv,.json,.xlsx,.pdf,.png,.jpeg">
+          <input type="file" id="samplefile" name="samplefile" hidden required accept=".csv,.json,.xlsx,.pdf,.png,.jpeg,.jrxml">
           <label for="samplefile" class="file-input-label" id="dropArea">
             <div id="uploadAreaContent" style="text-align: center; width: 100%;">
               <div class="upload-icon">☁️</div>
               <p>Drag & Drop files or Click to Upload</p>
-              <p class="upload-hint">Supports PDF, XLS, PNG, JPEG, CSV, JSON</p>
+              <p class="upload-hint">Supports PDF, XLS, PNG, JPEG, CSV, JSON, JRXML</p>
             </div>
             <div class="files-container" id="filesGrid"></div>
           </label>
@@ -115,17 +125,17 @@
     const ext = filedata.pop().toLowerCase();
     const reportname = filedata.join(".");
 
-    const validExtensions = ["pdf", "xls", "xlsx", "png", "jpeg", "csv", "json"];
+    const validExtensions = ["pdf", "xls", "xlsx", "png", "jpeg", "csv", "json", "jrxml"];
 
     if (!validExtensions.includes(ext)) {
       renderFiles(false);
     } else {
-      renderFiles(true, file, reportname);
+      renderFiles(true, file, reportname,ext);
     }
   }
 
   // RENDER
-  function renderFiles(isvalid, file = null, reportname = "") {
+  function renderFiles(isvalid, file = null, reportname = "", ext = "") {
     const grid = document.getElementById("filesGrid");
     grid.innerHTML = "";
     const uploadbtn = document.getElementById("uploadButton");
@@ -149,6 +159,11 @@
 
       uploadbtn.disabled = false;
       document.getElementById("reportname").value = reportname;
+      
+      if(ext == 'jrxml'){
+        document.getElementById("report_type").value = ext;
+      }
+      
     } else {
       uploadbtn.disabled = true;
       grid.innerHTML = `

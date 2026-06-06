@@ -4,14 +4,17 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.models import CropImages
+
 
 
 from ...databases.db import conn
-from ...models.model import Upload
+from ...models.model import Upload, Process
 
 from datetime import datetime, timezone
 
-from ...services.report.upload import pdfToImg
+from ...services.report.upload import pdfToImg 
+from ...services.report.process import saveRegion
 import os
 from dotenv import load_dotenv
 
@@ -39,10 +42,24 @@ def process_report(request: Request, report_id: int, db: Session = Depends(conn)
 
 
 @router.post("/process/save-region")
-async def save_region(request: Request):
+async def save_region(request: Request, db: Session = Depends(conn)):
     
     data = await request.json()
 
 
-    print(data)
-    return {'msg': data}
+
+    file_id = data['file_id']
+    file_name = data['file_name']
+    regions = data['regions']
+    image_path = data['image_path']
+
+    result  = saveRegion(file_id, file_name, image_path, regions)
+
+    
+    # Insert crop image record in DB
+    for r in result:
+        print(r)
+        save_img = Process(upload_id = r.get('upload_id'), bandname = r.get('bandname'), path = r.get('path'))
+        db.add(save_img)
+        db.commit()
+

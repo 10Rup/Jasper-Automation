@@ -1,0 +1,1845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BARCH" pageWidth="595" pageHeight="842" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="10" isFloatColumnFooter="true" uuid="791fc3b8-d8de-4b83-808a-ed10c7d9d714">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="258"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="735"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DPSRU_KSDSU"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="634"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="356"/>
+	<property name="ireport.jasperserver.url" value="http://makautreport.ucanapply.com/jasperserver/"/>
+	<property name="ireport.jasperserver.user" value="jasperadmin"/>
+	<property name="ireport.jasperserver.reportUnit" value="/reports/RAIGANJ/GRADE_CARD/GRADE_CARD_PG"/>
+	<property name="com.jaspersoft.studio.report.unit.description" value="FOR PG"/>
+	<parameter name="course_name" class="java.lang.String"/>
+	<parameter name="INSTCODE" class="java.lang.String"/>
+	<parameter name="RESULTTYPE" class="java.lang.String"/>
+	<parameter name="STUDENTTYPE" class="java.lang.String"/>
+	<parameter name="s3path" class="java.lang.String"/>
+	<parameter name="sem_code" class="java.lang.String"/>
+	<parameter name="SESSCODE" class="java.lang.String"/>
+	<parameter name="ROLLNO" class="java.lang.String"/>
+	<parameter name="issue_date" class="java.lang.String"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT 
+IFNULL(TPSD.WITHHELD_TYPE,"") AS WITHHELD_TYPE,TRM.STUDENTTYPE,
+IF(CM.PASSOUTSEM = TRM.TRSEMCODE,1,0) AS FINALSEM,TPSD.TRCREDIT,
+IFNULL(TP.RESULT_SEM1,"") AS RESULT_SEM1,
+IFNULL(TP.RESULT_SEM2,"") AS RESULT_SEM2,
+IFNULL(TP.RESULT_SEM3,"") AS RESULT_SEM3,
+IFNULL(TP.RESULT_SEM4,"") AS RESULT_SEM4,
+IFNULL(TP.RESULT_SEM5,"") AS RESULT_SEM5,
+IFNULL(TP.RESULT_SEM6,"") AS RESULT_SEM6,
+IFNULL(TP.RESULT_SEM7,"") AS RESULT_SEM7,
+IFNULL(TP.RESULT_SEM8,"") AS RESULT_SEM8,
+
+
+IFNULL(TP.OBT_SEM1,"") AS OBT_SEM1,
+IFNULL(TP.OBT_SEM2,"") AS OBT_SEM2,
+IFNULL(TP.OBT_SEM3,"") AS OBT_SEM3,
+IFNULL(TP.OBT_SEM4,"") AS OBT_SEM4,
+IFNULL(TP.OBT_SEM5,"") AS OBT_SEM5,
+IFNULL(TP.OBT_SEM6,"") AS OBT_SEM6,
+IFNULL(TP.OBT_SEM7,"") AS OBT_SEM7,
+IFNULL(TP.OBT_SEM8,"") AS OBT_SEM8,
+
+
+IFNULL(TP.TOT_SEM1,"") AS TOT_SEM1,
+IFNULL(TP.TOT_SEM2,"") AS TOT_SEM2,
+IFNULL(TP.TOT_SEM3,"") AS TOT_SEM3,
+IFNULL(TP.TOT_SEM4,"") AS TOT_SEM4,
+IFNULL(TP.TOT_SEM5,"") AS TOT_SEM5,
+IFNULL(TP.TOT_SEM6,"") AS TOT_SEM6,
+IFNULL(TP.TOT_SEM7,"") AS TOT_SEM7,
+IFNULL(TP.TOT_SEM8,"") AS TOT_SEM8,
+
+IFNULL(TP.CRDT_SEM1,"") AS CRDT_SEM1,
+IFNULL(TP.CRDT_SEM2,"") AS CRDT_SEM2,
+IFNULL(TP.CRDT_SEM3,"") AS CRDT_SEM3,
+IFNULL(TP.CRDT_SEM4,"") AS CRDT_SEM4,
+IFNULL(TP.CRDT_SEM5,"") AS CRDT_SEM5,
+IFNULL(TP.CRDT_SEM6,"") AS CRDT_SEM6,
+IFNULL(TP.CRDT_SEM7,"") AS CRDT_SEM7,
+IFNULL(TP.CRDT_SEM8,"") AS CRDT_SEM8,
+
+
+IFNULL(TP.SGPA_SEM1,"") AS SGPA_SEM1,
+IFNULL(TP.SGPA_SEM2,"") AS SGPA_SEM2,
+IFNULL(TP.SGPA_SEM3,"") AS SGPA_SEM3,
+IFNULL(TP.SGPA_SEM4,"") AS SGPA_SEM4,
+IFNULL(TP.SGPA_SEM5,"") AS SGPA_SEM5,
+IFNULL(TP.SGPA_SEM6,"") AS SGPA_SEM6,
+IFNULL(TP.SGPA_SEM7,"") AS SGPA_SEM7,
+IFNULL(TP.SGPA_SEM8,"") AS SGPA_SEM8,
+
+IFNULL(TP.STTYPE_SEM1,"") AS STTYPE_SEM1,
+IFNULL(TP.STTYPE_SEM2,"") AS STTYPE_SEM2,
+IFNULL(TP.STTYPE_SEM3,"") AS STTYPE_SEM3,
+IFNULL(TP.STTYPE_SEM4,"") AS STTYPE_SEM4,
+IFNULL(TP.STTYPE_SEM5,"") AS STTYPE_SEM5,
+IFNULL(TP.STTYPE_SEM6,"") AS STTYPE_SEM6,
+IFNULL(TP.STTYPE_SEM7,"") AS STTYPE_SEM7,
+IFNULL(TP.STTYPE_SEM8,"") AS STTYPE_SEM8,
+
+(IFNULL(TP.TOT_SEM1,"")+
+IFNULL(TP.TOT_SEM2,"")+
+IFNULL(TP.TOT_SEM3,"")+
+IFNULL(TP.TOT_SEM4,"")+
+IFNULL(TP.TOT_SEM5,"")+
+IFNULL(TP.TOT_SEM6,"")+
+IFNULL(TP.TOT_SEM7,"")+
+IFNULL(TP.TOT_SEM8,"")) AS FINAL_TOT,
+
+(IFNULL(TP.OBT_SEM1,"")+
+IFNULL(TP.OBT_SEM2,"")+
+IFNULL(TP.OBT_SEM3,"")+
+IFNULL(TP.OBT_SEM4,"")+
+IFNULL(TP.OBT_SEM5,"")+
+IFNULL(TP.OBT_SEM6,"")+
+IFNULL(TP.OBT_SEM7,"")+
+IFNULL(TP.OBT_SEM8,"")) AS FINAL_OBT,
+CASE
+WHEN TRSEMCODE IN ("SM02","YR02") AND CM.PASSOUTSEM = TRM.TRSEMCODE AND TP.RESULT_SEM1="P" AND TPSD.RESULT="P" THEN "PASS" 
+WHEN TRSEMCODE IN ("SM04","YR04") AND CM.PASSOUTSEM = TRM.TRSEMCODE AND TP.RESULT_SEM1="P" AND TP.RESULT_SEM2="P" AND TP.RESULT_SEM3="P" AND TPSD.RESULT="P" THEN "PASS" 
+WHEN TRSEMCODE IN ("SM06") AND CM.PASSOUTSEM = TRM.TRSEMCODE AND TP.RESULT_SEM1="P" AND TP.RESULT_SEM2="P" AND TP.RESULT_SEM3="P" AND TP.RESULT_SEM4="P" AND TP.RESULT_SEM5="P" AND TPSD.RESULT="P" THEN "PASS" 
+WHEN TRSEMCODE IN ("SM08") AND CM.PASSOUTSEM = TRM.TRSEMCODE AND TP.RESULT_SEM1="P" AND TP.RESULT_SEM2="P" AND TP.RESULT_SEM3="P" AND TP.RESULT_SEM4="P" AND TP.RESULT_SEM5="P" AND TP.RESULT_SEM6="P" AND TP.RESULT_SEM7="P" AND TPSD.RESULT="P" THEN "PASS" 
+ELSE "FAIL"
+END AS FINAL_RES,
+
+#(SELECT IF(CM.PASSOUTSEM = TRM.TRSEMCODE AND FINAL_RES="PASS",
+#CAST((FINAL_OBT/FINAL_TOT)*100  AS DECIMAL(8,2)),"")) AS FINAL_PER,
+IFNULL(TP.show_cgpa,"") AS FINAL_PER,
+TP.FINAL_DIV,IFNULL(TP.CGPA,"") AS CGPA_PER,
+
+TR_R.SUBJECTCODE,V.DISABLITY_TYPE, TRM.GRADE_LOGIC,IFNULL(SM.SUBJECTCATEGORY,"0") AS SUBJECTCATEGORY,
+SEM.SEMTAGG,TRM.SUBHEADER,SUM(IF(TR_R.TYPE="T" AND TR_R.CTOTAL IN ("AB","AA"),1,0)) AS AB_SUB,V.ABC_ID,V.MAJOR_PAPER,
+CM.COURSEDISPLAYTYPE,DATE_FORMAT(STR_TO_DATE(TRM.PUBLICATIONDATE, '%m/%d/%Y'), '%d-%m-%Y') AS d,DATE_FORMAT(STR_TO_DATE(TRM.PUBLICATIONDATE, '%m/%d/%Y'), '%D %M, %Y') AS PUBLICATIONDATE,
+ DPT.DIPARTMENTSNAME,TPSD.TRCOURSECODE,TPSD.STUDENTCODE,TRM.COURSECODE,TRM.SESSCODE,TRM.TRSEMCODE, SEM.SEMESTER, TPSD.TRCREDIT,TPSD.STUDENTCODE, V.GURDIANSRES_PS, V.ROLLNO,TPSD.EXAMROLLNUMBER, SBM.SUBQCODE, SBM.SUBJDECS, V. DIPARTMENTNAME, V.YEAROFADMISION, TPSD.COURSETOTALCREDIT,TPSD.TRCOURSECODE,TPSD.EXAMROLLNUMBER,TPSD.PARMANETROLLNUMBER,TPSD.STUDENTNAME,TPSD.COURSENAME,CM.COURSESNAME AS StreamCode,
+TPSD.RESULT,TR_R.SRESULT,TPSD.COLLEGECODE,TPSD.COLLEGENAME,TR_R.CTOTAL,TR_R.GRACE,CAST(TR_R.CREDIT AS UNSIGNED) AS CREDIT_INT,CAST(TR_R.CRPOINT AS UNSIGNED) AS CR_POINT,TR_R.AGE ,
+CAST(TR_R.AGE AS UNSIGNED) AS GRADE_POINT,SBM.SUBJTYPE,TPSD.MCNUMBER,TPSD.MCNUMBERSERIES,TR_R.TYPE,
+IF(TR_R.CTOTAL="XX","XX",(IF(TR_R.CTOTAL="AB","AB",(TR_R.CTOTAL+TR_R.GRACE)))) AS MARK_SEC,TR_R.CMAXMARK,TR_R.GRADE,
+IFNULL(CTSS.CREDIT,"0") AS CREDIT,TR_R.CRPOINT,TR_R.AGE,TR_R.STOTAL,TR_R.TOTAL,CAST(TPSD.COURSE_SGPA AS DECIMAL(8,2)) AS GPA,
+TPSD.THEOTOTAL,TPSD.TOTAL AS GRAND_TOT,TPSD.GTOTAL AS GRAND_TOT_MAX,TPSD.THEOOBT,SBM.COURSECODE,SBM.SUBJDECS,SBM.SUBJECTPARTCODE,SBM.SUBJDECS,SBM.SUBJECTUCODE,
+STP.PICK_TEXT AS FINAL_RESULT,
+CAST(TPSD.COURSE_SGPA AS DECIMAL(8,2)) AS SGPA,IFNULL(MR.SUBJECTCODE,"") AS REPEATER_SUB,
+(SELECT COUNT(TRR.SUBJECTCODE) FROM `SUBJECTBILANG_MZU`.`TRPRINTSTUDENT_ROWS` AS TRR
+INNER JOIN `SUBJECTBILANG_MZU`.`SUBJECTMSTEVENSEM_PART` AS SBM 
+ON TRR.SUBJECTCODE = SBM.SUBJECTCODE
+WHERE SBM.COURSECODE=TRM.COURSECODE
+AND TRR.STUDENTCODE =TR_R.STUDENTCODE
+AND SBM.SEMCODE=TRM.TRSEMCODE
+AND SBM.TYPE ="T"
+ AND TRR.TYPE = SBM.TYPE AND TRR.UNIT = SBM.UNIT) AS THEORY_COUNT,
+   CONCAT('https://',$P{s3path},PS.STUDENTPHOTOPATH)  AS SPHOTO,
+       CONCAT('https://',$P{s3path},PS.STUDENTSIGNATUREPATH)  AS SIG,
+(SELECT COUNT(TRR.SUBJECTCODE) FROM `SUBJECTBILANG_MZU`.`TRPRINTSTUDENT_ROWS` AS TRR
+INNER JOIN `SUBJECTBILANG_MZU`.`SUBJECTMSTEVENSEM_PART` AS SBM 
+ON TRR.SUBJECTCODE = SBM.SUBJECTCODE
+WHERE SBM.COURSECODE=TRM.COURSECODE
+AND TRR.STUDENTCODE =TR_R.STUDENTCODE
+AND SBM.SEMCODE=TRM.TRSEMCODE
+AND SBM.TYPE ="P"
+ AND TRR.TYPE = SBM.TYPE AND TRR.UNIT = SBM.UNIT)AS PRAC_COUNT,
+
+((SELECT COUNT(TRR.SUBJECTCODE) FROM `SUBJECTBILANG_MZU`.`TRPRINTSTUDENT_ROWS` AS TRR
+INNER JOIN `SUBJECTBILANG_MZU`.`SUBJECTMSTEVENSEM_PART` AS SBM 
+ON TRR.SUBJECTCODE = SBM.SUBJECTCODE
+WHERE SBM.COURSECODE=TRM.COURSECODE
+AND TRR.STUDENTCODE =TR_R.STUDENTCODE
+AND SBM.SEMCODE=TRM.TRSEMCODE
+AND SBM.TYPE ="T"
+ AND TRR.TYPE = SBM.TYPE AND TRR.UNIT = SBM.UNIT)-
+ (SELECT COUNT(TRR.SUBJECTCODE) FROM `SUBJECTBILANG_MZU`.`TRPRINTSTUDENT_ROWS` AS TRR
+INNER JOIN `SUBJECTBILANG_MZU`.`SUBJECTMSTEVENSEM_PART` AS SBM 
+ON TRR.SUBJECTCODE = SBM.SUBJECTCODE
+WHERE SBM.COURSECODE=TRM.COURSECODE
+AND TRR.STUDENTCODE =TR_R.STUDENTCODE
+AND SBM.SEMCODE=TRM.TRSEMCODE
+AND SBM.TYPE ="S"
+ AND TRR.TYPE = SBM.TYPE AND TRR.UNIT = SBM.UNIT))AS SESS_COUNT,
+TRMP.PUBLICATIONDATE AS PUB_DT,
+IF($P{issue_date}!="NA",DATE_FORMAT( $P{issue_date} , '%D %M, %Y'),DATE_FORMAT(TRMP.PUBLICATIONDATE,'%D %M, %Y')) AS issue_dt,
+IF(SBM.SUBQCODE = "C13 (VI)", "C13 (VI)", IF(SBM.SUBQCODE = "C13 (HI)", "C13 (HI)", "")) AS kk,
+VAC.`Name_of_Course_Under_SEC`,VAC.`Paper_code`,
+SEC.`Name_of_Course_Under_SEC` AS SECpap,SEC.`Paper_code` AS SECcode,
+TRM.SUBHEADER AS EXAM,TRM.FOOTERLINE AS Decr, TRM.TRCOURSENAME,IM.INSTSNAME,IM.INSTNAME,IM.CITY,SEM.SEMNAME,SEM.SEMDISPNAME,SBM.SUBJTYPE,SEM.NUMERIC
+
+FROM `SUBJECTBILANG_MZU`.`TRPRINTSTUDENTDETAILS` AS TPSD
+
+JOIN `SUBJECTBILANG_MZU`.`TRPRINTSTUDENT_ROWS` AS TR_R ON TPSD.STUDENTCODE = TR_R.STUDENTCODE AND TR_R.DELETED_AT IS NULL
+AND TPSD.TRCOURSECODE = TR_R.TRCOURSECODE
+JOIN `UNI_SYS_MZU`.`STOREPICK` AS STP 
+ON TPSD.RESULT = STP.PICK_ID
+AND STP.STORE_ID='display_result_syntax'
+
+JOIN `UNI_SYS_MZU`.`VIEW_STUDENTENROLLED` AS V ON TPSD.STUDENTCODE = V.STUDENTCODE AND TPSD.FACUCOURSEDEGREECODE = V.FACUCOURSEDEGREECODE
+
+JOIN `SUBJECTBILANG_MZU`.`TRROOTMASTER` AS TRM ON TPSD.TRCOURSECODE = TRM.TRCOURSECODE
+AND TR_R.TRCOURSECODE = TRM.TRCOURSECODE
+AND TRM.DELETED_AT IS NULL
+
+JOIN `SUBJECTBILANG_MZU`.`TRROOTMASTER_PART` AS TRMP ON TRM.id=TRMP.tr_id
+
+INNER JOIN  `SUBJECTBILANG_MZU`.`COURSE_TYPE_SUBJECT_SCHEMA` AS CTSS
+ON CTSS.SUBJECTCODE = TR_R.SUBJECTCODE
+AND CTSS.COURSECODE = TRM.COURSECODE
+AND CTSS.SEMECODE =TRM.TRSEMCODE
+AND CTSS.`deleted_at` IS NULL
+
+LEFT JOIN  `SUBJECTBILANG_MZU`.`STUDENTPAPER_GRP_DETAILS_TMP` AS SPM
+ON SPM.STUDENTCODE = TPSD.STUDENTCODE
+AND SPM.SUBJECTCODE  = TR_R.SUBJECTCODE	
+
+INNER JOIN `UNI_SYS_MZU`.`INSTMST` AS IM ON TPSD.INSTCODE = IM.INSTCODE
+
+INNER JOIN `UNI_SYS_MZU`.`SEMESTERMST` AS SEM ON TR_R.SEMCODE = SEM.SEMCODE
+
+INNER JOIN `SUBJECTBILANG_MZU`.`SUBJECTMSTEVENSEM_PART` AS SBM 
+ON TRM.COURSECODE = SBM.COURSECODE 
+AND TR_R.SUBJECTCODE = SBM.SUBJECTCODE
+AND TR_R.TYPE = SBM.TYPE AND TR_R.UNIT = SBM.UNIT
+
+INNER JOIN `SUBJECTBILANG_MZU`.`SUBJECTMSTEVENSEM` AS SM 
+ON TR_R.SUBJECTCODE = SM.SUBJECTCODE
+
+
+INNER JOIN `UNI_SYS_MZU`.`COURSEMST` AS CM ON TRM.COURSECODE=CM.COURSECD
+
+
+LEFT JOIN SUBJECTBILANG_MZU.MBBS_REPETR AS MR 
+ON MR.STUDENTCODE = TPSD.STUDENTCODE
+AND MR.FACUCOURSEDEGREECODE = TPSD.FACUCOURSEDEGREECODE 
+AND MR.`SUBJECTCODE`= TR_R.`SUBJECTCODE` 
+AND MR.SESSCODE = TRM.SESSCODE 
+AND MR.SEMCODE = TRM.TRSEMCODE 
+AND MR.STUDENTTYPE ='D' 
+#AND MR.RESULTTYPE =TRM.RESULTTYPE 
+
+   LEFT JOIN `UNI_SYS_MZU`.`STUDENTPHOTOSIGN` AS PS
+          ON TPSD.STUDENTCODE = PS.STUDENTCODE
+          
+LEFT JOIN `UNI_SYS_MZU`.`DIPARTMENTMST` AS DPT
+ON  V.DIPARTMENTCODE = DPT.DIPARTMENTCODE
+
+LEFT JOIN `SUBJECTBILANG_MZU`.`TRPASSOUTDATATABLE` AS TP
+ON TP.ROLL_NO = TPSD.EXAMROLLNUMBER
+
+LEFT JOIN `SUBJECTBILANG_MZU`.`MZU_SEC_VAC120` AS VAC
+ON TPSD.`EXAMROLLNUMBER`=VAC.`Roll_No`
+AND TRM.SESSCODE=  VAC.`sesscode`
+AND TRM.TRSEMCODE= VAC.`semester`
+AND VAC.`Paper_code`="VAC120"
+
+LEFT JOIN `SUBJECTBILANG_MZU`.`MZU_SEC_VAC120` AS SEC
+ON TPSD.`EXAMROLLNUMBER`=SEC.`Roll_No`
+AND TRM.SESSCODE=  SEC.`sesscode`
+AND TRM.TRSEMCODE= SEC.`semester`
+AND SEC.`Paper_code`="SEC"
+
+
+WHERE TRM.COURSECODE =  $P{course_name} 
+AND TRM.SESSCODE= $P{SESSCODE}  
+AND TRM.TRSEMCODE=   $P{sem_code}
+AND TRM.RESULTTYPE =  $P{RESULTTYPE} 
+AND TRM.STUDENTTYPE = $P{STUDENTTYPE} 
+AND IF("1" =  $P{INSTCODE}  ,TPSD.INSTCODE !="",TPSD.INSTCODE= $P{INSTCODE} )
+ AND IF("NA" =  $P{ROLLNO}  ,TPSD.EXAMROLLNUMBER !="",TPSD.EXAMROLLNUMBER= $P{ROLLNO} )
+#AND  TPSD.RESULT IN ("V","U","W","T") 
+AND (SBM.UNITNAME!="" OR SBM.UNITNAME IS NOT NULL) 
+#AND TRM.MARKSCARD='BARCH_Gradesheet'
+AND TPSD.deleted_at IS NULL
+GROUP BY TRM.COURSECODE,TPSD.INSTCODE,TR_R.SEMCODE,TR_R.STUDENTCODE,TR_R.SUBJECTCODE
+ORDER BY V.ROLLNO,TPSD.STUDENTNAME,SM.SUBJECTCATEGORY,SPM.SEQUENCE,FIELD(SBM.`TYPE`,"T","P","S"),SBM.SUBJECTCODE]]>
+	</queryString>
+	<field name="WITHHELD_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="WITHHELD_TYPE"/>
+	</field>
+	<field name="STUDENTTYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTTYPE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="FINALSEM" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="FINALSEM"/>
+	</field>
+	<field name="TRCREDIT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="TRCREDIT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="RESULT_SEM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM1"/>
+	</field>
+	<field name="RESULT_SEM2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM2"/>
+	</field>
+	<field name="RESULT_SEM3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM3"/>
+	</field>
+	<field name="RESULT_SEM4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM4"/>
+	</field>
+	<field name="RESULT_SEM5" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM5"/>
+	</field>
+	<field name="RESULT_SEM6" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM6"/>
+	</field>
+	<field name="RESULT_SEM7" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM7"/>
+	</field>
+	<field name="RESULT_SEM8" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT_SEM8"/>
+	</field>
+	<field name="OBT_SEM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM1"/>
+	</field>
+	<field name="OBT_SEM2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM2"/>
+	</field>
+	<field name="OBT_SEM3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM3"/>
+	</field>
+	<field name="OBT_SEM4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM4"/>
+	</field>
+	<field name="OBT_SEM5" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM5"/>
+	</field>
+	<field name="OBT_SEM6" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM6"/>
+	</field>
+	<field name="OBT_SEM7" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM7"/>
+	</field>
+	<field name="OBT_SEM8" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="OBT_SEM8"/>
+	</field>
+	<field name="TOT_SEM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM1"/>
+	</field>
+	<field name="TOT_SEM2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM2"/>
+	</field>
+	<field name="TOT_SEM3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM3"/>
+	</field>
+	<field name="TOT_SEM4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM4"/>
+	</field>
+	<field name="TOT_SEM5" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM5"/>
+	</field>
+	<field name="TOT_SEM6" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM6"/>
+	</field>
+	<field name="TOT_SEM7" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM7"/>
+	</field>
+	<field name="TOT_SEM8" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOT_SEM8"/>
+	</field>
+	<field name="CRDT_SEM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM1"/>
+	</field>
+	<field name="CRDT_SEM2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM2"/>
+	</field>
+	<field name="CRDT_SEM3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM3"/>
+	</field>
+	<field name="CRDT_SEM4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM4"/>
+	</field>
+	<field name="CRDT_SEM5" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM5"/>
+	</field>
+	<field name="CRDT_SEM6" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM6"/>
+	</field>
+	<field name="CRDT_SEM7" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM7"/>
+	</field>
+	<field name="CRDT_SEM8" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRDT_SEM8"/>
+	</field>
+	<field name="SGPA_SEM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM1"/>
+	</field>
+	<field name="SGPA_SEM2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM2"/>
+	</field>
+	<field name="SGPA_SEM3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM3"/>
+	</field>
+	<field name="SGPA_SEM4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM4"/>
+	</field>
+	<field name="SGPA_SEM5" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM5"/>
+	</field>
+	<field name="SGPA_SEM6" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM6"/>
+	</field>
+	<field name="SGPA_SEM7" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM7"/>
+	</field>
+	<field name="SGPA_SEM8" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA_SEM8"/>
+	</field>
+	<field name="STTYPE_SEM1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM1"/>
+	</field>
+	<field name="STTYPE_SEM2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM2"/>
+	</field>
+	<field name="STTYPE_SEM3" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM3"/>
+	</field>
+	<field name="STTYPE_SEM4" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM4"/>
+	</field>
+	<field name="STTYPE_SEM5" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM5"/>
+	</field>
+	<field name="STTYPE_SEM6" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM6"/>
+	</field>
+	<field name="STTYPE_SEM7" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM7"/>
+	</field>
+	<field name="STTYPE_SEM8" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STTYPE_SEM8"/>
+	</field>
+	<field name="FINAL_TOT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_TOT"/>
+	</field>
+	<field name="FINAL_OBT" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_OBT"/>
+	</field>
+	<field name="FINAL_RES" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_RES"/>
+	</field>
+	<field name="FINAL_PER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_PER"/>
+	</field>
+	<field name="FINAL_DIV" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_DIV"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPASSOUTDATATABLE"/>
+	</field>
+	<field name="CGPA_PER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CGPA_PER"/>
+	</field>
+	<field name="SUBJECTCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJECTCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="DISABLITY_TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DISABLITY_TYPE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="GRADE_LOGIC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GRADE_LOGIC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="SUBJECTCATEGORY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJECTCATEGORY"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM"/>
+	</field>
+	<field name="SEMTAGG" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="SEMTAGG"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SEMESTERMST"/>
+	</field>
+	<field name="SUBHEADER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBHEADER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="AB_SUB" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="AB_SUB"/>
+		<fieldDescription><![CDATA[java.lang.Integer]]></fieldDescription>
+	</field>
+	<field name="ABC_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ABC_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="MAJOR_PAPER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MAJOR_PAPER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="COURSEDISPLAYTYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COURSEDISPLAYTYPE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="COURSEMST"/>
+	</field>
+	<field name="d" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="d"/>
+	</field>
+	<field name="PUBLICATIONDATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PUBLICATIONDATE"/>
+	</field>
+	<field name="DIPARTMENTSNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DIPARTMENTSNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="DIPARTMENTMST"/>
+	</field>
+	<field name="TRCOURSECODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TRCOURSECODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="STUDENTCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COURSECODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COURSECODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="SESSCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SESSCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="TRSEMCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TRSEMCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="SEMESTER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SEMESTER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SEMESTERMST"/>
+	</field>
+	<field name="COLUMN_78" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="TRCREDIT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COLUMN_79" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="GURDIANSRES_PS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GURDIANSRES_PS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="ROLLNO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ROLLNO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="EXAMROLLNUMBER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EXAMROLLNUMBER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="SUBQCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBQCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="SUBJDECS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJDECS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="DIPARTMENTNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="DIPARTMENTNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="YEAROFADMISION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="YEAROFADMISION"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="VIEW_STUDENTENROLLED"/>
+	</field>
+	<field name="COURSETOTALCREDIT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COURSETOTALCREDIT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COLUMN_88" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TRCOURSECODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COLUMN_89" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EXAMROLLNUMBER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="PARMANETROLLNUMBER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PARMANETROLLNUMBER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="STUDENTNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COURSENAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COURSENAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="StreamCode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="StreamCode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="COURSEMST"/>
+	</field>
+	<field name="RESULT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="RESULT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="SRESULT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SRESULT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="COLLEGECODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COLLEGECODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COLLEGENAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COLLEGENAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="CTOTAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CTOTAL"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="GRACE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GRACE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="CREDIT_INT" class="java.math.BigInteger">
+		<property name="com.jaspersoft.studio.field.label" value="CREDIT_INT"/>
+	</field>
+	<field name="CR_POINT" class="java.math.BigInteger">
+		<property name="com.jaspersoft.studio.field.label" value="CR_POINT"/>
+	</field>
+	<field name="AGE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="AGE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="GRADE_POINT" class="java.math.BigInteger">
+		<property name="com.jaspersoft.studio.field.label" value="GRADE_POINT"/>
+	</field>
+	<field name="SUBJTYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJTYPE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="MCNUMBER" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MCNUMBER"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="MCNUMBERSERIES" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MCNUMBERSERIES"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="TYPE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TYPE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="MARK_SEC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MARK_SEC"/>
+	</field>
+	<field name="CMAXMARK" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CMAXMARK"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="GRADE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GRADE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="CREDIT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CREDIT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="COURSE_TYPE_SUBJECT_SCHEMA"/>
+	</field>
+	<field name="CRPOINT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CRPOINT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="COLUMN_113" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="AGE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="STOTAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STOTAL"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="TOTAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TOTAL"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENT_ROWS"/>
+	</field>
+	<field name="GPA" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="GPA"/>
+	</field>
+	<field name="THEOTOTAL" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="THEOTOTAL"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="GRAND_TOT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GRAND_TOT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="GRAND_TOT_MAX" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="GRAND_TOT_MAX"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="THEOOBT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="THEOOBT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRPRINTSTUDENTDETAILS"/>
+	</field>
+	<field name="COLUMN_121" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COURSECODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="COLUMN_122" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJDECS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="SUBJECTPARTCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJECTPARTCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="COLUMN_124" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJDECS"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="SUBJECTUCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJECTUCODE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="FINAL_RESULT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FINAL_RESULT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="STOREPICK"/>
+	</field>
+	<field name="SGPA" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="SGPA"/>
+	</field>
+	<field name="REPEATER_SUB" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="REPEATER_SUB"/>
+	</field>
+	<field name="THEORY_COUNT" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="THEORY_COUNT"/>
+	</field>
+	<field name="SPHOTO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SPHOTO"/>
+	</field>
+	<field name="SIG" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SIG"/>
+	</field>
+	<field name="PRAC_COUNT" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="PRAC_COUNT"/>
+	</field>
+	<field name="SESS_COUNT" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="SESS_COUNT"/>
+	</field>
+	<field name="PUB_DT" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="PUB_DT"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER_PART"/>
+	</field>
+	<field name="issue_dt" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="issue_dt"/>
+	</field>
+	<field name="kk" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="kk"/>
+	</field>
+	<field name="Name_of_Course_Under_SEC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Name_of_Course_Under_SEC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="MZU_SEC_VAC120"/>
+	</field>
+	<field name="Paper_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Paper_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="MZU_SEC_VAC120"/>
+	</field>
+	<field name="SECpap" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SECpap"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="MZU_SEC_VAC120"/>
+	</field>
+	<field name="SECcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SECcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="MZU_SEC_VAC120"/>
+	</field>
+	<field name="EXAM" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EXAM"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="Decr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="Decr"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="TRCOURSENAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TRCOURSENAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="TRROOTMASTER"/>
+	</field>
+	<field name="INSTSNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="INSTSNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="INSTMST"/>
+	</field>
+	<field name="INSTNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="INSTNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="INSTMST"/>
+	</field>
+	<field name="CITY" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CITY"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="INSTMST"/>
+	</field>
+	<field name="SEMNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SEMNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SEMESTERMST"/>
+	</field>
+	<field name="SEMDISPNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SEMDISPNAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SEMESTERMST"/>
+	</field>
+	<field name="COLUMN_149" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBJTYPE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SUBJECTMSTEVENSEM_PART"/>
+	</field>
+	<field name="NUMERIC" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="NUMERIC"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="SEMESTERMST"/>
+	</field>
+	<variable name="tot_cr" class="java.lang.Double" resetType="Group" resetGroup="stud_brk" calculation="Sum">
+		<variableExpression><![CDATA[DOUBLE_VALUE($F{CREDIT}.equals("")?"0":$F{CREDIT})]]></variableExpression>
+	</variable>
+	<variable name="tot_GP" class="java.lang.Integer" resetType="Group" resetGroup="stud_brk" calculation="Sum">
+		<variableExpression><![CDATA[$F{GRADE_POINT}]]></variableExpression>
+	</variable>
+	<variable name="cr_pnt" class="java.lang.Integer" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{CR_POINT}]]></variableExpression>
+	</variable>
+	<group name="stud_brk" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{STUDENTCODE}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="51">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<textField>
+					<reportElement x="434" y="33" width="131" height="18" uuid="e8a3a653-c9f8-48b6-b205-64139b0a43de">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Result : "+($F{RESULT}.equals("T")?"FAIL":$F{FINAL_RESULT})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="9" y="33" width="103" height="18" uuid="2a46341a-9131-4f66-ad93-0ad9e7845c70">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Total Credit : "+SUBSTITUTE(($F{TRCREDIT}).toString(),".0","")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="306" y="33" width="110" height="18" uuid="f4524deb-5d1e-4596-9483-1eba7e4a6b2e">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["SGPA : "+($F{FINAL_RESULT}.equals("FAIL")||$F{RESULT}.equals("T")?" -- ":$F{SGPA})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="9" y="3" width="387" height="41" uuid="e531cce8-8831-4362-8bfd-0b137693b961">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement verticalAlignment="Middle" markup="html">
+						<font isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["AB indicates ABSENT"+
+($F{RESULT}.equals("F")&&(!$F{WITHHELD_TYPE}.equals(""))?"<br><b>Disqualified Due to Unfair Means</b>":"")+
+($F{FINALSEM}==1?"<br>(R) indicates Repeater":(!$F{STUDENTTYPE}.equals("R")?"<br>(R) indicates Repeated paper(s)":""))]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="106" y="33" width="187" height="18" uuid="46a43739-d692-4c0a-b465-e9c5619785a5">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Credit Points Earned : "+($F{FINAL_RESULT}.equals("FAIL")||$F{RESULT}.equals("T")?" -- ":$F{COURSETOTALCREDIT})]]></textFieldExpression>
+				</textField>
+			</band>
+			<band height="125">
+				<printWhenExpression><![CDATA[$F{FINALSEM}==1]]></printWhenExpression>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="10" y="32" width="98" height="26" isPrintWhenDetailOverflows="true" uuid="2f5f4fd8-3601-4590-bbfd-12e9c03e3e5a">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Semester"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="108" y="58" width="115" height="19" isPrintWhenDetailOverflows="true" uuid="a50c7312-5607-4534-9040-5f66c76ab75a">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM1}.equals("P")?$F{SGPA_SEM1}:"--"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="10" y="58" width="98" height="19" isPrintWhenDetailOverflows="true" uuid="ebab48d1-b6f5-4493-99da-42bcca3c7d7d">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["SGPA"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="108" y="32" width="115" height="26" isPrintWhenDetailOverflows="true" uuid="a99a3502-efc9-4240-a614-a8be0b2de99a">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["I"+($F{STTYPE_SEM1}.equals("D")?" (R)":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="223" y="32" width="114" height="26" isPrintWhenDetailOverflows="true" uuid="68823c75-d64b-45ad-8452-ddc809277126">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["II"+($F{STTYPE_SEM2}.equals("D")?" (R)":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="337" y="32" width="115" height="26" isPrintWhenDetailOverflows="true" uuid="1250e337-76bd-4fbc-871f-af6060ac1f1e">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["III"+($F{STTYPE_SEM3}.equals("D")?" (R)":"")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="452" y="32" width="115" height="26" isPrintWhenDetailOverflows="true" uuid="3a1edfa0-0f5f-4669-ac6a-65a7b353c09c">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["IV"+($F{STTYPE_SEM4}.equals("D")?" (R)":"")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="11" y="-7" width="552" height="45" uuid="ced25695-1210-4e55-87cd-2ef50c4dec22">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="14" isBold="true" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Summary of SGPA]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="223" y="58" width="114" height="19" isPrintWhenDetailOverflows="true" uuid="ab91d1ec-29f2-47e4-be62-2d7a2757d723">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM2}.equals("P")?$F{SGPA_SEM2}:"--"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="337" y="58" width="115" height="19" isPrintWhenDetailOverflows="true" uuid="0a539b07-ecc6-409e-b7b3-12ae4a398472">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM3}.equals("P")?$F{SGPA_SEM3}:"--"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="452" y="58" width="115" height="19" isPrintWhenDetailOverflows="true" uuid="dd8ea9ca-f90c-4353-b6a7-89a9b53d8d08">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM4}.equals("P")?$F{SGPA_SEM4}:"--"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="10" y="107" width="185" height="18" uuid="9dd22726-9521-44d4-b2eb-93a79fc1cae4">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Final Result : "+($F{RESULT}.equals("T")?"FAIL":$F{FINAL_RES})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="156" y="107" width="240" height="18" uuid="7f843d15-8d11-4bb4-9058-36d7cacbfb92">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CGPA : "+($F{FINAL_RES}.equals("PASS")?$F{CGPA_PER}:"--")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="280" y="107" width="286" height="18" uuid="45ca1bc0-33d6-4dfa-9dd1-ce491c8dd6a3">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Division : "+($F{FINAL_RES}.equals("PASS")?$F{FINAL_DIV}:"--")]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="452" y="77" width="115" height="19" isPrintWhenDetailOverflows="true" uuid="0563018b-d455-4202-ac3e-51f24589fe7f">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM4}.equals("P")?"PASS":"FAIL"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="108" y="77" width="115" height="19" isPrintWhenDetailOverflows="true" uuid="e4468172-fb12-43a4-b89b-11d2aa3260b0">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM1}.equals("P")?"PASS":"FAIL"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="337" y="77" width="115" height="19" isPrintWhenDetailOverflows="true" uuid="6bd3b55b-f020-4939-a318-11091d4ec5bc">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM3}.equals("P")?"PASS":"FAIL"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#.###;(#.###)">
+					<reportElement stretchType="RelativeToTallestObject" x="223" y="77" width="114" height="19" isPrintWhenDetailOverflows="true" uuid="370fc9f8-1917-4407-8300-59e0a8cb5b0d">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RESULT_SEM2}.equals("P")?"PASS":"FAIL"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement stretchType="RelativeToTallestObject" x="10" y="77" width="98" height="19" isPrintWhenDetailOverflows="true" uuid="15087853-b9d1-4906-aeea-b7fcb620da2d">
+						<property name="com.jaspersoft.studio.unit.x" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<box>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="11" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["RESULT"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="254" y="107" width="142" height="18" uuid="5cb5041b-14c9-4387-8936-50a07ce18496">
+						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+						<printWhenExpression><![CDATA[1==0]]></printWhenExpression>
+					</reportElement>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["PERCENTAGE : "+($F{FINAL_RES}.equals("PASS")?SUBSTITUTE($F{FINAL_PER},".00",""):"--")]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="273" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="67" y="207" width="256" height="18" uuid="bc0eb294-538b-4907-b916-6360ae688b8a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEMESTER}.replaceAll("Semester - ","")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="67" y="158" width="256" height="18" uuid="c5fe7540-161c-414e-a759-3e15d0c9a712">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{STUDENTNAME}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="207" width="137" height="18" uuid="e24de6ce-276f-41bb-925c-8315048bc616">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Semester]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="158" width="167" height="18" uuid="8b80b898-6ff1-48b5-b07e-26e91ce6fd3e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="235" width="137" height="18" uuid="ceb008f6-54e0-4f59-abe6-8b51313e37fc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[College]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="158" width="10" height="18" uuid="2233ee3b-14d6-4ab0-92dc-42df459bba73">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="235" width="10" height="18" uuid="e5a9f7cb-13ff-410f-9b88-5f52340979f4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="207" width="10" height="18" uuid="0091f4a3-0396-4231-8a7d-47a3fa99214b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="67" y="235" width="501" height="31" isPrintWhenDetailOverflows="true" uuid="ddc90b73-e14e-45e8-ae8e-ec43f834f0bb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COLLEGENAME}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="67" y="183" width="255" height="18" uuid="f4fc1794-46dd-4ad4-ad36-625407bc75ff">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EXAMROLLNUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="183" width="137" height="18" uuid="8c317fca-6ac0-4172-9efb-4748a0ec044b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Roll No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="183" width="10" height="18" uuid="57ce813d-a91d-4f66-a59d-6858c46dca25">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="122" y="95" width="330" height="29" uuid="ff79245e-7dab-4297-a017-0c8f4dffee8e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["GRADE CARD"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="469" y="158" width="145" height="18" uuid="299614aa-f135-4d9d-a016-ab03eefa7663">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GURDIANSRES_PS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="469" y="183" width="144" height="18" uuid="fca87451-9b7e-45eb-8dfd-3fa4b1540b1d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUBHEADER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="323" y="183" width="166" height="18" uuid="2c6f4703-6485-41a7-a4fc-e6caacb7f907">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Year of Examination ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="461" y="183" width="10" height="18" uuid="524cd4f7-310d-4203-825b-85dbcb614e7b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="323" y="207" width="166" height="18" uuid="a6883d6f-2071-4c60-a5b1-d62bedbce0b6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date of Result Declaration]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="469" y="207" width="145" height="18" uuid="4db8c8d1-15d2-4a99-bf2a-258010a6bdc3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUBLICATIONDATE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="323" y="158" width="166" height="18" uuid="3b841b4c-a156-48a3-a2b0-5dfe61edd5be">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Registration No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="461" y="207" width="10" height="18" uuid="88550ff3-0507-4870-9eec-d97e434307bc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="461" y="158" width="10" height="18" uuid="89328b58-7bf5-4f5b-a96d-116da775a7ec">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="118" width="575" height="26" isPrintWhenDetailOverflows="true" uuid="f5dd5d02-25eb-45af-b816-09978e5e0e30">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="12" isBold="true"/>
+					<paragraph lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[UPPER($F{COURSENAME})]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" vAlign="Middle" onErrorType="Blank">
+				<reportElement stretchType="RelativeToTallestObject" x="490" y="49" width="82" height="69" uuid="7903837d-abbf-4ec1-a5d3-0e12573b6542"/>
+				<imageExpression><![CDATA[$F{SPHOTO}]]></imageExpression>
+			</image>
+			<image hAlign="Center">
+				<reportElement x="15" y="1" width="544" height="97" uuid="c6d1cd9f-e78f-4b3c-baa4-eb7c64e5cba9"/>
+				<imageExpression><![CDATA["https://"+$P{s3path}+"/logo/MZU/mizoram_university_logo.png"]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="90" y="255" width="285" height="18" isPrintWhenDetailOverflows="true" uuid="5bc8d141-6b80-4412-bb8c-0dd0ffb9b0a4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{COURSECODE}.equals("C000019") || $F{COURSECODE}.equals("C000018")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAJOR_PAPER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="255" width="10" height="18" uuid="9a3a452f-2818-4cee-80f7-1b9b38c2dade">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<printWhenExpression><![CDATA[$F{COURSECODE}.equals("C000019") || $F{COURSECODE}.equals("C000018")]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="255" width="137" height="18" uuid="6bf81280-2646-4599-95c8-5d32f72a2af0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<printWhenExpression><![CDATA[$F{COURSECODE}.equals("C000019") || $F{COURSECODE}.equals("C000018")]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Specialization ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="136" width="575" height="26" isPrintWhenDetailOverflows="true" uuid="8091af77-4f08-4d96-822c-2ad864440521">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="11" isBold="true"/>
+					<paragraph lineSpacingSize="1.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COURSECODE}.equals("C000015")?$F{DISABLITY_TYPE}:""]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="43" splitType="Prevent">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.layout"/>
+			<staticText>
+				<reportElement x="100" y="7" width="260" height="36" uuid="b6af2a8d-0045-494c-914a-fe6df164f27d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Course Title]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="7" width="90" height="36" uuid="acbe06b9-4a36-44d5-a942-70fedcb309dd">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Course Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="7" width="52" height="36" uuid="85f7c1b3-6122-4c49-b882-e0e73f162b6d">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grade 
+Value]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="410" y="7" width="55" height="36" uuid="b17207b3-3bf5-4905-8edf-73db236b805f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="7" width="50" height="36" uuid="a4ae8f6a-99c5-4f0d-b0b5-24e698ecc8a8">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Credit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="517" y="7" width="50" height="36" uuid="bd70725d-3989-40dc-b4ce-1d2f0b901559">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Credit
+Point]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24">
+			<printWhenExpression><![CDATA[!($F{SUBJECTCODE}.equals("SU00000912") ||$F{SUBJECTCATEGORY}.equals("E"))]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="410" y="0" width="55" height="24" isPrintWhenDetailOverflows="true" uuid="d7865db9-0876-4c8a-95c4-4bd7e024d1b8">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AB_SUB}>0?"AB":$F{GRADE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="52" height="24" isPrintWhenDetailOverflows="true" uuid="e0adb89d-7d74-4c01-854b-fdfd3b00abf1">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CR_POINT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="10" y="0" width="90" height="24" isPrintWhenDetailOverflows="true" uuid="cea00192-16f9-41a9-a837-380f54e232ce">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SUBJECTUCODE}+($F{SUBJECTCODE}.equals($F{REPEATER_SUB})?"(R)":"")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="50" height="24" isPrintWhenDetailOverflows="true" uuid="3681319d-a662-4ff7-9a26-a68411231369"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[SUBSTITUTE($F{CREDIT},".0","")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="517" y="0" width="50" height="24" isPrintWhenDetailOverflows="true" uuid="8b4bcb3d-861d-4acc-a888-fe09fdfc5cf4"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AGE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="260" height="24" isPrintWhenDetailOverflows="true" uuid="ce02f3ea-8192-4a59-988f-03e0e20c4b56">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="106" y="0" width="254" height="24" isPrintWhenDetailOverflows="true" uuid="dfc6a3a5-92f8-439c-bf99-ed85b9011c00"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(($F{SUBJECTUCODE}.contains( "VAC" ))?
+($F{Name_of_Course_Under_SEC}==null?$F{SUBJDECS}:$F{Name_of_Course_Under_SEC}):
+($F{SUBJECTUCODE}.contains( "SEC" ))?
+($F{SECcode}==null?$F{SUBJDECS}:$F{SECpap}):$F{SUBJDECS})+"\t"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="36">
+			<printWhenExpression><![CDATA[$F{SUBJECTCODE}.equals("SU00000912")]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="410" y="0" width="55" height="36" isPrintWhenDetailOverflows="true" uuid="d5a9a374-1f5c-46b4-8362-c2f175a9490b">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AB_SUB}>0?"AB":$F{GRADE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="465" y="0" width="52" height="36" isPrintWhenDetailOverflows="true" uuid="7f3126d4-10b4-4397-a89d-ba22a59f1ae4">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{CR_POINT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="10" y="0" width="90" height="18" isPrintWhenDetailOverflows="true" uuid="5e0cec9a-852c-4533-bed0-1e4e2c2ea27c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SUBJECTUCODE}.split("/")[0]+($F{SUBJECTCODE}.equals($F{REPEATER_SUB})?"(R)":"")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="360" y="0" width="50" height="36" isPrintWhenDetailOverflows="true" uuid="8cb4043a-75c9-4567-bc95-0420ec052e9a"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[SUBSTITUTE($F{CREDIT},".0","")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="517" y="0" width="50" height="36" isPrintWhenDetailOverflows="true" uuid="507b4b90-dad6-471b-91d5-a5412c46a0df"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{AGE}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="260" height="36" isPrintWhenDetailOverflows="true" uuid="47d87eeb-d900-4506-9d9b-0fd72bef6601">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="106" y="0" width="254" height="36" isPrintWhenDetailOverflows="true" uuid="5656b7f3-6b86-400c-8087-454a020cec95"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[(($F{SUBJECTUCODE}.contains( "VAC" ))?
+($F{Name_of_Course_Under_SEC}==null?$F{SUBJDECS}:$F{Name_of_Course_Under_SEC}):
+($F{SUBJECTUCODE}.contains( "SEC" ))?
+($F{SECcode}==null?$F{SUBJDECS}:$F{SECpap}):$F{SUBJDECS})+"\t"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="10" y="18" width="90" height="18" isPrintWhenDetailOverflows="true" uuid="26fd5b3f-a8e0-4873-9cf4-f2062147a4ee">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SUBJECTUCODE}.split("/")[1]+($F{SUBJECTCODE}.equals($F{REPEATER_SUB})?"(R)":"")]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="24">
+			<printWhenExpression><![CDATA[$F{SUBJECTCATEGORY}.equals("E")]]></printWhenExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="10" y="0" width="90" height="24" isPrintWhenDetailOverflows="true" uuid="d73417b2-ff93-48c1-8796-0e3359487d1c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{SUBJECTUCODE}+($F{SUBJECTCODE}.equals($F{REPEATER_SUB})?"(R)":"")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="0" width="260" height="24" isPrintWhenDetailOverflows="true" uuid="27431191-69d8-479a-be50-535c5f70fdf7">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="106" y="0" width="461" height="24" isPrintWhenDetailOverflows="true" uuid="82896972-6313-43e0-b0b3-8997618f0fe5"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA[((($F{SUBJECTUCODE}.contains( "VAC" ))?
+($F{Name_of_Course_Under_SEC}==null?$F{SUBJDECS}:$F{Name_of_Course_Under_SEC}):
+($F{SUBJECTUCODE}.contains( "SEC" ))?
+($F{SECcode}==null?$F{SUBJDECS}:$F{SECpap}):$F{SUBJDECS})+" : ")+("<style isBold='true'>Grade "+$F{GRADE}+"</style>")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="107">
+			<componentElement>
+				<reportElement x="21" y="0" width="107" height="93" uuid="3215b5f1-d383-4e02-915b-6c854f087e6d"/>
+				<jr:QRCode xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA["RollNo="+$F{EXAMROLLNUMBER}+"; StudName :"+$F{STUDENTNAME}+"; Sem. :"+$F{SEMESTER}+"; Year of Examination : "+(ISEVEN($F{SEMTAGG})?("Even, "+RIGHT($F{SUBHEADER},4)):("Odd, "+RIGHT($F{SUBHEADER},4)))+" Result :"+($F{RESULT}.equals("T")?"FAIL":$F{FINAL_RESULT})]]></jr:codeExpression>
+				</jr:QRCode>
+			</componentElement>
+			<staticText>
+				<reportElement x="360" y="71" width="205" height="36" uuid="3fd00ee5-28e5-465b-9347-44f4843537b6">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assistant Registrar
+(Examinations)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="85" width="162" height="19" uuid="c432b2b7-15e8-46ef-9180-6312e14642c0">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date of Issue : ]]></text>
+			</staticText>
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="114" y="85" width="160" height="19" uuid="1135afb3-5e00-4b8a-a08a-a9a10351951b"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{issue_dt}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

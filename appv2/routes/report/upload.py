@@ -35,19 +35,26 @@ def upload(request: Request):
 
 
 @router.post('/upload')
-async def upload(request: Request, reportname: str = Form(...), report_type: str = Form(...),  samplefile: UploadFile = File(...), pagesize: str = Form(...), orientation: str = Form(...), db: Session = Depends(conn)):
+async def upload(request: Request, correction: str =  Form(...), reportname: str = Form(...), report_type: str = Form(...),  samplefile: UploadFile = File(...), pagesize: str = Form(...), orientation: str = Form(...), db: Session = Depends(conn)):
 
     filename = samplefile.filename
     name, ext = os.path.splitext(samplefile.filename)
-    pdf_bytes = await samplefile.read()
+    report_bytes = await samplefile.read()
 
-
-    image_path = pdfToImg(ext, pdf_bytes, reportname, db)
+    # if correction == 'yes':
+        
+    #     return RedirectResponse(
+    #         url='/report/correction',
+    #         status_code=303
+    #     )
+        
+    image_path = pdfToImg(ext, report_bytes, reportname, db)
 
     new_report = Upload(displayname=reportname, name=filename, type=report_type, size=pagesize, pagedimention=orientation, path=image_path, created_at=datetime.now(timezone.utc))
     db.add(new_report)
     db.commit()
 
+    
 
     return RedirectResponse(
         url='/report/view',

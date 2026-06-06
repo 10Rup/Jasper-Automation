@@ -16,3 +16,15 @@ class Upload(Base):
     pagedimention = Column(String)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
+
+
+
+
+class Process(Base):
+    __tablename__ = 'processimages'
+    id = Column(Integer, primary_key=True, index=True)
+    upload_id = Column(Integer, ForeignKey('uploads.id'), nullable=False)
+    bandname = Column(String, nullable=False)
+    path = Column(String, default="")
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    deleted_at = Column(DateTime, nullable=True)
