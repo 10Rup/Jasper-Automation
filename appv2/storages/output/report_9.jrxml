@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
+```xml
+<pageHeader>
+  <band height="80">
+    <staticText>
+      <reportElement x="0" y="10" width="555" height="40"/>
+      <textElement textAlignment="Left" verticalAlignment="Middle">
+        <font size="36" isItalic="true" fontName="SansSerif"/>
+      </textElement>
+      <text><![CDATA[Sample PDF]]></text>
+    </staticText>
+    <staticText>
+      <reportElement x="0" y="50" width="555" height="25"/>
+      <textElement textAlignment="Left" verticalAlignment="Middle">
+        <font size="18" isItalic="true" fontName="SansSerif"/>
+      </textElement>
+      <text><![CDATA[This is a simple PDF file. Fun fun fun.]]></text>
+    </staticText>
+  </band>
+</pageHeader>
+```
+```xml
+<columnHeader>
+  <band height="200">
+    <staticText>
+      <reportElement x="20" y="10" width="515" height="180"/>
+      <textElement textAlignment="Justified" verticalAlignment="Top">
+        <font size="12" fontName="SansSerif"/>
+      </textElement>
+      <text><![CDATA[Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus facilisis odio sed mi. Curabitur suscipit. Nullam vel nisi. Etiam semper ipsum ut lectus. Proin aliquam, erat eget pharetra commodo, eros mi condimentum quam, sed commodo justo quam ut velit. Integer a erat. Cras laoreet ligula cursus enim. Aenean scelerisque velit et tellus. Vestibulum dictum aliquet sem. Nulla facilisi. Vestibulum accumsan ante vitae elit. Nulla erat dolor, blandit in, rutrum quis, semper pulvinar, enim. Nullam varius congue risus. Vivamus sollicitudin, metus ut interdum eleifend, nisi tellus pellentesque elit, tristique accumsan eros quam et risus. Suspendisse libero odio, mattis sit amet, aliquet eget, hendrerit vel, nulla. Sed vitae augue. Aliquam erat volutpat. Aliquam feugiat vulputate nisl. Suspendisse quis nulla pretium ante pretium mollis. Proin velit ligula, sagittis at, egestas a, pulvinar quis, nisl.]]></text>
+    </staticText>
+  </band>
+</columnHeader>
+```
+```xml
+<detail>
+  <band height="320">
+    <staticText>
+      <reportElement x="20" y="10" width="515" height="140"/>
+      <textElement textAlignment="Justified" verticalAlignment="Top">
+        <font size="12" fontName="SansSerif"/>
+      </textElement>
+      <text><![CDATA[Pellentesque sit amet lectus. Praesent pulvinar, nunc quis iaculis sagittis, justo quam lobortis tortor, sed vestibulum dui metus venenatis est. Nunc cursus ligula. Nulla facilisi. Phasellus ullamcorper consectetuer ante. Duis tincidunt, urna id condimentum luctus, nibh ante vulputate sapien, id sagittis massa orci ut enim. Pellentesque vestibulum convallis sem. Nulla consequat quam ut nisl. Nullam est. Curabitur tincidunt dapibus lorem. Proin velit turpis, scelerisque sit amet, iaculis nec, rhoncus ac, ipsum. Phasellus lorem arcu, feugiat eu, gravida eu, consequat molestie, ipsum. Nullam vel est ut ipsum volutpat feugiat. Aenean pellentesque.]]></text>
+    </staticText>
+    <staticText>
+      <reportElement x="20" y="160" width="515" height="150"/>
+      <textElement textAlignment="Justified" verticalAlignment="Top">
+        <font size="12" fontName="SansSerif"/>
+      </textElement>
+      <text><![CDATA[In mauris. Pellentesque dui nisi, iaculis eu, rhoncus in, venenatis ac, ante. Ut odio justo, scelerisque vel, facilisis non, commodo a, pede. Cras nec massa sit amet tortor volutpat varius. Donec lacinia, neque a luctus aliquet, pede massa imperdiet ante, at varius lorem pede sed sapien. Fusce erat nibh, aliquet in, eleifend eget, commodo eget, erat. Fusce consectetuer. Cras risus tortor, porttitor nec, tristique sed, convallis semper, eros. Fusce vulputate ipsum a mauris. Phasellus mollis. Curabitur sed urna. Aliquam nec sapien non nibh pulvinar convallis. Vivamus facilisis augue quis quam. Proin cursus aliquet metus. Suspendisse lacinia. Nulla at tellus ac turpis eleifend scelerisque. Maecenas a pede vitae enim commodo interdum. Donec odio. Sed sollicitudin dui vitae justo.]]></text>
+    </staticText>
+  </band>
+</detail>
+```
+```xml
+<pageFooter>
+  <band height="120">
+    <staticText>
+      <reportElement x="20" y="10" width="515" height="100"/>
+      <textElement textAlignment="Justified" verticalAlignment="Top">
+        <font size="12" fontName="SansSerif"/>
+      </textElement>
+      <text><![CDATA[Morbi elit nunc, facilisis a, mollis a, molestie at, lectus. Suspendisse eget mauris eu tellus molestie cursus. Duis ut magna at justo dignissim condimentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus varius. Ut sit amet diam suscipit mauris ornare aliquam. Sed varius. Duis arcu. Etiam tristique massa eget dui. Phasellus congue. Aenean est erat, tincidunt eget, venenatis quis, commodo at, quam.]]></text>
+    </staticText>
+  </band>
+</pageFooter>
+```
+</jasperReport>

@@ -1,0 +1,9 @@
+DATABASE_URL=postgresql://postgres:root@localhost:5432/jasperauto
+SECRET_KEY=your_secret_key_here
+APP_NAME=appv2
+UPLOAD_DIR=uploads/reports/
+OUTPUT_DIR=storages/output/
+REFERENCE_DIR=storages/reference/
+PROCESS_DIR=storages/upload/processed/
+API_KEY_GEMINIE=AIzaSyAxH-wuLTNnWIBxX23DXlIHqZpSYK5Aw1k
+API_KEY=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

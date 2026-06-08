@@ -14,7 +14,7 @@ from .models.model import Base
 
 
 from .routes import home
-from .routes.report import upload, view, process, correction
+from .routes.report import upload, view, process, correction, generate
 import os
 from dotenv import load_dotenv
 
@@ -35,7 +35,7 @@ templates = Jinja2Templates(f"{appname}/report/templates")
 
 # Mount static files
 app.mount("/uploadimg", StaticFiles(directory=f"{appname}/uploads/reports"), name="uploadimg")
-
+app.mount('/processed-img', StaticFiles(directory=f'{appname}/storages/upload/processed'), name='processed-img')
 
 # app routes
 app.include_router(home.router)
@@ -46,3 +46,4 @@ app.include_router(upload.router)
 app.include_router(view.router)
 app.include_router(process.router)
 app.include_router(correction.router)
+app.include_router(generate.router)

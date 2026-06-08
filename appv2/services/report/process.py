@@ -33,23 +33,29 @@ def saveRegion(id, name, path, regions):
 
         crop = img.crop((x1, y1, x2, y2))
 
-        crop_name = f'{r["band"]}-{id}.png'
-        crop_path = os.path.join(f'{name}', crop_name)
-        image_path = os.path.join(folder, crop_path)
-        crop.save(image_path)
+        # crop_name = f'{r["band"]}-{id}.png'
+        # crop_path = os.path.join(f'{name}', crop_name)
+        # image_path = os.path.join(folder, crop_path)
+        # crop.save(image_path)
 
-        print(f"Image Saved: {crop_path}")
+        crop_name = f'{r["band"]}-{id}.png'
+        crop_path = os.path.join(
+            name,
+            crop_name
+        )
+        
+        image_path = os.path.join(
+            appname,
+            processed,
+            name,
+            crop_name
+        )
+
+        os.makedirs(os.path.dirname(image_path), exist_ok=True)
+
+        crop.save(image_path)
+        print(f"Image Saved: {image_path}")
         results.append({"upload_id": id, "bandname": r["band"], "path": crop_path.replace("\\", "/")})
 
-    # with open(os.path.join(folder, "metadata.json"), "w") as f:
-    #     json.dump(results, f)
-
-    # return {
-    #     'status': 'success',
-    #     'redirect': f'/process/{file_id}/cropped/'
-    # }
-
-
-    # result = f"Saving regions for file_id: {id}, file_name: {name}, image_path: {path}, regions: {regions}"
 
     return results

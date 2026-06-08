@@ -13,7 +13,8 @@
                 <h2>{{ report.displayname }}</h2>
                 <img src="/uploadimg/{{ report.path }}" alt="{{ report.displayname }}" style="width: 100%; max-width: 600px; border-radius: 10px;">
                 <br>
-                <button><a href="/report/process/{{ report.id }}">Process Report</a></button>
+                <button><a href="/report/process/{{ report.id }}">Process Report</a></button><br>
+                <button><a href="/report/generate/{{ report.id }}">Generate Report</a></button>
                 <hr>
             </div>
         {% endfor %}

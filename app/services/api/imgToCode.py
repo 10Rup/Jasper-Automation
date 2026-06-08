@@ -124,3 +124,6 @@ def img_code(band,fields,config,imgPath, apiKey):
 
     code = response.text.strip()
     return code
+
+
+

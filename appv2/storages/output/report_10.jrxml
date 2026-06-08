@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
+<pageHeader>
+  <band height="180">
+    <textField>
+      <reportElement x="0" y="10" width="555" height="40"/>
+      <textElement textAlignment="Center" verticalAlignment="Middle">
+        <font size="28"/>
+      </textElement>
+      <textFieldExpression><![CDATA[$F{STUDENT_NAME}]]></textFieldExpression>
+    </textField>
+    <staticText>
+      <reportElement x="0" y="55" width="555" height="20"/>
+      <textElement textAlignment="Center" verticalAlignment="Middle">
+        <font size="11"/>
+      </textElement>
+      <text><![CDATA[214 Mitre Avenue, Park Hill, 3045  |  04501 123 456  |  haydensmith@email.com]]></text>
+    </staticText>
+    <staticText>
+      <reportElement x="0" y="80" width="555" height="30" forecolor="#666666"/>
+      <textElement textAlignment="Center" verticalAlignment="Middle">
+        <font size="9" isItalic="true"/>
+      </textElement>
+      <text><![CDATA[(Tip: Name, mobile number and email address are essential. Current address could be included especially if you live nearby. Ensure that it is clearly displayed)]]></text>
+    </staticText>
+    <staticText>
+      <reportElement x="0" y="115" width="555" height="25"/>
+      <textElement textAlignment="Left" verticalAlignment="Middle">
+        <font size="16"/>
+      </textElement>
+      <text><![CDATA[Career Objective]]></text>
+    </staticText>
+    <staticText>
+      <reportElement x="0" y="142" width="555" height="38"/>
+      <textElement textAlignment="Left" verticalAlignment="Top">
+        <font size="10"/>
+      </textElement>
+      <text><![CDATA[I am reliable hard working Year 11 student seeking casual or part-time customer service work in a sports retail environment. Having played soccer for nine years and a keen all-round sports enthusiast, I am looking to contribute knowledge and proven communications skills.]]></text>
+    </staticText>
+  </band>
+</pageHeader>
+</jasperReport>

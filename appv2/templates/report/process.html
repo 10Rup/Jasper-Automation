@@ -308,7 +308,7 @@
             })
             .then(res => res.json())
             .then(data => {
-                alert("All regions saved and synced successfully!");
+                alert(data.message);
                 // console.log(data)
                 if (data.redirect) {
                     // setting flag

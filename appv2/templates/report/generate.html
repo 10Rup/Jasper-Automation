@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Generation</title>
+</head>
+<body>
+    <div>
+        <h1>Welcome to the Report Generation Page</h1>
+        <div id="crops-list">
+            {% for report in reports %}
+            <div class="crop-container" id="container_{{report.id}}">
+                <p><b>(Target Band: <span style="color:blue;">{{report.bandname}}</span>)</b></p>
+
+                <div class="row-layout">
+                    <div class="left-col">
+                        <img src="/processed-img/{{report.path}}" 
+                            class="preview-img" 
+                            onclick="openPreview('/processed-img/{{report.path}}')"
+                            alt="Crop Preview">
+
+                        <div class="btn-group-custom">
+                            <button class="btn btn-success" id="btn_{{report.id}}" 
+                                    onclick="apiProcess('{{report.id}}','{{report.id}}', '{{report.displayname}}', '{{report.bandname}}','{{report.path}}')">
+                                Prepare Design
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="deleteImage('{{report.id}}','{{report.id}}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="right-col">
+                        <input type="text" id="prompt_{{report.id}}" class="prompt-input" 
+                            placeholder="Optional: Add extra instructions (e.g. '3 columns', 'bold text')...">
+
+                            <div class="xml-box-container">
+                                <div class="xml-actions" id="actions_{{report.id}}" style="display: none;">
+                                    <i class="fas fa-copy" onclick="copyXML('{{report.id}}')" title="Copy XML"></i>
+                                    <i class="fas fa-save" onclick="saveXML('{{report.id}}','{{report.id}}','{{report.bandname}}')" title="Save to File"></i>
+                                </div>
+                            
+                                <textarea id="result_{{report.id}}" class="result-box" readonly></textarea>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+    </div>
+</body>
+</html>

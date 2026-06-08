@@ -12,8 +12,7 @@ from ...databases.db import conn
 from ...models.model import Upload, Process
 
 from datetime import datetime, timezone
-
-from ...services.report.upload import pdfToImg 
+ 
 from ...services.report.process import saveRegion
 import os
 from dotenv import load_dotenv
@@ -55,11 +54,16 @@ async def save_region(request: Request, db: Session = Depends(conn)):
 
     result  = saveRegion(file_id, file_name, image_path, regions)
 
-    
-    # Insert crop image record in DB
-    for r in result:
-        print(r)
-        save_img = Process(upload_id = r.get('upload_id'), bandname = r.get('bandname'), path = r.get('path'))
-        db.add(save_img)
-        db.commit()
+    try:
+        # Insert crop image record in DB
+        for r in result:
+            print(r)
+            save_img = Process(upload_id = r.get('upload_id'), bandname = r.get('bandname'), path = r.get('path'))
+            db.add(save_img)
+            db.commit()
+        
+        return {'status': 'success', 'message': "Report Successfully Processed", 'redirect':f'/report/generate/geminie/{file_id}'}
+
+    except Exception as e:
+        return {"status": "error", "message": f"Error Message - {str(e)}"}  
 
