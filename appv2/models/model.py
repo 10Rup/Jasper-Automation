@@ -26,5 +26,6 @@ class Process(Base):
     upload_id = Column(Integer, ForeignKey('uploads.id'), nullable=False)
     bandname = Column(String, nullable=False)
     path = Column(String, default="")
+    code = Column(Text, default="")
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)

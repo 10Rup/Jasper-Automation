@@ -54,9 +54,9 @@ async def upload(request: Request, correction: str =  Form(...), reportname: str
     db.add(new_report)
     db.commit()
 
-    
+    redirect_url = '/report/correction' if correction == 'yes' else '/report/view'
 
     return RedirectResponse(
-        url='/report/view',
+        url=redirect_url,
         status_code=303
     )

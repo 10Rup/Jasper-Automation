@@ -1,0 +1,174 @@
+{
+    "image_width": 1569,
+    "image_height": 725,
+    "elements": [
+        {
+            "type": "text",
+            "text": "course , ar",
+            "x": 133,
+            "y": 29,
+            "width": 587,
+            "height": 32
+        },
+        {
+            "type": "text",
+            "text": "C SCHEME OF MARKS: | MARKS OBTAINED CREDIT POINT",
+            "x": 120,
+            "y": 33,
+            "width": 1315,
+            "height": 30
+        },
+        {
+            "type": "text",
+            "text": "Course Title DisciplinelEse| [a",
+            "x": 366,
+            "y": 47,
+            "width": 485,
+            "height": 26
+        },
+        {
+            "type": "text",
+            "text": "Cod:",
+            "x": 130,
+            "y": 62,
+            "width": 43,
+            "height": 18
+        },
+        {
+            "type": "text",
+            "text": "ode MAX Max] OTAL MIN} ESE] IA TOTAL) GR.| GP.|CR.| CP.",
+            "x": 148,
+            "y": 67,
+            "width": 1316,
+            "height": 41
+        },
+        {
+            "type": "text",
+            "text": "HSSC-01 | BASIC NUTRITION Dsc | 70 30 100 40] 43 28 71 A 8 3 24",
+            "x": 119,
+            "y": 122,
+            "width": 1340,
+            "height": 33
+        },
+        {
+            "type": "text",
+            "text": "HSSC-01P | BASIC NUTRITION DSc | 35 15 50 20 32.13 45 | At 9 1 9",
+            "x": 112,
+            "y": 164,
+            "width": 1333,
+            "height": 33
+        },
+        {
+            "type": "text",
+            "text": "INTRODUCTION TO RESOURCE",
+            "x": 243,
+            "y": 206,
+            "width": 341,
+            "height": 19
+        },
+        {
+            "type": "text",
+            "text": "HSSC-02 MANAGEMENT DSc | 70 30 100 40 32 28 60 B 6 3 18",
+            "x": 119,
+            "y": 220,
+            "width": 1340,
+            "height": 41
+        },
+        {
+            "type": "text",
+            "text": "INTRODUCTION TO RESOURCE",
+            "x": 243,
+            "y": 274,
+            "width": 341,
+            "height": 19
+        },
+        {
+            "type": "text",
+            "text": "HSSC-02P MANAGEMENT DSc | 35 16 50 20 32 14 46 Oo 10 1 10",
+            "x": 112,
+            "y": 288,
+            "width": 1347,
+            "height": 41
+        },
+        {
+            "type": "text",
+            "text": "INTRODUCTION TO HUMAN",
+            "x": 243,
+            "y": 342,
+            "width": 305,
+            "height": 19
+        },
+        {
+            "type": "text",
+            "text": "HSSC-03 DEVELOPMENT Bsc | 70 30 100 40 28 28 56 B 6 3 18",
+            "x": 119,
+            "y": 355,
+            "width": 1340,
+            "height": 40
+        },
+        {
+            "type": "text",
+            "text": "INTRODUCTION TO HUMAN",
+            "x": 243,
+            "y": 410,
+            "width": 305,
+            "height": 19
+        },
+        {
+            "type": "text",
+            "text": "HSSC-03P DEVELOPMENT Bsc | 35 15 50 20 32 14 46 oO 10 1 10",
+            "x": 112,
+            "y": 423,
+            "width": 1347,
+            "height": 42
+        },
+        {
+            "type": "text",
+            "text": "LIFE ON EARTH & UNIQUE",
+            "x": 243,
+            "y": 479,
+            "width": 301,
+            "height": 21
+        },
+        {
+            "type": "text",
+            "text": "ZOGE -01 ATTRIBUTE OF ANIMAL KINGDOM GE 70 30 100 40] 47 28 75 |A 8 3 24",
+            "x": 114,
+            "y": 491,
+            "width": 1345,
+            "height": 19
+        },
+        {
+            "type": "text",
+            "text": "LIFE ON EARTH & UNIQUE",
+            "x": 243,
+            "y": 547,
+            "width": 301,
+            "height": 21
+        },
+        {
+            "type": "text",
+            "text": "ZOGE-O1P) crrRIBUTE OF ANIMAL KINGDOM | GE | 35 15 50 20) 30 14 44 |Ar 9 1 8",
+            "x": 106,
+            "y": 559,
+            "width": 1339,
+            "height": 49
+        },
+        {
+            "type": "text",
+            "text": "AEC-03 ard aa AEC | 35 15 50 20 19 12 31 B+ 7 2 14",
+            "x": 126,
+            "y": 617,
+            "width": 1333,
+            "height": 33
+        },
+        {
+            "type": "text",
+            "text": "ZOVAC-01 | PUBLIC HEALTH AND HYGIENE VAC | 35 15 50 20 29 14 #43 |At 9 2 18",
+            "x": 110,
+            "y": 662,
+            "width": 1349,
+            "height": 33
+        }
+    ]
+}
