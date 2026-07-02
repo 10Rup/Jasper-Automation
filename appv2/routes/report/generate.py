@@ -16,10 +16,11 @@ from datetime import datetime, timezone
 from ...services.report.generate import generateReport 
 from ...services.report.ocr_generate import imgToOcr, buildJson
 from ...services.report.geminie_generate import imgToCode
+from ...services.report.cleanXml import clean_sql
 import os
 import json
 from dotenv import load_dotenv
-
+from sql_metadata import Parser
 
 processed = os.getenv("PROCESS_DIR")
 appname = os.getenv("APP_NAME")
@@ -154,18 +155,37 @@ def generate_report(request: Request, report_id: int, db: Session = Depends(conn
 
     )
 
+@router.get('/test-generate-geminie/{report_id}')
+def generate_report(request: Request, report_id: int, db: Session = Depends(conn)):
 
+    file = db.query(Upload).filter(Upload.id == report_id).first()
+
+    query = file.query
+    query = clean_sql(query)
+    
+    # print(query)
+    
+    parser = Parser(query)
+    columns = [col.split('.')[-1] for col in parser.columns]
+    fields = {col: "string" for col in columns}  # Defaulting all fields to string for now
+    print(columns)
+    print(fields)
+
+
+
+    return ''
 @router.get('/generate-geminie/{report_id}')
 def generate_report(request: Request, report_id: int, db: Session = Depends(conn)):
 
     file = db.query(Upload).filter(Upload.id == report_id).first()
     # reports = db.query(Process).filter(Process.upload_id == report_id).all()
-    fields = {
-        "STUDENT_NAME": "string",
-        "TOTAL_THEO_MARKS": "integer",
-        "TOTAL_THEO_OBT_MARKS": "integer",
-    }
+    query = file.query
+    query = clean_sql(query)
+    parser = Parser(query)
+    columns = [col.split('.')[-1] for col in parser.columns]
+    fields = {col: "string" for col in columns}
     config = {"pagesize": file.size}  # A4
+
     jrxml_bands = {
         'queryString': "",
         'title': "",

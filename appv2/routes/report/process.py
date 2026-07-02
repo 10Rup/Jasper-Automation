@@ -62,8 +62,22 @@ async def save_region(request: Request, db: Session = Depends(conn)):
             db.add(save_img)
             db.commit()
         
-        return {'status': 'success', 'message': "Report Successfully Processed", 'redirect':f'/report/generate/geminie/{file_id}'}
-
+        # return {'status': 'success', 'message': "Report Successfully Processed", 'redirect':f'/report/generate/geminie/{file_id}'}
+        return {'status': 'success', 'message': "Report Successfully Processed", 'redirect':f'/report/view'}
     except Exception as e:
         return {"status": "error", "message": f"Error Message - {str(e)}"}  
 
+
+
+@router.post('/add-query/{report_id}')
+async def add_query(request: Request, report_id: int, db: Session = Depends(conn)):
+    data = await request.json()
+    query = data.get('query')
+
+    add_query = db.query(Upload).filter(Upload.id == report_id).first()
+    add_query.query = query
+    db.commit()
+    
+    
+    # Logic to add query to the report
+    return {'status': 'success', 'message': 'Query added successfully'}

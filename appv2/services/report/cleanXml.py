@@ -28,3 +28,10 @@ def clean_jrxml_response(xml_content: str) -> str:
     xml_content = re.sub(r"\n\s*\n", "\n", xml_content)
 
     return xml_content.strip()
+
+
+def clean_sql(sql):
+    # Replace $P{} and $P!{}
+    sql = re.sub(r"\$P!\{[^}]+\}", "'VALUE'", sql)
+    sql = re.sub(r"\$P\{[^}]+\}", "'VALUE'", sql)
+    return sql

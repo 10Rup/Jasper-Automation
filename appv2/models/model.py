@@ -14,6 +14,7 @@ class Upload(Base):
     path = Column(String, nullable=False)
     size = Column(String)
     pagedimention = Column(String)
+    query = Column(Text, default="")
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
 

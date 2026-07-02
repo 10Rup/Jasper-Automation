@@ -96,6 +96,7 @@ def imgToCode(band: str,fields: dict,config: dict,imgPath: str, apiKey: str):
                 - forecolor inside <font/> tag
                 - topIndent
                 - textFieldExpression with staticText
+                - <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 
 
 
