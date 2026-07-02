@@ -236,6 +236,21 @@ def generate_report(request: Request, report_id: int, db: Session = Depends(conn
     # 3. Build final XML (for now just base)
     final_xml = base_xml
 
+
+    # Adding query and fields
+    query_string = f'''<queryString>
+		<![CDATA[{query}]]>
+	</queryString>'''
+
+    for field_name, field_type in fields.items():
+        query_string += f'''\n<field name="{field_name}" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="{field_name}"/>
+	</field>'''
+    
+    final_xml += f'\n{query_string}'
+    print(final_xml)
+    
+
     # 4. Update xml code with band codes
     for band, image in band_images.items():
         report = db.query(Process).filter(Process.upload_id == report_id, Process.bandname == band).first()
