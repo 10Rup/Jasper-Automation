@@ -15,6 +15,8 @@ from .models.model import Base
 
 from .routes import home
 from .routes.report import upload, view, process, correction, generate
+from .routes.dbconn import dbconn, view as dbview
+from .routes.query import build as querybuild
 import os
 from dotenv import load_dotenv
 
@@ -37,8 +39,11 @@ templates = Jinja2Templates(f"{appname}/report/templates")
 app.mount("/uploadimg", StaticFiles(directory=f"{appname}/uploads/reports"), name="uploadimg")
 app.mount('/processed-img', StaticFiles(directory=f'{appname}/storages/upload/processed'), name='processed-img')
 
+
 # app routes
 app.include_router(home.router)
+
+# database connection routes
 
 
 # report routes
@@ -47,3 +52,10 @@ app.include_router(view.router)
 app.include_router(process.router)
 app.include_router(correction.router)
 app.include_router(generate.router)
+
+# dbconn routes
+app.include_router(dbview.router)
+app.include_router(dbconn.router)
+
+# query routes
+app.include_router(querybuild.router)
