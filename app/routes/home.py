@@ -3,36 +3,25 @@ from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse, JSON
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from ..database import SessionLocal
-from ..models import ApiMaster, Uploadfile, CropImages, CompileReport
+from ..databases.db import conn
+from ..models.model import Upload
 from datetime import datetime, timezone
+
+import os
+from dotenv import load_dotenv
+
+
+appname = os.getenv("APP_NAME")
+
 
 
 router = APIRouter()
-templates = Jinja2Templates("app/templates")
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
+templates = Jinja2Templates(f"{appname}/templates")
 
 @router.get('/')
-def home(request: Request, db: Session = Depends(get_db)):
+def home(request: Request):
 
-    automantion = db.query(func.count(CompileReport.id).label('total')).filter(CompileReport.deleted_at==None, CompileReport.is_compiled==True).first()
-
-    apis = db.query(func.count(ApiMaster.id).label('total')).first()
-    # print(automantion.total)
     return templates.TemplateResponse(
         request,
-        'home.html',
-        {
-            'automated': automantion.total,
-            'api_count': apis.total
-        }
+        'home.html'
     )
-
-
