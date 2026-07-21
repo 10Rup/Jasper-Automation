@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
+<queryString>
+		<![CDATA[SELECT 
+ER.APPLICATION_ID,ER.`COURSE_ID` ,
+UPPER(EA.STUDENTFNAME) AS STUDENTFNAME,UPPER(EA.STUDENTMNAME) AS  STUDENTMNAME,UPPER(EA.STUDENTLNAME) AS STUDENTLNAME,
+UPPER(EA.FATHERSNAME) AS FATHERSNAME, UPPER(EA.MOTHERSNAME) AS MOTHERSNAME,
+"https://d1cmkr5tdoeyjk.cloudfront.net/ucanapply/PIY0000028/2026/notification/durg_260713145349_694.png" AS logo,
+ER.EXM_GROUP,
+ER.ROLL_NO,
+DT.PICK_TEXT 'DATE',
+TM.PICK_TEXT 'EXAM_TIME',
+TM.PICK_TEXT_EXTEND 'Reprting TIME',
+CR.ROOM_NAME AS Centre_Name,
+CR.ADDRESS AS Centre_Address,
+ER.TMP_COURSE
+FROM UCANAPPLY_LARAVEL.ENTRANCE_ROLLNO AS ER
+JOIN UCANAPPLY_LARAVEL.ENTRANCEAPPLICANTDATA AS EA ON ER.REGISTRATION_ID = EA.REGISTRATION_ID AND ER.COURSE_ID=EA.COURSE_ID
+JOIN UCANAPPLY_LARAVEL.ENTRANCEPHOTOSIGN AS PIC ON PIC.REGISTRATION_ID=ER.REGISTRATION_ID
+JOIN UCANAPPLY_LARAVEL.EXAMCENTREROOM AS CR ON CR.ID = ER.CENTRE_ROOM_ID   AND CR.PORTALINSTYEARCODE = 'PIY0000028'
+LEFT JOIN UCANAPPLY_LARAVEL.STOREPICK DT ON DT.PICK_ID=ER.EXM_DATE AND DT.STORE_ID='EXM_DATE' AND DT.PORTALINSTYEARCODE='PIY0000028'
+LEFT JOIN UCANAPPLY_LARAVEL.STOREPICK TM ON TM.PICK_ID=ER.EXM_TIME AND TM.STORE_ID='EXM_TIME' AND TM.PORTALINSTYEARCODE='PIY0000028'
+WHERE ER.PORTALINSTYEARCODE = 'PIY0000028'
+AND ER.`COURSE_ID` = 'XRT085'
+ORDER BY ER.`COURSE_ID`,ER.ROLL_NO;]]>
+	</queryString>
+<field name="APPLICATION_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="APPLICATION_ID"/>
+	</field>
+<field name="COURSE_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="COURSE_ID"/>
+	</field>
+<field name="STUDENTFNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTFNAME"/>
+	</field>
+<field name="STUDENTMNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTMNAME"/>
+	</field>
+<field name="STUDENTLNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STUDENTLNAME"/>
+	</field>
+<field name="FATHERSNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="FATHERSNAME"/>
+	</field>
+<field name="MOTHERSNAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="MOTHERSNAME"/>
+	</field>
+<field name="EXM_GROUP" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EXM_GROUP"/>
+	</field>
+<field name="ROLL_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ROLL_NO"/>
+	</field>
+<field name="PICK_TEXT" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PICK_TEXT"/>
+	</field>
+<field name="PICK_TEXT_EXTEND" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PICK_TEXT_EXTEND"/>
+	</field>
+<field name="ROOM_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ROOM_NAME"/>
+	</field>
+<field name="ADDRESS" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ADDRESS"/>
+	</field>
+<field name="TMP_COURSE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="TMP_COURSE"/>
+	</field>
+<field name="REGISTRATION_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="REGISTRATION_ID"/>
+	</field>
+<field name="ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="ID"/>
+	</field>
+<field name="CENTRE_ROOM_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="CENTRE_ROOM_ID"/>
+	</field>
+<field name="PORTALINSTYEARCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PORTALINSTYEARCODE"/>
+	</field>
+<field name="PICK_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="PICK_ID"/>
+	</field>
+<field name="EXM_DATE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EXM_DATE"/>
+	</field>
+<field name="STORE_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="STORE_ID"/>
+	</field>
+<field name="EXM_TIME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="EXM_TIME"/>
+	</field>
+
+
+</jasperReport>

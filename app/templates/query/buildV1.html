@@ -86,7 +86,6 @@
   .panel .sub{ font-size:12.5px; color:var(--text-faint); margin:0 0 20px; }
 
   .field-label{ font-size:12px; font-weight:600; color:var(--text-dim); margin-bottom:7px; display:block; }
-  .optional-tag{ color:var(--text-faint); font-weight:400; text-transform:none; letter-spacing:0; }
   .field{ margin-bottom:18px; }
   input[type=text], select{
     width:100%; background:var(--surface-2); border:1px solid var(--border);
@@ -203,15 +202,6 @@
     width:10px; height:10px; border-radius:50%; border:1.5px solid rgba(87,230,199,0.25);
     border-top-color:var(--accent); animation:spin .6s linear infinite; flex-shrink:0;
   }
-  .refresh-btn{
-    display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px;
-    border-radius:5px; background:none; border:none; color:var(--text-faint); cursor:pointer;
-    transition:color .15s, background .15s; flex-shrink:0;
-  }
-  .refresh-btn:hover{ color:var(--accent); background:var(--surface-3); }
-  .refresh-btn svg{ width:12px; height:12px; }
-  .refresh-btn.spinning svg{ animation:spin .7s linear infinite; }
-  .refresh-btn[disabled]{ opacity:0.4; cursor:not-allowed; pointer-events:none; }
 
   /* ===== report format switch ===== */
   .format-switch{ display:flex; gap:8px; margin-bottom:14px; }
@@ -231,20 +221,18 @@
   .img-drop svg{ width:22px; height:22px; color:var(--accent); }
   .img-drop img{ max-width:100%; max-height:160px; border-radius:6px; margin-bottom:4px; }
 
-  /* ===== generated SQL output (editable) ===== */
+  /* ===== generated SQL output ===== */
   .sql-output{
-    display:block; font-family:var(--mono); font-size:12.5px; line-height:1.7; color:var(--text);
+    font-family:var(--mono); font-size:12.5px; line-height:1.7; color:var(--text);
     background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
-    padding:14px; width:100%; min-height:160px; max-height:420px; resize:vertical;
-    margin:0; outline:none; box-sizing:border-box; transition:border-color .15s, box-shadow .15s;
+    padding:14px; white-space:pre-wrap; word-break:break-word; min-height:160px; max-height:420px; overflow-y:auto;
+    margin:0;
   }
-  .sql-output:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
-  .sql-output::placeholder{ color:var(--text-faint); font-style:italic; }
-  .edit-hint{
-    display:none; align-items:center; gap:6px; font-family:var(--mono); font-size:11px;
-    color:var(--warn); margin-top:8px;
-  }
-  .edit-hint.show{ display:flex; }
+  .sql-output .kw{ color:#7DB7F5; font-weight:600; }
+  .sql-output .cm{ color:var(--text-faint); font-style:italic; }
+  .sql-output .pm{ color:var(--warn); }
+  .sql-output .str{ color:var(--ok); }
+  .sql-output:empty::before{ content:'Generated SQL will appear here…'; color:var(--text-faint); font-style:italic; }
 
   .copy-btn{
     display:inline-flex; align-items:center; gap:6px; background:var(--surface-2); border:1px solid var(--border);
@@ -253,15 +241,6 @@
   }
   .copy-btn:hover{ color:var(--text); border-color:#3A4356; }
   .copy-btn svg{ width:12px; height:12px; }
-  .copy-btn[disabled]{ opacity:0.4; cursor:not-allowed; pointer-events:none; }
-  .copy-btn.saved{ color:var(--ok); border-color:rgba(95,221,143,0.35); }
-  .copy-btn.loading{ position:relative; color:transparent !important; }
-  .copy-btn.loading svg{ visibility:hidden; }
-  .copy-btn.loading::after{
-    content:''; position:absolute; top:50%; left:50%; width:11px; height:11px;
-    margin:-5.5px 0 0 -5.5px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.25); border-top-color:currentColor;
-    animation:spin .6s linear infinite; color:var(--text-dim);
-  }
 
   .param-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:10px; margin:14px 0; }
   .param-field label{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:5px; }
@@ -271,19 +250,12 @@
   }
   .param-field input:focus{ border-color:var(--accent); }
 
-  .result-wrap{ overflow-x:auto; overflow-y:auto; max-height:520px; border:1px solid var(--border); border-radius:7px; margin-top:0; }
+  .result-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:7px; margin-top:14px; }
   table.result-table{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
   table.result-table th{ text-align:left; background:var(--surface-2); color:var(--text-dim); padding:9px 12px; border-bottom:1px solid var(--border); white-space:nowrap; position:sticky; top:0; }
   table.result-table td{ padding:8px 12px; border-bottom:1px solid var(--border-soft); color:var(--text); white-space:nowrap; }
   table.result-table tr:last-child td{ border-bottom:none; }
   .result-meta{ font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:8px; }
-
-  .result-panel{
-    margin-top:22px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;
-    animation:fade .25s ease;
-  }
-  @keyframes fade{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
-  .result-panel-body{ padding:16px; }
 
   .toast{
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -340,11 +312,6 @@
       </div>
 
       <div class="field">
-        <span class="field-label">Description <span class="optional-tag">optional</span></span>
-        <textarea class="mono-area" id="q-description" style="min-height:70px; font-family:var(--body);" placeholder="Anything that helps generate a better query — e.g. exclude dropped students, group marks by term, only include active subjects…"></textarea>
-      </div>
-
-      <div class="field">
         <span class="field-label">Table(s)</span>
         <div class="multiselect" id="tableMultiselect">
           <div class="multiselect-box" id="tableSelectBox" aria-disabled="true">
@@ -366,9 +333,6 @@
         <textarea class="mono-area" id="q-sample-json" placeholder="Pulled automatically once you pick tables above — edit if needed"></textarea>
         <div class="field-foot">
           <span class="hint" id="jsonHint">Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)</span>
-          <button type="button" class="refresh-btn" id="refreshSampleBtn" title="Refresh from the database, bypassing the cache">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
-          </button>
         </div>
       </div>
 
@@ -384,12 +348,6 @@
         </div>
 
         <div id="format-image" style="display:none;">
-          <div class="field" style="margin-bottom:10px;">
-            <span class="field-label">Or reuse a previously uploaded file <span class="optional-tag">optional</span></span>
-            <select class="conn-select" id="q-existing-upload">
-              <option value="">Loading uploaded files…</option>
-            </select>
-          </div>
           <label class="img-drop" id="imgDrop" for="q-format-image">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
             <span id="imgDropText">Choose a report screenshot or drop it here</span>
@@ -409,18 +367,13 @@
         <span class="dot" style="background:var(--warn)"></span>
         <span class="dot" style="background:var(--ok)"></span>
         <span class="title">generated.sql</span>
-        <button class="copy-btn" id="saveQueryBtn" style="margin-left:auto;" disabled>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
-          Save
-        </button>
-        <button class="copy-btn" id="copySqlBtn">
+        <button class="copy-btn" id="copySqlBtn" style="margin-left:auto;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           Copy
         </button>
       </div>
       <div class="preview-body">
-        <textarea class="sql-output" id="sqlOutput" spellcheck="false" placeholder="Generated SQL will appear here…"></textarea>
-        <div class="edit-hint" id="editHint">✎ edited — Copy, Save, and Run will use this version</div>
+        <pre class="sql-output" id="sqlOutput"></pre>
 
         <div id="paramSection" style="display:none;">
           <span class="field-label" style="margin-top:6px;">Test values for parameters</span>
@@ -429,20 +382,12 @@
             <button class="btn btn-ghost" id="runQueryBtn">Run against connection</button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="result-panel" id="resultSection" style="display:none;">
-    <div class="preview-head" style="border-radius:var(--radius) var(--radius) 0 0;">
-      <span class="dot" style="background:var(--err)"></span>
-      <span class="dot" style="background:var(--warn)"></span>
-      <span class="dot" style="background:var(--ok)"></span>
-      <span class="title">query results</span>
-    </div>
-    <div class="result-panel-body">
-      <div class="result-wrap"><table class="result-table" id="resultTable"></table></div>
-      <div class="result-meta" id="resultMeta"></div>
+        <div id="resultSection" style="display:none;">
+          <div class="result-wrap"><table class="result-table" id="resultTable"></table></div>
+          <div class="result-meta" id="resultMeta"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -462,40 +407,23 @@
   //        Introspects the target DB's schema for the given saved connection and returns table names.
   //
   //   POST {QUERY_API_BASE}/sample-data -> 200 { "students": [ {...} ], "marks": [ {...}, {...}, {...}, {...} ] }
-  //        body: { connection_id, tables: [...], force_refresh?: boolean }
+  //        body: { connection_id, tables: [...] }
   //        For each table, return 1 sample row by default. If the table is "repeating" relative to a
   //        single record — e.g. one row per subject per student, so a student naturally has multiple rows —
   //        return 4 rows instead of 1, so the LLM can see the repeating shape. A reasonable server-side
   //        heuristic: for each requested table, check whether it has a foreign key into another requested
   //        table (or a shared key like student_id/roll_no) with a 1:many cardinality; if so pull 4 rows
   //        sharing the same parent key, otherwise pull 1 row.
-  //        Results are cached per-connection on disk (storage/jsondata/{connection_id}.json) so repeat
-  //        table selections don't re-hit the source database. `force_refresh: true` (the refresh icon
-  //        next to the Sample data hint) bypasses the cache and re-fetches from the live connection.
-  //
-  //   GET  {QUERY_API_BASE}/uploads -> 200 [{id, filename, url, uploaded_at}, ...]
-  //        Lists previously uploaded report files from the Upload table, most recent first,
-  //        so the user can reuse one instead of re-uploading. `url` should point somewhere
-  //        the browser can render it directly (for the preview thumbnail).
   //
   //   POST {QUERY_API_BASE}/generate -> 200 { sql: "<comment block + SELECT ...>" }
-  //        body: { connection_id, dataset_name, report_type, description: <optional free text>,
-  //                tables: [...], sample_json: <string or parsed JSON>,
-  //                report_format: { mode: 'text', text }
-  //                             | { mode: 'image', existing_upload_id }   (JSON — reusing a saved file)
-  //                             | { mode: 'image' } (+ multipart file 'reportImage')   (a freshly chosen file) }
+  //        body: { connection_id, dataset_name, report_type, tables: [...], sample_json: <string or parsed JSON>,
+  //                report_format: { mode: 'text', text } | { mode: 'image' } (+ multipart file 'reportImage') }
   //        Server-side, this is where you inject the fixed system prompt
   //        ("Generate one optimized MySQL SELECT query...") plus these inputs, call the LLM,
-  //        and return only the SQL text — never the raw prompt or extra prose. `description`,
-  //        when present, is appended as extra guidance the user typed in, not part of the fixed prompt.
-  //        When `existing_upload_id` is present, look up that Upload row's stored file and read its
-  //        bytes for the image content block — same as a fresh multipart upload, just sourced differently.
+  //        and return only the SQL text — never the raw prompt or extra prose.
   //   POST {QUERY_API_BASE}/run -> 200 { columns: [...], rows: [[...], ...], row_count, execution_ms }
   //                              | 200 { error: "..." }  (query errors are not HTTP errors)
   //        body: { connection_id, sql, params: { paramName: value, ... } }
-  //   POST {QUERY_API_BASE}/save -> 201 { id, ...saved row }
-  //        body: { connection_id, dataset_name, report_type, tables: [...], sample_json, sql }
-  //        Persists the generated query so it can be reused later without regenerating it.
   const CONN_API_BASE = '/db';
   const QUERY_API_BASE = '/query';
 
@@ -510,9 +438,7 @@
   let selectedTables = [];
   let reportFormatMode = 'text';
   let reportImageFile = null;
-  let selectedExistingUploadId = '';   // set when the user picks a previously uploaded file instead of dropping a new one
   let lastGeneratedSql = '';
-  let lastGeneratedMeta = null;   // { connection_id, dataset_name, report_type, tables, sample_json } from the last successful generate
 
   // ---- toast ----
   let toastTimer;
@@ -557,42 +483,6 @@
     }
   }
 
-  // ---- load previously uploaded report files, for the "reuse a file" dropdown ----
-  async function loadUploads(){
-    const sel = document.getElementById('q-existing-upload');
-    sel.innerHTML = `<option value="">Loading uploaded files…</option>`;
-    try{
-      const res = await fetch(`${QUERY_API_BASE}/uploads`);
-      if(!res.ok) throw new Error(`API responded ${res.status}`);
-      const uploads = await res.json();
-      if(uploads.length === 0){
-        sel.innerHTML = `<option value="">No previously uploaded files</option>`;
-        return;
-      }
-      sel.innerHTML = `<option value="">Upload a new file instead…</option>` + uploads.map(u =>
-        `<option value="${u.id}" data-url="${u.url || ''}">${u.filename}${u.uploaded_at ? ' — ' + new Date(u.uploaded_at).toLocaleDateString() : ''}</option>`
-      ).join('');
-    } catch(err){
-      sel.innerHTML = `<option value="">Couldn't load uploaded files</option>`;
-    }
-  }
-
-  document.getElementById('q-existing-upload').addEventListener('change', function(){
-    selectedExistingUploadId = this.value;
-    if(!selectedExistingUploadId){
-      imgDrop.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span id="imgDropText">Choose a report screenshot or drop it here</span>`;
-      return;
-    }
-    // a previously uploaded file was picked — it replaces any freshly dropped file
-    reportImageFile = null;
-    qImageInput.value = '';
-    const opt = this.selectedOptions[0];
-    const url = opt.dataset.url;
-    imgDrop.innerHTML = url
-      ? `<img src="${url}" alt="report sample"><span>${opt.textContent}</span>`
-      : `<span>${opt.textContent}</span>`;
-  });
-
   // ---- when the connection changes: reset tables + sample data, fetch this DB's tables ----
   document.getElementById('q-connection').addEventListener('change', async function(){
     selectedTables = [];
@@ -601,17 +491,6 @@
     setJsonHint('Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)', '');
     renderTableChips();
     closeTablePanel();
-
-    // switching connections invalidates any previously generated SQL
-    lastGeneratedSql = '';
-    lastGeneratedMeta = null;
-    sqlOutput.value = '';
-    document.getElementById('editHint').classList.remove('show');
-    document.getElementById('paramSection').style.display = 'none';
-    document.getElementById('resultSection').style.display = 'none';
-    const saveBtn = document.getElementById('saveQueryBtn');
-    saveBtn.disabled = true;
-    saveBtn.classList.remove('saved');
 
     const box = document.getElementById('tableSelectBox');
     const connId = this.value;
@@ -734,47 +613,37 @@
   }
 
   let sampleFetchToken = 0;
-  async function fetchSampleData(forceRefresh){
+  async function fetchSampleData(){
     const connId = document.getElementById('q-connection').value;
     const textarea = document.getElementById('q-sample-json');
-    const refreshBtn = document.getElementById('refreshSampleBtn');
     if(!connId || selectedTables.length === 0){
       textarea.value = '';
       setJsonHint('Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)', '');
       return;
     }
     const token = ++sampleFetchToken;   // guards against out-of-order responses while toggling tables quickly
-    document.getElementById('jsonHint').innerHTML = forceRefresh
-      ? '<span class="mini-spinner"></span> refreshing from the database…'
-      : '<span class="mini-spinner"></span> fetching sample rows…';
+    document.getElementById('jsonHint').innerHTML = '<span class="mini-spinner"></span> fetching sample rows…';
     document.getElementById('jsonHint').className = 'hint fetching';
     textarea.setAttribute('disabled', 'true');
-    refreshBtn.classList.add('spinning');
-    refreshBtn.disabled = true;
     try{
       const res = await fetch(`${QUERY_API_BASE}/sample-data`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ connection_id: connId, tables: selectedTables, force_refresh: !!forceRefresh }),
+        body: JSON.stringify({ connection_id: connId, tables: selectedTables }),
       });
       if(token !== sampleFetchToken) return; // a newer request has already superseded this one
       if(!res.ok) throw new Error(`API responded ${res.status}`);
       const data = await res.json();
       textarea.value = JSON.stringify(data, null, 2);
-      setJsonHint(forceRefresh ? '✓ refreshed from the database' : '✓ sample rows loaded — edit freely if needed', 'valid-ok');
+      setJsonHint('✓ sample rows loaded — edit freely if needed', 'valid-ok');
     } catch(err){
       if(token !== sampleFetchToken) return;
       setJsonHint(`✗ couldn't fetch sample data: ${err.message}`, 'valid-err');
     } finally {
-      if(token === sampleFetchToken){
-        textarea.removeAttribute('disabled');
-        refreshBtn.classList.remove('spinning');
-        refreshBtn.disabled = false;
-      }
+      if(token === sampleFetchToken) textarea.removeAttribute('disabled');
     }
   }
 
-  document.getElementById('refreshSampleBtn').addEventListener('click', () => fetchSampleData(true));
 
   // manual edits to the auto-filled sample data are still validated live
   document.getElementById('q-sample-json').addEventListener('input', function(){
@@ -805,8 +674,6 @@
   const imgDrop = document.getElementById('imgDrop');
   function setReportImage(file){
     reportImageFile = file;
-    selectedExistingUploadId = '';
-    document.getElementById('q-existing-upload').value = '';
     const reader = new FileReader();
     reader.onload = () => {
       imgDrop.innerHTML = `<img src="${reader.result}" alt="report sample"><span>${file.name}</span>`;
@@ -826,6 +693,18 @@
       showToast('Please drop an image file');
     }
   });
+
+  // ---- lightweight SQL syntax highlighting for display only ----
+  function highlightSql(sql){
+    const esc = sql.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const KEYWORDS = /\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|ON|AND|OR|AS|GROUP BY|ORDER BY|WITH|CASE|WHEN|THEN|ELSE|END|UNION|HAVING|LIMIT|IS|NULL|NOT|IN|DISTINCT|COUNT|SUM|BY)\b/gi;
+    return esc
+      .replace(/(--[^\n]*)/g, '<span class="cm">$1</span>')
+      .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="cm">$1</span>')
+      .replace(/('(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>')
+      .replace(/(:[a-zA-Z_][a-zA-Z0-9_]*)/g, '<span class="pm">$1</span>')
+      .replace(KEYWORDS, '<span class="kw">$1</span>');
+  }
 
   function extractParams(sql){
     const found = [...sql.matchAll(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)].map(m => m[1]);
@@ -856,7 +735,6 @@
     const connectionId = document.getElementById('q-connection').value;
     const datasetName = document.getElementById('q-dataset-name').value.trim();
     const reportType = document.getElementById('q-report-type').value.trim();
-    const description = document.getElementById('q-description').value.trim();
     const sampleJsonRaw = document.getElementById('q-sample-json').value.trim();
 
     if(!datasetName){ showToast('Give this dataset a name'); return; }
@@ -872,49 +750,32 @@
     if(reportFormatMode === 'text' && !document.getElementById('q-format-text').value.trim()){
       showToast('Paste the report format, or switch to image upload'); return;
     }
-    if(reportFormatMode === 'image' && !reportImageFile && !selectedExistingUploadId){
-      showToast('Upload a report image, choose a previously uploaded file, or switch to pasted text'); return;
+    if(reportFormatMode === 'image' && !reportImageFile){
+      showToast('Upload a report image, or switch to pasted text'); return;
     }
 
     const btn = document.getElementById('generateBtn');
     btn.classList.add('loading');
-    sqlOutput.value = '';
-    document.getElementById('editHint').classList.remove('show');
+    sqlOutput.innerHTML = '';
     document.getElementById('paramSection').style.display = 'none';
     document.getElementById('resultSection').style.display = 'none';
-    const saveBtn = document.getElementById('saveQueryBtn');
-    saveBtn.disabled = true;
-    saveBtn.classList.remove('saved');
 
     const basePayload = {
       connection_id: connectionId,
       dataset_name: datasetName,
       report_type: reportType,
-      description: description,   // optional — empty string when not provided
       tables: selectedTables,
       sample_json: sampleJsonRaw,
     };
 
     try{
       let res;
-      if(reportFormatMode === 'image' && reportImageFile){
-        // freshly chosen file — must go as multipart so the bytes can be uploaded
+      if(reportFormatMode === 'image'){
         const fd = new FormData();
         Object.entries(basePayload).forEach(([k, v]) => fd.append(k, typeof v === 'string' ? v : JSON.stringify(v)));
         fd.append('report_format_mode', 'image');
         fd.append('reportImage', reportImageFile, reportImageFile.name);
         res = await fetch(`${QUERY_API_BASE}/generate`, { method: 'POST', body: fd });
-      } else if(reportFormatMode === 'image' && selectedExistingUploadId){
-        // reusing a file already sitting in the Upload table — no bytes to send, plain JSON is enough
-        res = await fetch(`${QUERY_API_BASE}/generate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...basePayload,
-            sample_json: sampleJson,
-            report_format: { mode: 'image', existing_upload_id: selectedExistingUploadId },
-          }),
-        });
       } else {
         res = await fetch(`${QUERY_API_BASE}/generate`, {
           method: 'POST',
@@ -932,27 +793,15 @@
       }
       const data = await res.json();
       lastGeneratedSql = data.sql || '';
-      lastGeneratedMeta = basePayload;   // remembered for the Save button, so it doesn't re-read stale form state
-      sqlOutput.value = lastGeneratedSql;
+      sqlOutput.innerHTML = highlightSql(lastGeneratedSql);
       renderParamFields(lastGeneratedSql);
-      saveBtn.disabled = !lastGeneratedSql;
     } catch(err){
+      sqlOutput.innerHTML = `<span style="color:var(--err)">✗ ${err.message}</span>`;
       showToast(`Couldn't generate query: ${err.message}`);
     } finally {
       btn.classList.remove('loading');
     }
   });
-
-  // ---- keep everything in sync when the user hand-edits the generated SQL ----
-  sqlOutput.addEventListener('input', () => {
-    lastGeneratedSql = sqlOutput.value;
-    renderParamFields(lastGeneratedSql);
-    document.getElementById('editHint').classList.toggle('show', lastGeneratedSql.trim().length > 0);
-    const saveBtn = document.getElementById('saveQueryBtn');
-    saveBtn.disabled = !lastGeneratedSql.trim();
-    saveBtn.classList.remove('saved');   // a save from before this edit no longer reflects what's in the box
-  });
-
 
   document.getElementById('copySqlBtn').addEventListener('click', async () => {
     if(!lastGeneratedSql){ showToast('Nothing to copy yet'); return; }
@@ -961,30 +810,6 @@
       showToast('SQL copied to clipboard');
     } catch(e){
       showToast("Couldn't copy — select and copy manually");
-    }
-  });
-
-  // ---- save the generated query for later reuse ----
-  document.getElementById('saveQueryBtn').addEventListener('click', async () => {
-    if(!lastGeneratedSql || !lastGeneratedMeta){ showToast('Generate a query first'); return; }
-    const btn = document.getElementById('saveQueryBtn');
-    btn.classList.add('loading');
-    try{
-      const res = await fetch(`${QUERY_API_BASE}/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...lastGeneratedMeta, sql: lastGeneratedSql }),
-      });
-      if(!res.ok){
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || err.error || `API responded ${res.status}`);
-      }
-      btn.classList.add('saved');
-      showToast('Query saved — you can reuse it later');
-    } catch(err){
-      showToast(`Couldn't save query: ${err.message}`);
-    } finally {
-      btn.classList.remove('loading');
     }
   });
 
@@ -1034,7 +859,6 @@
   }
 
   loadConnections();
-  loadUploads();
 </script>
 </body>
 </html>

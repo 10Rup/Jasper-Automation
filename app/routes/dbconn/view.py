@@ -32,7 +32,15 @@ class ConnectionOut(BaseModel):
     host: str
     port: Optional[int] = None
     db: Optional[str] = None
+    user: Optional[str] = None
     status: Optional[str] = "untested"
+    ssl: bool = False
+    sshHost: Optional[str] = None
+    sshPort: Optional[int] = None
+    sshUser: Optional[str] = None
+    authMode: Optional[str] = "password"
+    ssh_key_id: Optional[int] = None
+    keyFileName: Optional[str] = None
     
 
 @router.get('/view', response_model=list[ConnectionOut])

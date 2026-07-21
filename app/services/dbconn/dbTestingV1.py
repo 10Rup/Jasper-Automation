@@ -8,7 +8,7 @@ from urllib.parse import quote_plus
 from decimal import Decimal
 from datetime import date, datetime
 
-from sqlalchemy import create_engine, inspect, MetaData, Table, select, func, text
+from sqlalchemy import create_engine, inspect, MetaData, Table, select, func
 from sqlalchemy.orm import Session
 
 from ...models.model import SshKey
@@ -18,43 +18,13 @@ CONNECT_TIMEOUT = 5  # seconds — never let a test hang the request thread
 SSH_KEY_DIR = Path(os.getenv("SSH_KEY_DIR", "storage/ssh_keys"))
 SSH_KEY_DIR.mkdir(parents=True, exist_ok=True)
 
-# --------------------------------------------------------------------------------------
-
 def looks_like_pem(file_bytes: bytes) -> bool:
-    return file_bytes.lstrip()[:40].startswith(b"-----BEGIN")
-
-def save_ssh_key(name: str, filename: str, file_bytes: bytes, db: Session) -> SshKey:
-    """Saves a standalone .pem key — independent of any connection, selected later by ID."""
-    if not looks_like_pem(file_bytes):
-        raise ValueError("that file doesn't look like a valid .pem private key")
-
-    safe_name = os.path.basename(filename or "key.pem")
-    stored_name = f"{uuid.uuid4().hex}_{safe_name}"
-    key_path = SSH_KEY_DIR / stored_name
-
-    with open(key_path, "wb") as f:
-        f.write(file_bytes)
-    os.chmod(key_path, 0o600)
-
-    row = SshKey(
-        name=name.strip() or safe_name,
-        original_filename=safe_name,
-        stored_filename=stored_name,
-        storage_path=str(key_path),
-    )
-    db.add(row)
-    db.flush()
-    return row
-
-# -------------------------------------------------------------------------------------------------
-
-# def looks_like_pem(file_bytes: bytes) -> bool:
-#     """
-#     Quick sanity check so a wrong/corrupted upload fails with a clear message
-#     here, instead of a confusing error deep inside paramiko later.
-#     """
-#     head = file_bytes.lstrip()[:40]
-#     return head.startswith(b"-----BEGIN")
+    """
+    Quick sanity check so a wrong/corrupted upload fails with a clear message
+    here, instead of a confusing error deep inside paramiko later.
+    """
+    head = file_bytes.lstrip()[:40]
+    return head.startswith(b"-----BEGIN")
 
 def load_private_key(path: str, passphrase: str | None = None):
     """
@@ -283,13 +253,6 @@ def build_sqlalchemy_url(c: dict, host: str, port) -> str:
 
     raise ValueError(f"{c['type']} isn't a SQLAlchemy-inspectable engine")
 
-def _split_table_name(name: str, default_schema: str | None) -> tuple[str | None, str]:
-    """'salesdb.students' -> ('salesdb', 'students'); 'students' -> (default_schema, 'students')"""
-    if "." in name:
-        schema, table = name.split(".", 1)
-        return schema, table
-    return default_schema, name
-
 
 def list_tables(c: dict) -> list[str]:
     if c["type"] == "mongodb":
@@ -311,27 +274,11 @@ def list_tables(c: dict) -> list[str]:
         engine = create_engine(build_sqlalchemy_url(c, host, port),
                                 connect_args={"connect_timeout": CONNECT_TIMEOUT})
         try:
-            if c.get("db"):
-                # a specific database is set on this connection — same behavior as before
-                return sorted(inspect(engine).get_table_names())
-
-            if c["type"] != "mysql":
-                raise ValueError(
-                    f"{c['type']} connections need a specific database selected — "
-                    f"cross-database table listing is only supported for MySQL"
-                )
-
-            # no default database on this connection — list every table on the server,
-            # qualified as "database.table" so the caller knows which schema each is in
-            with engine.connect() as db_conn:
-                result = db_conn.execute(text(
-                    "SELECT table_schema, table_name FROM information_schema.tables "
-                    "WHERE table_schema NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys') "
-                    "ORDER BY table_schema, table_name"
-                ))
-                return [f"{schema}.{table}" for schema, table in result.fetchall()]
+            return sorted(inspect(engine).get_table_names())
         finally:
             engine.dispose()
+
+
 # ============================================================
 # Sample data
 # ============================================================
@@ -346,75 +293,52 @@ def json_safe(value):
 def rows_to_dicts(rows, columns):
     return [{col: json_safe(v) for col, v in zip(columns, row)} for row in rows]
 
+
 def get_sample_data(c: dict, table_names: list[str]) -> dict:
     with maybe_ssh_tunnel(c) as (host, port):
         engine = create_engine(build_sqlalchemy_url(c, host, port),
                                 connect_args={"connect_timeout": CONNECT_TIMEOUT})
         try:
             insp = inspect(engine)
-            default_schema = c.get("db") or None
-
-            requested = [_split_table_name(t, default_schema) for t in table_names]
-            resolved = []
-            for schema, table in requested:
-                try:
-                    real_tables = set(insp.get_table_names(schema=schema))
-                except Exception:
-                    continue
-                if table in real_tables:
-                    resolved.append((schema, table))
-            if not resolved:
+            real_tables = set(insp.get_table_names())
+            table_names = [t for t in table_names if t in real_tables]  # reject unknowns
+            if not table_names:
                 return {}
 
-            selected = set(resolved)
+            selected = set(table_names)
             metadata = MetaData()
 
-            def get_or_reflect(schema, table):
-                """Reflects a table once and only once per MetaData, regardless of how
-                many code paths ask for it — resolve_fks=False so SQLAlchemy never
-                implicitly pulls in FK-referenced tables behind our back, which is what
-                causes 'Table already defined' conflicts when multiple selected tables
-                reference each other."""
-                key = f"{schema}.{table}" if schema else table
-                existing = metadata.tables.get(key)
-                if existing is not None:
-                    return existing
-                return Table(table, metadata, schema=schema, autoload_with=engine, resolve_fks=False)
+            # ---- 1. introspect PK + FKs for each requested table ----
+            schema = {}
+            for t in table_names:
+                pk_cols = insp.get_pk_constraint(t).get("constrained_columns") or []
+                schema[t] = {"pk": pk_cols, "fks": insp.get_foreign_keys(t)}
 
-            # ---- 1. introspect PK + FKs per (schema, table) ----
-            schema_info = {}
-            for schema, table in resolved:
-                pk_cols = insp.get_pk_constraint(table, schema=schema).get("constrained_columns") or []
-                fks = insp.get_foreign_keys(table, schema=schema)
-                schema_info[(schema, table)] = {"pk": pk_cols, "fks": fks}
-
-            # ---- 2. classify children: FK into a selected table (possibly in another schema) ----
-            child_links = {}
-            for (schema, table), info in schema_info.items():
+            # ---- 2. classify children: FK into a selected table, and FK != own PK ----
+            child_links = {}  # child_table -> {parent, fk_cols, parent_cols}
+            for t, info in schema.items():
                 for fk in info["fks"]:
-                    parent_schema = fk.get("referred_schema") or schema
-                    parent_key = (parent_schema, fk["referred_table"])
-                    if parent_key not in selected or parent_key == (schema, table):
+                    parent = fk["referred_table"]
+                    if parent not in selected or parent == t:
                         continue
                     fk_cols = fk["constrained_columns"]
                     if set(fk_cols) == set(info["pk"]):
-                        continue
-                    child_links[(schema, table)] = {
-                        "parent": parent_key,
+                        continue  # 1:1 extension table — not a repeater
+                    child_links[t] = {
+                        "parent": parent,
                         "fk_cols": fk_cols,
                         "parent_cols": fk["referred_columns"],
                     }
-                    break
+                    break  # first qualifying relationship wins
 
             # ---- 3. anchor: find a parent record with real repetition ----
-            anchor = {}
+            anchor = {}  # parent_table -> {parent_col_name: value}
             parents = {link["parent"] for link in child_links.values()}
 
             with engine.connect() as conn:
-                for parent_key in parents:
-                    child_key, link = next((k, l) for k, l in child_links.items() if l["parent"] == parent_key)
-                    child_schema, child_table = child_key
-                    child_tbl = get_or_reflect(child_schema, child_table)
+                for parent in parents:
+                    child_t, link = next((t, l) for t, l in child_links.items() if l["parent"] == parent)
+                    child_tbl = Table(child_t, metadata, autoload_with=engine)
                     fk_cols = [child_tbl.c[col] for col in link["fk_cols"]]
 
                     grouped = (
@@ -425,39 +349,38 @@ def get_sample_data(c: dict, table_names: list[str]) -> dict:
                         .limit(1)
                     )
                     row = conn.execute(grouped).first()
-                    if row is None:
+                    if row is None:  # nothing repeats in real data — fall back to any existing key
                         row = conn.execute(select(*fk_cols).limit(1)).first()
                     if row is not None:
                         values = row[:len(link["fk_cols"])]
-                        anchor[parent_key] = dict(zip(link["parent_cols"], values))
+                        anchor[parent] = dict(zip(link["parent_cols"], values))
 
-            # ---- 4. pull the actual sample rows, keyed by "schema.table" ----
+            # ---- 4. pull the actual sample rows ----
             samples = {}
             with engine.connect() as conn:
-                for schema, table in resolved:
-                    key = (schema, table)
-                    tbl = get_or_reflect(schema, table)
+                for t in table_names:
+                    tbl = metadata.tables.get(t) or Table(t, metadata, autoload_with=engine)
                     columns = [col.name for col in tbl.columns]
-                    output_key = f"{schema}.{table}" if schema else table
 
-                    if key in child_links and child_links[key]["parent"] in anchor:
-                        link = child_links[key]
+                    if t in child_links and child_links[t]["parent"] in anchor:
+                        link = child_links[t]
                         parent_vals = anchor[link["parent"]]
                         where = [tbl.c[fk] == parent_vals[pk]
                                  for fk, pk in zip(link["fk_cols"], link["parent_cols"])]
                         q = select(tbl).where(*where).limit(4)
-                    elif key in anchor:
-                        where = [tbl.c[col] == val for col, val in anchor[key].items()]
+                    elif t in anchor:
+                        where = [tbl.c[col] == val for col, val in anchor[t].items()]
                         q = select(tbl).where(*where).limit(1)
                     else:
                         q = select(tbl).limit(1)
 
                     result = conn.execute(q)
-                    samples[output_key] = rows_to_dicts(result.fetchall(), columns)
+                    samples[t] = rows_to_dicts(result.fetchall(), columns)
 
             return samples
         finally:
             engine.dispose()
+
 
 def get_sample_data_mongo(c: dict, table_names: list[str]) -> dict:
     from pymongo import MongoClient

@@ -168,9 +168,6 @@
   .auth-opt:hover:not(.selected){ border-color:#3A4356; }
 
   .optional-tag{ color:var(--text-faint); font-weight:400; text-transform:none; letter-spacing:0; }
-  .field-foot{ display:flex; justify-content:space-between; align-items:center; }
-  .field-foot .hint{ font-size:11px; color:var(--text-faint); font-family:var(--mono); }
-  .field-foot .hint:hover{ text-decoration:underline; }
 
   .file-drop{
     display:flex; align-items:center; gap:10px; padding:14px; border:1px dashed var(--border);
@@ -180,19 +177,6 @@
   .file-drop:hover{ border-color:var(--accent); color:var(--text-dim); }
   .file-drop svg{ width:16px; height:16px; flex-shrink:0; color:var(--accent); }
   .file-drop.has-file{ border-style:solid; border-color:var(--accent); color:var(--text); }
-
-  .key-row{
-    display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border);
-    border-radius:9px; padding:12px 14px;
-  }
-  .key-row .key-icon{
-    width:34px; height:34px; border-radius:8px; background:var(--surface-3); display:flex;
-    align-items:center; justify-content:center; color:var(--accent); flex-shrink:0;
-  }
-  .key-row .key-icon svg{ width:16px; height:16px; }
-  .key-row .key-main{ flex:1; min-width:0; }
-  .key-row .key-main .kname{ font-family:var(--display); font-weight:600; font-size:13.5px; color:var(--text); }
-  .key-row .key-main .kfile{ font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:2px; }
 
   .btn-row{ display:flex; gap:10px; margin-top:6px; }
   .btn{ font-family:var(--display); font-weight:600; font-size:13px; padding:11px 20px; border-radius:8px; border:none; cursor:pointer; transition:filter .15s, transform .1s; }
@@ -318,7 +302,6 @@
   <div class="tabbar">
     <button class="tab active" data-view="list-view" id="tab-list">All Connections <span class="count" id="tab-count">3</span></button>
     <button class="tab" data-view="add-view" id="tab-add">+ New Connection</button>
-    <button class="tab" data-view="key-view" id="tab-key">+ Add SSH Key</button>
   </div>
 
   <!-- ================= LIST VIEW ================= -->
@@ -419,13 +402,12 @@
 
           <div class="auth-mode" id="auth-key" style="display:none;">
             <div class="field">
-              <div class="field-foot" style="margin:0 0 7px;">
-                <span class="field-label" style="margin:0;">Private key</span>
-                <span class="hint" id="addKeyLink" style="cursor:pointer; color:var(--accent);">+ add new key</span>
-              </div>
-              <select id="ssh-key-select">
-                <option value="">Loading keys…</option>
-              </select>
+              <span class="field-label">Private key file</span>
+              <label class="file-drop" id="fileDrop" for="ssh-key-file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+                <span id="fileDropText">Choose a .pem file or drop it here</span>
+              </label>
+              <input type="file" id="ssh-key-file" accept=".pem" style="display:none;">
             </div>
             <div class="field">
               <span class="field-label">Key passphrase <span class="optional-tag">optional</span></span>
@@ -450,40 +432,6 @@
         </div>
         <div class="preview-body" id="previewBody"></div>
         <div class="test-result" id="testResult"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= ADD SSH KEY VIEW ================= -->
-  <div class="view" id="key-view">
-    <div class="add-grid">
-      <div class="panel">
-        <h2>Add an SSH key</h2>
-        <p class="sub">Upload a .pem key once — pick it from a dropdown when setting up any connection that needs it.</p>
-
-        <div class="field">
-          <span class="field-label">Key name</span>
-          <input type="text" id="key-name" placeholder="e.g. Prod bastion">
-        </div>
-
-        <div class="field">
-          <span class="field-label">Private key file</span>
-          <label class="file-drop" id="keyFileDrop" for="key-file-input">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
-            <span id="keyFileDropText">Choose a .pem file or drop it here</span>
-          </label>
-          <input type="file" id="key-file-input" accept=".pem" style="display:none;">
-        </div>
-
-        <div class="btn-row">
-          <button class="btn btn-primary" id="saveKeyBtn">Save key</button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>Saved keys</h2>
-        <p class="sub">Every key you can pick from when setting up a connection.</p>
-        <div class="conn-list" id="keyList" style="gap:8px;"></div>
       </div>
     </div>
   </div>
@@ -570,11 +518,9 @@
       const sshPort = document.getElementById('ssh-port').value || '22';
       const sshUser = document.getElementById('ssh-user').value || '—';
       const authMode = document.querySelector('.auth-opt.selected').dataset.auth;
-      const keySelect = document.getElementById('ssh-key-select');
-      const keyLabel = keySelect.selectedOptions[0]?.textContent;
       const authLine = authMode === 'password'
         ? 'password ••••'
-        : (keySelect.value ? `key · ${keyLabel}` : 'key · not selected');
+        : (fileInput.files[0] ? `key · ${fileInput.files[0].name}` : 'key · not selected');
       sshBlock = `
         <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
           <div><span class="k">ssh</span>&nbsp;&nbsp;&nbsp; <span class="v">${sshUser}@${sshHost}:${sshPort}</span></div>
@@ -614,30 +560,32 @@
     });
   });
 
-  // ---- SSH key dropdown (keys are managed on their own tab, selected here by id) ----
-  async function loadSshKeysDropdown(selectedId){
-    const sel = document.getElementById('ssh-key-select');
-    sel.innerHTML = `<option value="">Loading keys…</option>`;
-    try{
-      const res = await fetch(`${API_BASE}/keys`);
-      if(!res.ok) throw new Error(`API responded ${res.status}`);
-      const keys = await res.json();
-      if(keys.length === 0){
-        sel.innerHTML = `<option value="">No keys yet — add one on the "+ Add SSH Key" tab</option>`;
-        return;
-      }
-      sel.innerHTML = `<option value="">Select a key…</option>` + keys.map(k =>
-        `<option value="${k.id}">${k.name} (${k.filename})</option>`
-      ).join('');
-      if(selectedId) sel.value = selectedId;
-    } catch(err){
-      sel.innerHTML = `<option value="">Couldn't load keys</option>`;
+  // ---- .pem file picker ----
+  const fileInput = document.getElementById('ssh-key-file');
+  const fileDrop = document.getElementById('fileDrop');
+  fileInput.addEventListener('change', () => {
+    const f = fileInput.files[0];
+    if(f){
+      document.getElementById('fileDropText').textContent = f.name;
+      fileDrop.classList.add('has-file');
+    } else {
+      document.getElementById('fileDropText').textContent = 'Choose a .pem file or drop it here';
+      fileDrop.classList.remove('has-file');
     }
     updatePreview();
-  }
-  document.getElementById('ssh-key-select').addEventListener('change', updatePreview);
-  document.getElementById('addKeyLink').addEventListener('click', () => switchView('key-view'));
-
+  });
+  ['dragover','drop'].forEach(evt => fileDrop.addEventListener(evt, e => e.preventDefault()));
+  fileDrop.addEventListener('drop', e => {
+    const f = e.dataTransfer.files[0];
+    if(f && f.name.toLowerCase().endsWith('.pem')){
+      fileInput.files = e.dataTransfer.files;
+      document.getElementById('fileDropText').textContent = f.name;
+      fileDrop.classList.add('has-file');
+      updatePreview();
+    } else {
+      showToast('Private key must be a .pem file');
+    }
+  });
   updatePreview();
 
   // ---- shared payload builder (used by both Test and Save) ----
@@ -646,7 +594,6 @@
     const sslOn = document.getElementById('sslSwitch').classList.contains('on');
     const authMode = document.querySelector('.auth-opt.selected').dataset.auth;
     return {
-      connection_id: editingId ?? '',   // lets the backend fall back to the saved key/passphrase when testing an edit
       type: t ? t.id : null,
       name: document.getElementById('f-name').value.trim(),
       host: document.getElementById('f-host').value.trim(),
@@ -661,13 +608,20 @@
       authMode: sslOn ? authMode : 'password',
       sshPass: sslOn && authMode === 'password' ? document.getElementById('ssh-pass').value : '',
       keyPass: sslOn && authMode === 'key' ? document.getElementById('ssh-key-pass').value : '',
-      ssh_key_id: sslOn && authMode === 'key' ? (document.getElementById('ssh-key-select').value || null) : null,
     };
   }
 
-  // Keys are uploaded separately on their own tab and referenced here by id — connection
-  // save/test never uploads a file itself, so this is always a plain JSON request.
+  // Sends either JSON (no key file) or multipart/form-data (key file attached).
+  // A FastAPI route can accept both by declaring the field as `UploadFile | None = File(None)`
+  // alongside `Form(...)` fields, or by branching on request.headers['content-type'].
   async function submitConnection(method, url, payload){
+    const keyFile = fileInput.files[0];
+    if(payload.authMode === 'key' && keyFile){
+      const fd = new FormData();
+      Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
+      fd.append('keyFile', keyFile, keyFile.name);
+      return fetch(url, { method, body: fd });
+    }
     return fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
@@ -714,7 +668,9 @@
     document.querySelectorAll('.auth-opt').forEach(b => b.classList.toggle('selected', b.dataset.auth === 'password'));
     document.getElementById('auth-password').style.display = 'block';
     document.getElementById('auth-key').style.display = 'none';
-    loadSshKeysDropdown(); // refresh in case a key was added since the form last opened
+    fileInput.value = '';
+    document.getElementById('fileDropText').textContent = 'Choose a .pem file or drop it here';
+    fileDrop.classList.remove('has-file');
     selectedType = null;
     editingId = null;
     testResult.className = 'test-result';
@@ -726,7 +682,7 @@
     updatePreview();
   }
 
-  async function openEdit(conn){
+  function openEdit(conn){
     editingId = conn.id;
     selectType(conn.type);
     document.getElementById('f-name').value = conn.name;
@@ -747,7 +703,8 @@
     document.querySelectorAll('.auth-opt').forEach(b => b.classList.toggle('selected', b.dataset.auth === authMode));
     document.getElementById('auth-password').style.display = authMode === 'password' ? 'block' : 'none';
     document.getElementById('auth-key').style.display = authMode === 'key' ? 'block' : 'none';
-    await loadSshKeysDropdown(conn.ssh_key_id); // pre-selects this connection's saved key, if it has one
+    document.getElementById('fileDropText').textContent = conn.keyFileName || 'Choose a .pem file or drop it here';
+    fileDrop.classList.toggle('has-file', !!conn.keyFileName);
 
     document.getElementById('formTitle').textContent = `Edit “${conn.name}”`;
     document.getElementById('formSub').textContent = 'Update the credentials below, then save your changes.';
@@ -898,114 +855,6 @@
     resetForm(); // always start "+ New Connection" from a clean slate, even mid-edit
     switchView('add-view');
   });
-  document.getElementById('tab-key').addEventListener('click', () => {
-    resetKeyForm();
-    loadKeyList();
-    switchView('key-view');
-  });
-
-  // ---- Add SSH Key view ----
-  const keyFileInput = document.getElementById('key-file-input');
-  const keyFileDrop = document.getElementById('keyFileDrop');
-
-  function setKeyFile(f){
-    document.getElementById('keyFileDropText').textContent = f.name;
-    keyFileDrop.classList.add('has-file');
-  }
-  keyFileInput.addEventListener('change', () => {
-    const f = keyFileInput.files[0];
-    if(f) setKeyFile(f);
-  });
-  ['dragover','drop'].forEach(evt => keyFileDrop.addEventListener(evt, e => e.preventDefault()));
-  keyFileDrop.addEventListener('drop', e => {
-    const f = e.dataTransfer.files[0];
-    if(f && f.name.toLowerCase().endsWith('.pem')){
-      keyFileInput.files = e.dataTransfer.files;
-      setKeyFile(f);
-    } else {
-      showToast('Private key must be a .pem file');
-    }
-  });
-
-  function resetKeyForm(){
-    document.getElementById('key-name').value = '';
-    keyFileInput.value = '';
-    document.getElementById('keyFileDropText').textContent = 'Choose a .pem file or drop it here';
-    keyFileDrop.classList.remove('has-file');
-  }
-
-  document.getElementById('saveKeyBtn').addEventListener('click', async () => {
-    const name = document.getElementById('key-name').value.trim();
-    const file = keyFileInput.files[0];
-    if(!name){ showToast('Give this key a name'); return; }
-    if(!file){ showToast('Choose a .pem file'); return; }
-
-    const btn = document.getElementById('saveKeyBtn');
-    btn.classList.add('loading');
-    try{
-      const fd = new FormData();
-      fd.append('name', name);
-      fd.append('keyFile', file, file.name);
-      const res = await fetch(`${API_BASE}/keys/add`, { method: 'POST', body: fd });
-      if(!res.ok){
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.detail || 'save failed');
-      }
-      showToast('Key saved — now available in the connection form');
-      resetKeyForm();
-      loadKeyList();
-    } catch(err){
-      showToast(`Couldn't save key: ${err.message}`);
-    } finally {
-      btn.classList.remove('loading');
-    }
-  });
-
-  async function loadKeyList(){
-    const list = document.getElementById('keyList');
-    list.innerHTML = `<div class="skeleton-card"></div><div class="skeleton-card"></div>`;
-    try{
-      const res = await fetch(`${API_BASE}/keys`);
-      if(!res.ok) throw new Error(`API responded ${res.status}`);
-      const keys = await res.json();
-      if(keys.length === 0){
-        list.innerHTML = `<div class="empty-state"><p>No keys uploaded yet.</p></div>`;
-        return;
-      }
-      list.innerHTML = '';
-      keys.forEach(k => {
-        const row = document.createElement('div');
-        row.className = 'key-row';
-        row.innerHTML = `
-          <div class="key-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-          <div class="key-main">
-            <div class="kname">${k.name}</div>
-            <div class="kfile">${k.filename}</div>
-          </div>
-          <div class="icon-btn danger" title="Delete">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>
-          </div>
-        `;
-        row.querySelector('.icon-btn.danger').addEventListener('click', async () => {
-          if(!confirm(`Delete key "${k.name}"?`)) return;
-          try{
-            const res = await fetch(`${API_BASE}/keys/${k.id}`, { method: 'DELETE' });
-            if(!res.ok){
-              const err = await res.json().catch(() => ({}));
-              throw new Error(err.detail || `API responded ${res.status}`);
-            }
-            showToast('Key removed');
-            loadKeyList();
-          } catch(err){
-            showToast(`Couldn't delete: ${err.message}`);
-          }
-        });
-        list.appendChild(row);
-      });
-    } catch(err){
-      list.innerHTML = `<div class="empty-state"><p>Couldn't load keys — ${err.message}</p></div>`;
-    }
-  }
 
   // ---- toast ----
   let toastTimer;
