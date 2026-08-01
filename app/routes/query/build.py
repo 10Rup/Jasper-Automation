@@ -50,7 +50,19 @@ def create_query(request: Request, db: Session = Depends(conn)):
 
 
 
-
+@router.get('/saved')
+def list_saved_queries(db: Session = Depends(conn)):
+    rows = db.query(SavedQuery).order_by(SavedQuery.created_at.desc()).all()
+    return [
+        {
+            "id": r.id,
+            "dataset_name": r.dataset_name,
+            "report_type": r.report_type,
+            "sql_text": r.sql_text,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+        }
+        for r in rows
+    ]
 
 
 
@@ -113,7 +125,24 @@ def sample_data(payload: dict = Body(...), db: Session = Depends(conn)):
 
 
 
+from sql_metadata import Parser
 
+def validate_generated_tables(sql: str, allowed_tables: list[str]) -> list[str]:
+    """
+    Returns a list of tables/views referenced in the generated SQL that weren't
+    part of the sample data given to the model. A non-empty list means the model
+    hallucinated a join — the query should not be returned to the user as-is.
+    """
+    try:
+        referenced = set(Parser(sql).tables)
+    except Exception:
+        return []  # if the parser itself can't handle this SQL, don't block on it — not this check's job
+
+    # normalize both sides: strip backticks, compare case-insensitively
+    def norm(t): return t.strip("`").lower()
+    allowed = {norm(t) for t in allowed_tables}
+    unknown = [t for t in referenced if norm(t) not in allowed]
+    return unknown
 
 
 
@@ -193,6 +222,17 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
 
     sql_text = call_claude(content_blocks)
     
+    sql_text = call_claude(content_blocks)
+
+    unknown_tables = validate_generated_tables(sql_text, tables)
+    if unknown_tables:
+        raise HTTPException(
+            502,
+            f"the generated query references table(s) not in your sample data: {', '.join(unknown_tables)} — "
+            f"this usually means a requested report field has no matching source table. "
+            f"Try removing that field from the report format, or add the missing table to your selection."
+        )
+
     return {"sql": sql_text}
 
 
@@ -359,3 +399,33 @@ def run_query(payload: dict = Body(...), db: Session = Depends(conn)):
         "row_count": len(rows),
         "execution_ms": execution_ms,
     }
+
+
+
+@router.get("/uploads")
+def list_query_uploads(db: Session = Depends(conn)):
+    uploads = (
+        db.query(Upload)
+        .filter(Upload.deleted_at.is_(None))
+        .order_by(Upload.created_at.desc())
+        .all()
+    )
+    return [
+        {
+            "id": u.id,
+            "filename": u.displayname or u.name,
+            "url": f"/uploads/file/{u.id}",
+            "uploaded_at": u.created_at.isoformat() if u.created_at else None,
+        }
+        for u in uploads
+    ]
+
+
+@router.get("/uploads/file/{id}")
+def get_upload_file(id: int, db: Session = Depends(conn)):
+    upload = db.query(Upload).filter(Upload.id == id).first()
+    if not upload:
+        raise HTTPException(404, "upload not found")
+    if not os.path.exists(upload.path):
+        raise HTTPException(404, "file is missing on disk")
+    return FileResponse(upload.path)

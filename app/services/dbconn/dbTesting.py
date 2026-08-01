@@ -490,3 +490,54 @@ def get_sample_data_mongo(c: dict, table_names: list[str]) -> dict:
             return json.loads(json_util.dumps(samples))
         finally:
             client.close()
+
+
+
+
+
+
+
+
+
+
+def get_plain_sample_rows(c: dict, table_name: str, limit: int = 5) -> list[dict]:
+    """
+    Simple, unconditioned SELECT ... LIMIT N — no anchor/repeat logic (that's specific
+    to get_sample_data's query-generation use case, where a coherent related record set
+    matters more than raw row count). Used when we just want a representative slice of
+    a table's actual data, e.g. for AI-generated table descriptions.
+    """
+    default_schema = c.get("db") or None
+    schema, table = _split_table_name(table_name, default_schema)
+
+    with maybe_ssh_tunnel(c) as (host, port):
+        engine = create_engine(build_sqlalchemy_url(c, host, port),
+                                connect_args={"connect_timeout": CONNECT_TIMEOUT})
+        try:
+            insp = inspect(engine)
+            if table not in set(insp.get_table_names(schema=schema)):
+                return []
+            metadata = MetaData()
+            tbl = Table(table, metadata, schema=schema, autoload_with=engine, resolve_fks=False)
+            columns = [col.name for col in tbl.columns]
+            with engine.connect() as db_conn:
+                result = db_conn.execute(select(tbl).limit(limit))
+                return rows_to_dicts(result.fetchall(), columns)
+        finally:
+            engine.dispose()
+
+
+def get_plain_sample_rows_mongo(c: dict, table_name: str, limit: int = 5) -> list[dict]:
+    from pymongo import MongoClient
+    import json
+    from bson import json_util
+
+    with maybe_ssh_tunnel(c) as (host, port):
+        client = MongoClient(host=host, port=int(port), username=c.get("user") or None,
+                              password=c.get("dbpass") or None,
+                              serverSelectionTimeoutMS=CONNECT_TIMEOUT * 1000)
+        try:
+            docs = list(client[c["db"]][table_name].find().limit(limit))
+            return json.loads(json_util.dumps(docs))
+        finally:
+            client.close()

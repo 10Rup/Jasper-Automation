@@ -2,97 +2,560 @@
 <!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
 <queryString>
-		<![CDATA[SELECT "" AS TEST]]>
+		<![CDATA[ SELECT DATE_FORMAT(CONVERT_TZ(NOW(),"-05:30","+00:00"),"%d/%m/%Y %r") AS printdate,i.logo,i.name AS 'institute name',tt.fullname,u.username,tt.address,u.email,
+tt.bank_name,tt.bank_branch_name,tt.bank_account_no,tt.bank_ifsc_code,tt.mobile,em.exam_name,'2025' AS "YEAR",
+CONCAT(ss.subqcode, '(', ss.subject_name, ')') AS subject_name,b.branch_name,COUNT(*) AS "total evaluated script"
+    FROM CODE_GENERATION cc
+    JOIN dbs_scan dd ON dd.code_gen_id=cc.id
+    JOIN users u ON u.id=dd.evaluated_by
+    JOIN teacher_master tt ON tt.user_id=u.id
+    JOIN institute_master i ON i.id = u.inst_id
+    JOIN subjects ss ON ss.id=cc.SUBQCODE
+    JOIN branch b ON b.id = ss.branch_id
+    JOIN exam_master em ON em.id=dd.exam_type
+    WHERE dd.exam_type=examtype AND cc.INSTCODE=instid AND ss.id=subjectid AND dd.problem_script IS NULL
+    AND u.id = userid AND dd.locked_time IS NOT NULL
+    GROUP BY dd.evaluated_by;]]>
 	</queryString>
-<field name="" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.label" value=""/>
+<field name="-05:30" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="-05:30"/>
+	</field>
+<field name="+00:00" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="+00:00"/>
+	</field>
+<field name="%d/%m/%Y %r" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="%d/%m/%Y %r"/>
+	</field>
+<field name="logo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="logo"/>
+	</field>
+<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+	</field>
+<field name="fullname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="fullname"/>
+	</field>
+<field name="username" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="username"/>
+	</field>
+<field name="address" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="address"/>
+	</field>
+<field name="email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="email"/>
+	</field>
+<field name="bank_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="bank_name"/>
+	</field>
+<field name="bank_branch_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="bank_branch_name"/>
+	</field>
+<field name="bank_account_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="bank_account_no"/>
+	</field>
+<field name="bank_ifsc_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="bank_ifsc_code"/>
+	</field>
+<field name="mobile" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="mobile"/>
+	</field>
+<field name="exam_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="exam_name"/>
+	</field>
+<field name="subqcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="subqcode"/>
+	</field>
+<field name="subject_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="subject_name"/>
+	</field>
+<field name="branch_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="branch_name"/>
+	</field>
+<field name="code_gen_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="code_gen_id"/>
+	</field>
+<field name="id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+	</field>
+<field name="evaluated_by" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="evaluated_by"/>
+	</field>
+<field name="user_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="user_id"/>
+	</field>
+<field name="inst_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="inst_id"/>
+	</field>
+<field name="SUBQCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="SUBQCODE"/>
+	</field>
+<field name="branch_id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="branch_id"/>
+	</field>
+<field name="exam_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="exam_type"/>
+	</field>
+<field name="examtype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="examtype"/>
+	</field>
+<field name="INSTCODE" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="INSTCODE"/>
+	</field>
+<field name="instid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="instid"/>
+	</field>
+<field name="subjectid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="subjectid"/>
+	</field>
+<field name="problem_script" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="problem_script"/>
+	</field>
+<field name="userid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="userid"/>
+	</field>
+<field name="locked_time" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="locked_time"/>
 	</field>
 <pageHeader>
-    <band height="165">
-        <staticText>
-            <reportElement x="10" y="15" width="200" height="30"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
-                <font size="14" isBold="true"/>
-            </textElement>
-            <text><![CDATA[à¤®à¤¿à¥à¥à¤°à¤® à¤µà¤¿à¤¶à¥à¤µà¤µà¤¿à¤¦à¥à¤¯à¤¾à¤²à¤¯]]></text>
-        </staticText>
-        <staticText>
-            <reportElement x="10" y="45" width="200" height="20"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
-                <font size="12"/>
-            </textElement>
-            <text><![CDATA[à¤ªà¤°à¥à¤à¥à¤·à¤¾ à¤µà¤¿à¤­à¤¾à¤]]></text>
-        </staticText>
-        <staticText>
-            <reportElement x="10" y="65" width="200" height="20"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
-                <font size="12"/>
-            </textElement>
-            <text><![CDATA[à¤à¤à¤à¤¼à¥à¤² -796004]]></text>
-        </staticText>
+    <band height="180" splitType="Stretch">
         <image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-            <reportElement x="235" y="5" width="100" height="100"/>
-            <imageExpression><![CDATA["Image_path"]]></imageExpression>
+            <reportElement x="10" y="0" width="120" height="110"/>
+            <imageExpression><![CDATA[$F{logo}]]></imageExpression>
         </image>
         <staticText>
-            <reportElement x="360" y="15" width="195" height="25"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
+            <reportElement x="135" y="10" width="415" height="22"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
                 <font size="14" isBold="true"/>
             </textElement>
-            <text><![CDATA[MIZORAM UNIVERSITY]]></text>
+            <text><![CDATA[SHAHEED MAHENDRA KARMA VISHWAVIDYALAYA, BASTAR,]]></text>
         </staticText>
         <staticText>
-            <reportElement x="360" y="40" width="195" height="20"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
+            <reportElement x="135" y="32" width="415" height="22"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="14" isBold="true"/>
+            </textElement>
+            <text><![CDATA[JAGDALPUR (C.G.)]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="135" y="65" width="415" height="25"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
                 <font size="12" isBold="true"/>
             </textElement>
-            <text><![CDATA[EXAMINATIONS DEPARTMENT]]></text>
+            <text><![CDATA[Remuneration Bill]]></text>
         </staticText>
         <staticText>
-            <reportElement x="360" y="60" width="195" height="20"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
-                <font size="12"/>
-            </textElement>
-            <text><![CDATA[Aizawlâ796004]]></text>
-        </staticText>
-        <staticText>
-            <reportElement x="360" y="80" width="35" height="20"/>
-            <textElement textAlignment="Left" verticalAlignment="Middle">
+            <reportElement x="350" y="100" width="195" height="20"/>
+            <textElement textAlignment="Right" verticalAlignment="Middle">
                 <font size="10"/>
             </textElement>
-            <text><![CDATA[Email-]]></text>
+            <text><![CDATA[Voucher No. .......................]]></text>
         </staticText>
         <staticText>
-            <reportElement x="395" y="80" width="160" height="20" forecolor="#350EE6"/>
+            <reportElement x="60" y="130" width="80" height="20"/>
             <textElement textAlignment="Left" verticalAlignment="Middle">
-                <font size="10" isUnderline="true"/>
+                <font size="11" isBold="true"/>
             </textElement>
-            <text><![CDATA[mzuexampro@mzu.edu.in]]></text>
+            <text><![CDATA[â   User ID - ]]></text>
         </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="140" y="130" width="200" height="20"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{userid}]]></textFieldExpression>
+        </textField>
         <staticText>
-            <reportElement x="0" y="110" width="555" height="20"/>
+            <reportElement x="60" y="155" width="280" height="20"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[â   Name of the Examiner (In block letter) :- ]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="340" y="155" width="210" height="20"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{fullname}]]></textFieldExpression>
+        </textField>
+    </band>
+</pageHeader>
+<columnHeader>
+    <band height="180">
+        <staticText>
+            <reportElement x="40" y="10" width="120" height="20"/>
             <textElement textAlignment="Center" verticalAlignment="Middle">
-                <font size="11"/>
+                <font isBold="true"/>
             </textElement>
-            <text><![CDATA[à¤­à¤¾à¤°à¤¤à¥à¤¯ à¤¸à¤à¤¸à¤¦ à¤¦à¥à¤µà¤¾à¤°à¤¾ à¤ªà¤¾à¤°à¤¿à¤¤ à¤à¤à¥à¤ à¤à¥ à¤à¤à¤¤à¤°à¥à¤à¤¤ à¤¸à¥à¤¥à¤¾à¤ªà¤¿à¤¤ à¤à¤ à¤à¥à¤¨à¥à¤¦à¥à¤°à¥à¤¯ à¤µà¤¿à¤¶à¥à¤µà¤µà¤¿à¤¦à¥à¤¯à¤¾à¤²à¤¯]]></text>
+            <text><![CDATA[â   College Name-]]></text>
         </staticText>
-        <staticText>
-            <reportElement x="0" y="130" width="555" height="20"/>
+        <textField isBlankWhenNull="true">
+            <reportElement x="160" y="10" width="350" height="20"/>
             <textElement textAlignment="Center" verticalAlignment="Middle">
-                <font size="12" isItalic="true"/>
+                <font/>
             </textElement>
-            <text><![CDATA[A Central University Established by Parliament Act No.8 of 2000]]></text>
+            <textFieldExpression><![CDATA[$F{branch_name}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="40" y="30" width="90" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[â   Address:-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="130" y="30" width="380" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{address}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="40" y="50" width="100" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[â   Mobile No.-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="140" y="50" width="110" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{mobile}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="280" y="50" width="70" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[E-mail-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="350" y="50" width="170" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="40" y="85" width="280" height="25"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="12" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Bank Account details (Essential)]]></text>
         </staticText>
         <staticText>
-            <reportElement x="45" y="155" width="465" height="1"/>
+            <reportElement x="50" y="115" width="120" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[(1) Bank Name:-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="170" y="115" width="140" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{bank_name}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="320" y="115" width="120" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[(2) Branch Name:-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="440" y="115" width="110" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{bank_branch_name}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="50" y="135" width="120" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[(3) Account No:-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="170" y="135" width="140" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{bank_account_no}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="320" y="135" width="120" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[(4 ) IFSC Code:-]]></text>
+        </staticText>
+        <textField isBlankWhenNull="true">
+            <reportElement x="440" y="135" width="110" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{bank_ifsc_code}]]></textFieldExpression>
+        </textField>
+    </band>
+</columnHeader>
+<detail>
+    <band height="100">
+        <staticText>
+            <reportElement x="0" y="0" width="50" height="40"/>
             <box>
                 <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-                <leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-                <bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-                <rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
             </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[S.No.]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="50" y="0" width="110" height="40"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Program Name]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="160" y="0" width="140" height="40"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Course Code & Name]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="300" y="0" width="120" height="40"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Total Evaluated Scripts]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="420" y="0" width="75" height="40"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Rate]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="495" y="0" width="60" height="40"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="11" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Amount]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="40" width="50" height="60"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[1]]></text>
+        </staticText>
+        <textField>
+            <reportElement x="50" y="40" width="110" height="60"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{branch_name}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="160" y="40" width="140" height="60"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{subqcode} + " - " + $F{subject_name}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="300" y="40" width="120" height="60"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="420" y="40" width="75" height="60"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="495" y="40" width="60" height="60"/>
+            <box>
+                <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
             <text><![CDATA[]]></text>
         </staticText>
     </band>
-</pageHeader>
+</detail>
+<columnFooter>
+    <band height="40">
+        <staticText>
+            <reportElement x="0" y="0" width="280" height="20"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Total]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="0" width="140" height="20"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="420" y="0" width="100" height="20"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="520" y="0" width="35" height="20"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="20" width="555" height="20"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[ Total in words:-]]></text>
+        </staticText>
+    </band>
+</columnFooter>
+<pageFooter>
+    <band height="180">
+        <staticText>
+            <reportElement x="10" y="5" width="150" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[FOR OFFICE USE]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="10" y="30" width="535" height="20"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[. Remuneration claimed Rs. ........................ TBF ........................]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="10" y="55" width="535" height="20"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[Other ........................]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="10" y="80" width="535" height="20"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[Net amount payable Rs. ........................ Passed of Rs on account of Entry made in the bill register on]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="30" y="120" width="200" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[Checked and Verified By]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="345" y="120" width="200" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[Signature/Seal]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="10" y="160" width="535" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[Note: This is a computer-generated invoice and needs no signature.]]></text>
+        </staticText>
+    </band>
+</pageFooter>
 </jasperReport>

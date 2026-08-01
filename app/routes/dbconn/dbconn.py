@@ -1,33 +1,48 @@
-from fastapi import APIRouter, Query, Request, Depends, Form, File, UploadFile, HTTPException
+from fastapi import APIRouter, Query, Request, Depends, Form, File, UploadFile, HTTPException, Body
 from fastapi.responses import FileResponse, RedirectResponse, HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+
 from ...databases.db import conn
 from ...models.model import Upload, Process, Dbcredentials, SshKey
-from datetime import datetime, timezone
-from ...services.dbconn.dbTesting import test_connection,list_tables, save_key_file_to_disk, write_temp_ssh_key
+from ...services.dbconn.connections import build_conn_dict
+from ...services.dbconn.dbTesting import (
+    test_connection, list_tables, save_key_file_to_disk, write_temp_ssh_key,
+    get_plain_sample_rows, get_plain_sample_rows_mongo, get_sample_data, get_sample_data_mongo,
+)
 from ...services.dbconn.sshkeys import save_ssh_key
+from ...services.dbconn.describe import generate_table_description
+from ...services.dbconn.table_meta import (
+    load_table_descriptions, save_table_descriptions,
+    load_default_descriptions, save_default_descriptions, bare_table_name,
+)
+from ...services.query.sample_cache import get_cached_sample, save_cached_sample
 
-
-import os,json
+from datetime import datetime, timezone
+import os
+import json
 from dotenv import load_dotenv
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 appname = os.getenv("APP_NAME")
-
+MIN_DESCRIBE_ROWS = 5
 
 router = APIRouter(prefix='/db', tags=['Connections'])
 templates = Jinja2Templates(f"{appname}/templates/dbconn")
 
-# ----------------------------------------------------------------------------------
+
+# ================= SSH KEYS =================
+
 @router.get('/keys')
 def list_ssh_keys(db: Session = Depends(conn)):
-    keys = (db.query(SshKey)
-              .filter(SshKey.deleted_at.is_(None))
-              .order_by(SshKey.uploaded_at.desc())
-              .all())
+    keys = (
+        db.query(SshKey)
+        .filter(SshKey.deleted_at.is_(None))
+        .order_by(SshKey.uploaded_at.desc())
+        .all()
+    )
     return [
         {"id": k.id, "name": k.name, "filename": k.original_filename,
          "uploaded_at": k.uploaded_at.isoformat() if k.uploaded_at else None}
@@ -66,16 +81,20 @@ def delete_ssh_key(id: int, db: Session = Depends(conn)):
     key = db.query(SshKey).filter(SshKey.id == id).first()
     if not key:
         raise HTTPException(404, "key not found")
-    in_use = (db.query(Dbcredentials)
-                .filter(Dbcredentials.ssh_key_id == id, Dbcredentials.deleted_at.is_(None))
-                .count())
+    in_use = (
+        db.query(Dbcredentials)
+        .filter(Dbcredentials.ssh_key_id == id, Dbcredentials.deleted_at.is_(None))
+        .count()
+    )
     if in_use:
         raise HTTPException(400, f"this key is used by {in_use} connection(s) — remove it from those first")
     key.deleted_at = datetime.now(timezone.utc)
     db.commit()
     return {"ok": True}
 
-# ------------------------------------Test For Db Connections-----------------------------------------------------------------------------------------------------------------
+
+# ================= CONNECTIONS: CRUD =================
+
 @router.post('/add')
 async def add_connection(request: Request, db: Session = Depends(conn)):
     raw_body = await request.body()
@@ -149,6 +168,20 @@ async def update_connection(id: int, request: Request, db: Session = Depends(con
     return {'ok': True, 'status': 'success', 'message': 'Database connection updated successfully.'}
 
 
+@router.delete('/{id}')
+def delete_connection(request: Request, id: int, db: Session = Depends(conn)):
+    connection = db.query(Dbcredentials).filter(Dbcredentials.id == id).first()
+    if not connection:
+        return JSONResponse(status_code=404, content={'status': 'error', 'message': 'Connection not found.'})
+
+    connection.deleted_at = datetime.now(timezone.utc)
+    db.commit()
+
+    return {'ok': True, 'status': 'success', 'message': 'Database connection deleted successfully.'}
+
+
+# ================= CONNECTIONS: TESTING =================
+
 @router.post('/test')
 async def test_connection_endpoint(request: Request, db: Session = Depends(conn)):
     raw_body = await request.body()
@@ -178,74 +211,30 @@ async def test_connection_endpoint(request: Request, db: Session = Depends(conn)
         return {"ok": True, "latency_ms": test_result.get("latency_ms")}
     else:
         return JSONResponse(status_code=200, content={"ok": False, "error": test_result["error"]})
-    
 
-@router.delete('/{id}')
-def delete_connection(request: Request, id: int, db: Session = Depends(conn)):
-    connection = db.query(Dbcredentials).filter(Dbcredentials.id == id).first()
-    if not connection:
-        return JSONResponse(status_code=404, content={'status': 'error', 'message': 'Connection not found.'})
-
-    # db.delete(connection)
-    connection.deleted_at = datetime.now(timezone.utc)
-    db.commit()
-
-    return {'ok': True, 'status': 'success', 'message': 'Database connection deleted successfully.'}
 
 @router.post('/{id}/test')
 def testing_connection(request: Request, id: int, db: Session = Depends(conn)):
     connection = db.query(Dbcredentials).filter(Dbcredentials.id == id).first()
-
     if not connection:
         return JSONResponse(status_code=404, content={'status': 'error', 'message': 'Connection not found.'})
 
-    payload = {
-        "type": connection.type,
-        "host": connection.host,
-        "port": connection.port,
-        "db": connection.db,
-        "user": connection.user,
-        "dbpass": connection.dbpass if connection.dbpass else None,
-        "ssl": connection.ssl,
-        "sshHost": connection.sshHost,
-        "sshPort": connection.sshPort,
-        "sshUser": connection.sshUser,
-        "authMode": connection.authMode,
-        "sshPass": connection.sshPass if connection.sshPass else None,
-        "keyPass": connection.keyPass if connection.keyPass else None,
-        "ssh_key_path": connection.ssh_key.storage_path if connection.ssh_key else None,
-    }
-
-    test_result = test_connection(payload)   # {"ok": True, "latency_ms": ...} or {"ok": False, "error": ...}
+    payload = build_conn_dict(connection)
+    test_result = test_connection(payload)
 
     connection.status = 'active' if test_result["ok"] else 'error'
     connection.last_tested_at = datetime.now(timezone.utc)
     db.commit()
 
     if test_result["ok"]:
-        return {
-            "ok": True,
-            "latency_ms": test_result.get("latency_ms"),
-            "status": connection.status,
-        }
+        return {"ok": True, "latency_ms": test_result.get("latency_ms"), "status": connection.status}
     else:
         return JSONResponse(status_code=200, content={
-            "ok": False,
-            "error": test_result["error"],
-            "status": connection.status,
+            "ok": False, "error": test_result["error"], "status": connection.status,
         })
 
 
-
-
-
-
-
-
-
-# ... build/save the Dbcredentials row from `payload`, and if key_file_bytes
-# is present, store the .ppk (convert to OpenSSH format here or at test-time,
-# per the earlier note about puttygen)
+# ================= TABLES =================
 
 @router.get("/{id}/tables")
 def get_connection_tables(id: int, db: Session = Depends(conn)):
@@ -253,24 +242,82 @@ def get_connection_tables(id: int, db: Session = Depends(conn)):
     if not connection:
         raise HTTPException(404, "connection not found")
 
-    c = {
-        "type": connection.type,
-        "host": connection.host,
-        "port": connection.port,
-        "db": connection.db,
-        "user": connection.user,
-        "dbpass": connection.dbpass if connection.dbpass else None,
-        "ssl": connection.ssl,
-        "sshHost": connection.sshHost,
-        "sshPort": connection.sshPort,
-        "sshUser": connection.sshUser,
-        "authMode": connection.authMode,
-        "sshPass": connection.sshPass if connection.sshPass else None,
-        "keyPass": connection.keyPass if connection.keyPass else None,
-        "ssh_key_path": connection.ssh_key.storage_path if connection.ssh_key else None,
-    }
-
+    c = build_conn_dict(connection)  # was a manually rebuilt dict here — reuse the shared helper instead
     try:
         return list_tables(c)
     except Exception as e:
         raise HTTPException(502, f"couldn't list tables: {e}")
+
+
+# ================= TABLE DESCRIPTIONS =================
+# GET  /table-descriptions/default         -> the shared, bare-table-name library
+# GET  /{id}/table-descriptions            -> this connection's own saved descriptions
+# PUT  /{id}/table-descriptions            -> saves both: this connection's copy (exact,
+#      possibly schema-qualified keys) AND write-through to the shared library (bare keys),
+#      so another connection with a same-named table gets it as a starting point.
+# POST /{id}/tables/{table_name}/describe  -> AI-drafts a description from real sample data.
+#      Cache-first: reuses the Query Builder's sample cache if it already has >= 5 rows,
+#      otherwise pulls a fresh plain LIMIT-5 sample (bypassing the anchor/repeat logic
+#      that's specific to query generation) and refreshes the cache with it.
+
+@router.get('/table-descriptions/default')
+def get_default_table_descriptions():
+    return load_default_descriptions()
+
+
+@router.get('/{id}/table-descriptions')
+def get_table_descriptions(id: int, db: Session = Depends(conn)):
+    connection = db.query(Dbcredentials).filter(Dbcredentials.id == id, Dbcredentials.deleted_at.is_(None)).first()
+    if not connection:
+        raise HTTPException(404, "connection not found")
+    return load_table_descriptions(id)
+
+
+@router.put('/{id}/table-descriptions')
+def put_table_descriptions(id: int, payload: dict = Body(...), db: Session = Depends(conn)):
+    connection = db.query(Dbcredentials).filter(Dbcredentials.id == id, Dbcredentials.deleted_at.is_(None)).first()
+    if not connection:
+        raise HTTPException(404, "connection not found")
+
+    tables = payload.get("tables", {})
+    save_table_descriptions(id, tables)
+
+    bare_entries = {bare_table_name(name): desc for name, desc in tables.items() if desc and desc.strip()}
+    if bare_entries:
+        save_default_descriptions(bare_entries)
+
+    return {"ok": True}
+
+
+@router.post('/{id}/tables/{table_name}/describe')
+def describe_table(id: int, table_name: str, db: Session = Depends(conn)):
+    connection = db.query(Dbcredentials).filter(Dbcredentials.id == id, Dbcredentials.deleted_at.is_(None)).first()
+    if not connection:
+        raise HTTPException(404, "connection not found")
+
+    c = build_conn_dict(connection)
+
+    cached = get_cached_sample(id, table_name)
+    rows = cached if cached and len(cached) >= MIN_DESCRIBE_ROWS else None
+
+    if rows is None:
+        try:
+            if c["type"] == "mongodb":
+                rows = get_plain_sample_rows_mongo(c, table_name, MIN_DESCRIBE_ROWS)
+            else:
+                rows = get_plain_sample_rows(c, table_name, MIN_DESCRIBE_ROWS)
+        except Exception as e:
+            raise HTTPException(502, f"couldn't fetch sample data: {e}")
+
+        if rows:
+            save_cached_sample(id, table_name, rows)
+
+    if not rows:
+        raise HTTPException(400, "no sample data available for this table")
+
+    try:
+        description = generate_table_description(table_name, rows[:MIN_DESCRIBE_ROWS])
+    except RuntimeError as e:
+        raise HTTPException(502, str(e))
+
+    return {"description": description}

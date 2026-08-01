@@ -1,0 +1,6 @@
+{
+  "connection_id": 1,
+  "tables": {
+    "SUBJECTBILANG_MSCW.COURSE_TYPE_SUBJECT_SCHEMA": "course and semester wise subject master details, joined using course-code, sem-code, subject-code."
+  }
+}

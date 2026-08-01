@@ -283,6 +283,13 @@ def build_sqlalchemy_url(c: dict, host: str, port) -> str:
 
     raise ValueError(f"{c['type']} isn't a SQLAlchemy-inspectable engine")
 
+def _split_table_name(name: str, default_schema: str | None) -> tuple[str | None, str]:
+    """'salesdb.students' -> ('salesdb', 'students'); 'students' -> (default_schema, 'students')"""
+    if "." in name:
+        schema, table = name.split(".", 1)
+        return schema, table
+    return default_schema, name
+
 
 def list_tables(c: dict) -> list[str]:
     if c["type"] == "mongodb":
@@ -304,11 +311,27 @@ def list_tables(c: dict) -> list[str]:
         engine = create_engine(build_sqlalchemy_url(c, host, port),
                                 connect_args={"connect_timeout": CONNECT_TIMEOUT})
         try:
-            return sorted(inspect(engine).get_table_names())
+            if c.get("db"):
+                # a specific database is set on this connection — same behavior as before
+                return sorted(inspect(engine).get_table_names())
+
+            if c["type"] != "mysql":
+                raise ValueError(
+                    f"{c['type']} connections need a specific database selected — "
+                    f"cross-database table listing is only supported for MySQL"
+                )
+
+            # no default database on this connection — list every table on the server,
+            # qualified as "database.table" so the caller knows which schema each is in
+            with engine.connect() as db_conn:
+                result = db_conn.execute(text(
+                    "SELECT table_schema, table_name FROM information_schema.tables "
+                    "WHERE table_schema NOT IN ('information_schema', 'mysql', 'performance_schema', 'sys') "
+                    "ORDER BY table_schema, table_name"
+                ))
+                return [f"{schema}.{table}" for schema, table in result.fetchall()]
         finally:
             engine.dispose()
-
-
 # ============================================================
 # Sample data
 # ============================================================

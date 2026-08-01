@@ -14,7 +14,7 @@ from .models.model import Base
 
 
 from .routes import home
-from .routes.report import upload, view, process, correction, generate
+from .routes.report import upload, view, process, correction, generate, report
 from .routes.dbconn import dbconn, view as dbview
 from .routes.query import build as querybuild
 import os
@@ -47,11 +47,12 @@ app.include_router(home.router)
 
 
 # report routes
-app.include_router(upload.router)
-app.include_router(view.router)
+app.include_router(report.report_router)
+# app.include_router(upload.router)
+# app.include_router(view.router)
 app.include_router(process.router)
 app.include_router(correction.router)
-app.include_router(generate.router)
+# app.include_router(generate.router)
 
 # dbconn routes
 app.include_router(dbview.router)

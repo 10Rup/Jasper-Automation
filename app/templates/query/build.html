@@ -72,6 +72,15 @@
   }
   .env-dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px var(--ok); }
 
+  .header-right{ display:flex; align-items:center; gap:10px; }
+  .home-btn{
+    display:flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim);
+    text-decoration:none; transition:color .15s, border-color .15s, background .15s;
+  }
+  .home-btn:hover{ color:var(--accent); border-color:#3A4356; background:var(--surface-2); }
+  .home-btn svg{ width:15px; height:15px; }
+
   h2.page-title{ font-family:var(--display); font-size:16px; margin:0 0 4px; }
   .page-sub{ font-size:12.5px; color:var(--text-faint); margin:0 0 22px; }
 
@@ -271,6 +280,28 @@
   }
   .param-field input:focus{ border-color:var(--accent); }
 
+  /* ===== field mapping panel ===== */
+  .field-map-list{ display:flex; flex-direction:column; gap:2px; border:1px solid var(--border); border-radius:7px; overflow:hidden; }
+  .field-map-row{
+    display:flex; align-items:center; gap:10px; padding:9px 11px; background:var(--surface-2);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .field-map-row:last-child{ border-bottom:none; }
+  .field-map-row .fm-alias{
+    font-family:var(--mono); font-size:11.5px; color:var(--accent); flex-shrink:0; width:110px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .field-map-row .fm-expr{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-faint); font-style:italic;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .field-map-row select{
+    flex:1; background:var(--surface-3); border:1px solid var(--border); color:var(--text);
+    font-family:var(--mono); font-size:11.5px; padding:6px 8px; border-radius:6px; outline:none;
+  }
+  .field-map-row select:focus{ border-color:var(--accent); }
+  .fm-unsupported{ font-size:11px; color:var(--text-faint); font-family:var(--mono); font-style:italic; margin-top:8px; }
+
   .result-wrap{ overflow-x:auto; overflow-y:auto; max-height:520px; border:1px solid var(--border); border-radius:7px; margin-top:0; }
   table.result-table{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
   table.result-table th{ text-align:left; background:var(--surface-2); color:var(--text-dim); padding:9px 12px; border-bottom:1px solid var(--border); white-space:nowrap; position:sticky; top:0; }
@@ -311,7 +342,12 @@
         <span>query builder</span>
       </div>
     </div>
-    <div class="env-pill"><span class="env-dot"></span> local · workspace: isha-dev</div>
+    <div class="header-right">
+      <a class="home-btn" href="/" title="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      </a>
+      <div class="env-pill"><span class="env-dot"></span> local · workspace: report-dev</div>
+    </div>
   </header>
 
   <h2 class="page-title">Prepare a report query</h2>
@@ -422,6 +458,12 @@
         <textarea class="sql-output" id="sqlOutput" spellcheck="false" placeholder="Generated SQL will appear here…"></textarea>
         <div class="edit-hint" id="editHint">✎ edited — Copy, Save, and Run will use this version</div>
 
+        <div id="fieldMapSection" style="display:none; margin-top:14px;">
+          <span class="field-label" style="margin-bottom:8px;">Field mapping</span>
+          <div class="field-map-list" id="fieldMapList"></div>
+        </div>
+        <div class="fm-unsupported" id="fieldMapUnsupported" style="display:none;"></div>
+
         <div id="paramSection" style="display:none;">
           <span class="field-label" style="margin-top:6px;">Test values for parameters</span>
           <div class="param-grid" id="paramGrid"></div>
@@ -432,6 +474,7 @@
       </div>
     </div>
   </div>
+
 
   <div class="result-panel" id="resultSection" style="display:none;">
     <div class="preview-head" style="border-radius:var(--radius) var(--radius) 0 0;">
@@ -513,6 +556,9 @@
   let selectedExistingUploadId = '';   // set when the user picks a previously uploaded file instead of dropping a new one
   let lastGeneratedSql = '';
   let lastGeneratedMeta = null;   // { connection_id, dataset_name, report_type, tables, sample_json } from the last successful generate
+  let lastSampleDataParsed = {};  // the sample JSON object at generate time — source of valid table.column options
+  let fieldMapModel = null;       // parsed { items, aliasToTable, spans } for the currently displayed SQL
+  let fieldMapDebounce = null;
 
   // ---- toast ----
   let toastTimer;
@@ -605,8 +651,12 @@
     // switching connections invalidates any previously generated SQL
     lastGeneratedSql = '';
     lastGeneratedMeta = null;
+    lastSampleDataParsed = {};
+    fieldMapModel = null;
     sqlOutput.value = '';
     document.getElementById('editHint').classList.remove('show');
+    document.getElementById('fieldMapSection').style.display = 'none';
+    document.getElementById('fieldMapUnsupported').style.display = 'none';
     document.getElementById('paramSection').style.display = 'none';
     document.getElementById('resultSection').style.display = 'none';
     const saveBtn = document.getElementById('saveQueryBtn');
@@ -850,6 +900,232 @@
     });
   }
 
+  // ================= FIELD MAPPING =================
+  // Only supports the standard single-SELECT (non-CTE) pattern the generator normally
+  // produces. Pivoted/CTE queries are flagged as unsupported rather than risking a
+  // fragile auto-edit — better to send the user back to editing the SQL directly.
+  function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  // Scans `sql` from `fromIndex`, skipping over parenthesised expressions and quoted
+  // strings, and returns the index of the first place `keywordRegex` (e.g. /^FROM\b/i)
+  // matches at genuine top-level word-boundary — or -1 if it never occurs.
+  function findTopLevelKeyword(sql, keywordRegex, fromIndex){
+    let depth = 0, inQuote = false;
+    for(let i = fromIndex; i < sql.length; i++){
+      const ch = sql[i];
+      if(inQuote){
+        if(ch === "'" && sql[i - 1] !== '\\') inQuote = false;
+        continue;
+      }
+      if(ch === "'"){ inQuote = true; continue; }
+      if(ch === '('){ depth++; continue; }
+      if(ch === ')'){ depth--; continue; }
+      if(depth === 0){
+        const prevOk = i === 0 || !/\w/.test(sql[i - 1]);
+        if(prevOk && keywordRegex.test(sql.slice(i))) return i;
+      }
+    }
+    return -1;
+  }
+
+  // Splits a comma-separated clause at top level only — ignores commas inside
+  // parens (function calls) or quoted string literals.
+  function splitTopLevel(str){
+    const parts = [];
+    let depth = 0, inQuote = false, start = 0;
+    for(let i = 0; i < str.length; i++){
+      const ch = str[i];
+      if(inQuote){
+        if(ch === "'" && str[i - 1] !== '\\') inQuote = false;
+        continue;
+      }
+      if(ch === "'"){ inQuote = true; continue; }
+      if(ch === '(') depth++;
+      else if(ch === ')') depth--;
+      else if(ch === ',' && depth === 0){
+        parts.push(str.slice(start, i));
+        start = i + 1;
+      }
+    }
+    parts.push(str.slice(start));
+    return parts.map(p => p.trim()).filter(Boolean);
+  }
+
+  function parseQueryForFieldMap(sql){
+    const trimmed = sql.trim();
+    if(!trimmed) return null;
+    if(/^WITH\b/i.test(trimmed)){
+      return { unsupported: "Field mapping isn't available for CTE-based queries — edit the SQL directly." };
+    }
+
+    const selectIdx = findTopLevelKeyword(sql, /^SELECT\b/i, 0);
+    if(selectIdx === -1) return { unsupported: 'Could not find a SELECT clause to map.' };
+    const fromIdx = findTopLevelKeyword(sql, /^FROM\b/i, selectIdx + 6);
+    if(fromIdx === -1) return { unsupported: 'Could not find a FROM clause to map.' };
+
+    // ---- alias -> table, read from the FROM/JOIN section ----
+    const afterFromStop = findTopLevelKeyword(sql, /^(WHERE|GROUP\s+BY|ORDER\s+BY|HAVING)\b/i, fromIdx);
+    const fromSection = sql.slice(fromIdx, afterFromStop === -1 ? sql.length : afterFromStop);
+    const aliasToTable = {};
+    const aliasRe = /\b(?:FROM|JOIN)\s+([a-zA-Z_][\w.]*)\s+(?:AS\s+)?([a-zA-Z_]\w*)\b/gi;
+    let m;
+    while((m = aliasRe.exec(fromSection))){
+      const table = m[1], alias = m[2];
+      if(/^(ON|WHERE|INNER|LEFT|RIGHT|OUTER|JOIN|AS)$/i.test(alias)) continue;
+      aliasToTable[alias] = table;
+    }
+
+    // ---- parse SELECT items ----
+    const selectClause = sql.slice(selectIdx + 6, fromIdx);
+    const items = splitTopLevel(selectClause).map(raw => {
+      const asMatch = raw.match(/^([\s\S]*?)\s+AS\s+([a-zA-Z_]\w*)\s*$/i);
+      let expr = raw, alias = null;
+      if(asMatch){ expr = asMatch[1].trim(); alias = asMatch[2]; }
+      const colMatch = expr.match(/^([a-zA-Z_]\w*)\.([a-zA-Z_]\w*)$/);
+      if(colMatch && alias){
+        return { raw, alias, tableAlias: colMatch[1], column: colMatch[2], editable: true };
+      }
+      return { raw, alias: alias || expr, tableAlias: null, column: null, editable: false };
+    });
+
+    // ---- optional GROUP BY span ----
+    const groupIdx = findTopLevelKeyword(sql, /^GROUP\s+BY\b/i, afterFromStop === -1 ? fromIdx : afterFromStop);
+    let groupSpan = null;
+    if(groupIdx !== -1){
+      const groupEnd = findTopLevelKeyword(sql, /^(ORDER\s+BY|HAVING)\b/i, groupIdx + 8);
+      groupSpan = [groupIdx, groupEnd === -1 ? sql.length : groupEnd];
+    }
+    // ---- optional ORDER BY span ----
+    const orderSearchFrom = groupSpan ? groupSpan[1] : (afterFromStop === -1 ? fromIdx : afterFromStop);
+    const orderIdx = findTopLevelKeyword(sql, /^ORDER\s+BY\b/i, orderSearchFrom);
+    const orderSpan = orderIdx !== -1 ? [orderIdx, sql.length] : null;
+
+    return { items, aliasToTable, spans: { select: [selectIdx, fromIdx], groupBy: groupSpan, orderBy: orderSpan } };
+  }
+
+  function getColumnsForTable(tableName){
+    if(!lastSampleDataParsed) return [];
+    let rows = lastSampleDataParsed[tableName];
+    if(!rows){
+      const key = Object.keys(lastSampleDataParsed).find(k => k.toLowerCase() === tableName.toLowerCase());
+      if(key) rows = lastSampleDataParsed[key];
+    }
+    if(!rows || !rows[0]) return [];
+    return Object.keys(rows[0]);
+  }
+
+  function rebuildSqlFromModel(){
+    const sql = lastGeneratedSql;
+    const { items, spans } = fieldMapModel;
+
+    const selectLines = items.map(it => it.editable ? `    ${it.tableAlias}.${it.column} AS ${it.alias}` : `    ${it.raw}`);
+    const newSelectClause = '\n' + selectLines.join(',\n') + '\n';
+
+    let newGroupByClause = null;
+    if(spans.groupBy){
+      const groupItems = items.filter(it => it.editable).map(it => `${it.tableAlias}.${it.column}`);
+      newGroupByClause = groupItems.length ? `GROUP BY \n    ${groupItems.join(',\n    ')}\n` : '';
+    }
+
+    let newOrderByClause = null;
+    if(spans.orderBy){
+      const orderBody = sql.slice(spans.orderBy[0], spans.orderBy[1]).replace(/^ORDER\s+BY\s*/i, '');
+      const orderItems = splitTopLevel(orderBody).filter(token => {
+        const bare = token.replace(/\s+(ASC|DESC)\s*$/i, '').trim();
+        return items.some(it => it.alias === bare);
+      });
+      newOrderByClause = orderItems.length ? `ORDER BY ${orderItems.join(', ')}` : '';
+    }
+
+    // splice from the rightmost span backwards, so earlier indices stay valid
+    let result = sql;
+    if(spans.orderBy) result = result.slice(0, spans.orderBy[0]) + newOrderByClause + result.slice(spans.orderBy[1]);
+    if(spans.groupBy) result = result.slice(0, spans.groupBy[0]) + newGroupByClause + result.slice(spans.groupBy[1]);
+    result = result.slice(0, spans.select[0]) + 'SELECT' + newSelectClause + result.slice(spans.select[1]);
+
+    return result.replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function applyFieldMapChange(idx, newValue){
+    if(!fieldMapModel) return;
+    if(newValue === '__remove__'){
+      fieldMapModel.items.splice(idx, 1);
+    } else {
+      const [newAlias, newCol] = newValue.split('.');
+      fieldMapModel.items[idx].tableAlias = newAlias;
+      fieldMapModel.items[idx].column = newCol;
+    }
+    const newSql = rebuildSqlFromModel();
+    lastGeneratedSql = newSql;
+    sqlOutput.value = newSql;
+    renderParamFields(newSql);
+    document.getElementById('editHint').classList.add('show');
+    const saveBtn = document.getElementById('saveQueryBtn');
+    saveBtn.disabled = !newSql.trim();
+    saveBtn.classList.remove('saved');
+    renderFieldMapPanel(); // re-parse the freshly rebuilt SQL so the panel stays in sync
+  }
+
+  function renderFieldMapPanel(){
+    const section = document.getElementById('fieldMapSection');
+    const unsupported = document.getElementById('fieldMapUnsupported');
+    const list = document.getElementById('fieldMapList');
+
+    if(!lastGeneratedSql.trim()){
+      section.style.display = 'none';
+      unsupported.style.display = 'none';
+      return;
+    }
+
+    const model = parseQueryForFieldMap(lastGeneratedSql);
+    if(!model || model.unsupported){
+      section.style.display = 'none';
+      unsupported.style.display = 'block';
+      unsupported.textContent = model ? model.unsupported : 'Could not parse this query for field mapping.';
+      fieldMapModel = null;
+      return;
+    }
+    unsupported.style.display = 'none';
+    section.style.display = 'block';
+    fieldMapModel = model;
+
+    list.innerHTML = '';
+    model.items.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'field-map-row';
+
+      if(!item.editable){
+        row.innerHTML = `
+          <span class="fm-alias">${item.alias}</span>
+          <span class="fm-expr" title="${item.raw.replace(/"/g, '&quot;')}">expression — edit SQL directly</span>
+        `;
+        list.appendChild(row);
+        return;
+      }
+
+      const options = [];
+      Object.entries(model.aliasToTable).forEach(([alias, table]) => {
+        getColumnsForTable(table).forEach(col => options.push(`${alias}.${col}`));
+      });
+      const currentValue = `${item.tableAlias}.${item.column}`;
+      const hasCurrent = options.includes(currentValue);
+
+      row.innerHTML = `
+        <span class="fm-alias">${item.alias}</span>
+        <select class="fm-select" data-idx="${idx}">
+          ${!hasCurrent ? `<option value="${currentValue}" selected>⚠ ${currentValue} — not in sample data</option>` : ''}
+          ${options.map(o => `<option value="${o}" ${o === currentValue ? 'selected' : ''}>${o}</option>`).join('')}
+          <option value="__remove__">— remove this field —</option>
+        </select>
+      `;
+      list.appendChild(row);
+    });
+
+    list.querySelectorAll('.fm-select').forEach(sel => {
+      sel.addEventListener('change', () => applyFieldMapChange(parseInt(sel.dataset.idx, 10), sel.value));
+    });
+  }
+
   // ---- generate query ----
   const sqlOutput = document.getElementById('sqlOutput');
   document.getElementById('generateBtn').addEventListener('click', async () => {
@@ -880,6 +1156,8 @@
     btn.classList.add('loading');
     sqlOutput.value = '';
     document.getElementById('editHint').classList.remove('show');
+    document.getElementById('fieldMapSection').style.display = 'none';
+    document.getElementById('fieldMapUnsupported').style.display = 'none';
     document.getElementById('paramSection').style.display = 'none';
     document.getElementById('resultSection').style.display = 'none';
     const saveBtn = document.getElementById('saveQueryBtn');
@@ -933,8 +1211,10 @@
       const data = await res.json();
       lastGeneratedSql = data.sql || '';
       lastGeneratedMeta = basePayload;   // remembered for the Save button, so it doesn't re-read stale form state
+      lastSampleDataParsed = sampleJson || {};   // source of valid table.column options for the field-mapping panel
       sqlOutput.value = lastGeneratedSql;
       renderParamFields(lastGeneratedSql);
+      renderFieldMapPanel();
       saveBtn.disabled = !lastGeneratedSql;
     } catch(err){
       showToast(`Couldn't generate query: ${err.message}`);
@@ -951,6 +1231,8 @@
     const saveBtn = document.getElementById('saveQueryBtn');
     saveBtn.disabled = !lastGeneratedSql.trim();
     saveBtn.classList.remove('saved');   // a save from before this edit no longer reflects what's in the box
+    clearTimeout(fieldMapDebounce);
+    fieldMapDebounce = setTimeout(renderFieldMapPanel, 700); // debounced so it doesn't re-parse on every keystroke
   });
 
 

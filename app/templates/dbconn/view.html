@@ -74,6 +74,15 @@
   }
   .env-dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px var(--ok); }
 
+  .header-right{ display:flex; align-items:center; gap:10px; }
+  .home-btn{
+    display:flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim);
+    text-decoration:none; transition:color .15s, border-color .15s, background .15s;
+  }
+  .home-btn:hover{ color:var(--accent); border-color:#3A4356; background:var(--surface-2); }
+  .home-btn svg{ width:15px; height:15px; }
+
   /* tabs */
   .tabbar{
     display:flex; gap:4px; background:var(--surface); border:1px solid var(--border);
@@ -171,6 +180,45 @@
   .field-foot{ display:flex; justify-content:space-between; align-items:center; }
   .field-foot .hint{ font-size:11px; color:var(--text-faint); font-family:var(--mono); }
   .field-foot .hint:hover{ text-decoration:underline; }
+
+  /* ===== table descriptions (edit mode only) ===== */
+  .table-desc-list{ display:flex; flex-direction:column; gap:10px; max-height:520px; overflow-y:auto; padding-right:2px; }
+  .table-desc-row{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:9px; padding:12px 14px;
+  }
+  .table-desc-row .tdr-head{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .table-desc-row .tdr-name{
+    flex:1; font-family:var(--mono); font-size:12.5px; color:var(--accent); font-weight:600;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .table-desc-row .tdr-filled{ width:6px; height:6px; border-radius:50%; background:var(--ok); flex-shrink:0; display:none; }
+  .table-desc-row.has-desc .tdr-filled{ display:block; }
+  .tdr-shared{
+    font-family:var(--mono); font-size:9.5px; color:var(--text-faint); background:var(--surface-3);
+    border:1px solid var(--border); padding:2px 8px; border-radius:100px; flex-shrink:0; white-space:nowrap;
+  }
+  .ai-desc-btn{
+    display:inline-flex; align-items:center; gap:5px; background:rgba(167,139,250,0.1);
+    border:1px solid rgba(167,139,250,0.3); color:#A78BFA; font-family:var(--display);
+    font-size:10.5px; font-weight:600; padding:4px 10px; border-radius:100px; cursor:pointer;
+    transition:filter .15s, background .15s; flex-shrink:0; position:relative;
+  }
+  .ai-desc-btn:hover{ filter:brightness(1.15); background:rgba(167,139,250,0.18); }
+  .ai-desc-btn svg{ width:11px; height:11px; }
+  .ai-desc-btn[disabled]{ opacity:0.5; cursor:not-allowed; pointer-events:none; }
+  .ai-desc-btn.loading svg, .ai-desc-btn.loading .ai-desc-label{ visibility:hidden; }
+  .ai-desc-btn.loading::after{
+    content:''; position:absolute; width:11px; height:11px; border-radius:50%;
+    border:1.5px solid rgba(167,139,250,0.3); border-top-color:#A78BFA;
+    animation:spin .6s linear infinite;
+  }
+  .table-desc-row textarea{
+    width:100%; min-height:60px; background:var(--surface-3); border:1px solid var(--border);
+    color:var(--text); font-family:var(--body); font-size:12.5px; line-height:1.5; padding:9px 11px;
+    border-radius:7px; outline:none; resize:vertical;
+  }
+  .table-desc-row textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .table-desc-row textarea::placeholder{ color:var(--text-faint); }
 
   .file-drop{
     display:flex; align-items:center; gap:10px; padding:14px; border:1px dashed var(--border);
@@ -312,7 +360,12 @@
         <span>connection registry</span>
       </div>
     </div>
-    <div class="env-pill"><span class="env-dot"></span> local · workspace: isha-dev</div>
+    <div class="header-right">
+      <a class="home-btn" href="/" title="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      </a>
+      <div class="env-pill"><span class="env-dot"></span> local · workspace: report-dev</div>
+    </div>
   </header>
 
   <div class="tabbar">
@@ -450,6 +503,15 @@
         </div>
         <div class="preview-body" id="previewBody"></div>
         <div class="test-result" id="testResult"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="tableDescPanel" style="display:none; margin-top:18px;">
+      <h2>Table descriptions <span class="optional-tag">optional</span></h2>
+      <p class="sub">Help the AI understand what each table is for and when it should be used. Saved per connection, and shared across connections with a same-named table — anything tagged "from shared library" is a starting point from elsewhere, not something verified against this connection's data.</p>
+      <div class="table-desc-list" id="tableDescList"></div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn btn-primary" id="saveTableDescBtn">Save descriptions</button>
       </div>
     </div>
   </div>
@@ -723,6 +785,8 @@
     document.getElementById('previewTitle').textContent = 'preview.conn';
     document.getElementById('saveBtn').textContent = 'Save connection';
     document.getElementById('cancelBtn').style.display = 'none';
+    document.getElementById('tableDescPanel').style.display = 'none';
+    document.getElementById('tableDescList').innerHTML = '';
     updatePreview();
   }
 
@@ -757,7 +821,123 @@
     testResult.className = 'test-result';
     updatePreview();
     switchView('add-view');
+
+    document.getElementById('tableDescPanel').style.display = 'block';
+    loadTableDescriptions(conn.id);
   }
+
+  // ================= TABLE DESCRIPTIONS (edit mode only) =================
+  // GET  {API_BASE}/{id}/tables              -> ["students", "marks", ...] (already used elsewhere)
+  // GET  {API_BASE}/{id}/table-descriptions  -> 200 { "students": "one row per enrolled student", ... }
+  //      Reads a per-connection JSON file on disk. Missing/empty = {}.
+  // PUT  {API_BASE}/{id}/table-descriptions  -> 200 {ok: true}
+  //      body: { tables: { "students": "...", "marks": "" } }
+  //      Overwrites the whole file for this connection — empty descriptions are dropped
+  //      server-side, so only tables with real notes are persisted.
+  // POST {API_BASE}/{id}/tables/{table}/describe -> 200 { description: "..." }
+  //      Pulls a few real sample rows for this table and asks the LLM to draft a short
+  //      description from them. Purely a starting point — the textarea stays editable
+  //      after this fills it in, nothing is auto-saved until "Save descriptions" is clicked.
+  async function loadTableDescriptions(connectionId){
+    const list = document.getElementById('tableDescList');
+    list.innerHTML = `<div class="skeleton-card"></div><div class="skeleton-card"></div>`;
+    try{
+      const [tablesRes, descRes, defaultsRes] = await Promise.all([
+        fetch(`${API_BASE}/${connectionId}/tables`),
+        fetch(`${API_BASE}/${connectionId}/table-descriptions`),
+        fetch(`${API_BASE}/table-descriptions/default`),
+      ]);
+      if(!tablesRes.ok) throw new Error(`couldn't load tables (${tablesRes.status})`);
+      const tables = await tablesRes.json();
+      const descriptions = descRes.ok ? await descRes.json() : {};
+      const defaults = defaultsRes.ok ? await defaultsRes.json() : {};
+
+      if(tables.length === 0){
+        list.innerHTML = `<div class="empty-state"><p>No tables found for this connection.</p></div>`;
+        return;
+      }
+
+      list.innerHTML = '';
+      tables.forEach(table => {
+        const bareName = table.split('.').pop();
+        const ownDesc = descriptions[table] || '';
+        const sharedDesc = defaults[bareName] || '';
+        const existing = ownDesc || sharedDesc;
+        const fromShared = !ownDesc && !!sharedDesc;
+
+        const row = document.createElement('div');
+        row.className = 'table-desc-row' + (existing ? ' has-desc' : '');
+        row.innerHTML = `
+          <div class="tdr-head">
+            <span class="tdr-filled"></span>
+            <span class="tdr-name">${table}</span>
+            ${fromShared ? '<span class="tdr-shared">from shared library</span>' : ''}
+            <button type="button" class="ai-desc-btn" title="Generate a description from this table's data">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/></svg>
+              <span class="ai-desc-label">Use AI</span>
+            </button>
+          </div>
+          <textarea data-table="${table}" placeholder="What is this table for, and when should it be used? e.g. one row per enrolled student, joined via studentcode">${existing}</textarea>
+        `;
+        row.querySelector('textarea').addEventListener('input', function(){
+          row.classList.toggle('has-desc', this.value.trim().length > 0);
+          row.querySelector('.tdr-shared')?.remove(); // once edited, this is this connection's own value, not the shared fallback anymore
+        });
+        row.querySelector('.ai-desc-btn').addEventListener('click', async function(){
+          const btn = this;
+          const textarea = row.querySelector('textarea');
+          btn.classList.add('loading');
+          btn.disabled = true;
+          try{
+            const res = await fetch(`${API_BASE}/${connectionId}/tables/${encodeURIComponent(table)}/describe`, { method: 'POST' });
+            if(!res.ok){
+              const err = await res.json().catch(() => ({}));
+              throw new Error(err.detail || `API responded ${res.status}`);
+            }
+            const data = await res.json();
+            textarea.value = data.description || '';
+            row.classList.toggle('has-desc', textarea.value.trim().length > 0);
+            row.querySelector('.tdr-shared')?.remove(); // AI-generated text replaces the shared fallback too
+            showToast(`Description generated for ${table} — review and edit as needed`);
+          } catch(err){
+            showToast(`Couldn't generate description: ${err.message}`);
+          } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+          }
+        });
+        list.appendChild(row);
+      });
+    } catch(err){
+      list.innerHTML = `<div class="empty-state"><p>Couldn't load tables — ${err.message}</p></div>`;
+    }
+  }
+
+  document.getElementById('saveTableDescBtn').addEventListener('click', async () => {
+    if(editingId === null) return;
+    const btn = document.getElementById('saveTableDescBtn');
+    btn.classList.add('loading');
+    try{
+      const tables = {};
+      document.querySelectorAll('#tableDescList textarea[data-table]').forEach(t => {
+        tables[t.dataset.table] = t.value;
+      });
+      const res = await fetch(`${API_BASE}/${editingId}/table-descriptions`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tables }),
+      });
+      if(!res.ok){
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `API responded ${res.status}`);
+      }
+      showToast('Table descriptions saved');
+    } catch(err){
+      showToast(`Couldn't save descriptions: ${err.message}`);
+    } finally {
+      btn.classList.remove('loading');
+    }
+  });
 
   // ---- save connection: POST to create, PUT to update ----
   document.getElementById('saveBtn').addEventListener('click', async () => {

@@ -1,344 +1,609 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Process Page</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conduit — Draw Regions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0D12;
+    --surface: #12161F;
+    --surface-2: #1A2029;
+    --surface-3: #212836;
+    --border: #262E3D;
+    --border-soft: #1D2432;
+    --text: #E7EAF0;
+    --text-dim: #8E97AB;
+    --text-faint: #5B6478;
+    --accent: #57E6C7;
+    --accent-dim: #2E4F49;
+    --accent-glow: rgba(87,230,199,0.16);
+    --warn: #F0B429;
+    --err: #F16A6A;
+    --ok: #5FDD8F;
+    --ai: #A78BFA;
+    --radius: 10px;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(87,230,199,0.05), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .pipes-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.3;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 20%, transparent 75%);
+  }
+
+  .shell{ position:relative; z-index:1; max-width:1520px; margin:0 auto; padding:32px 40px 60px; }
+  @media (max-width:900px){ .shell{ padding:24px 20px 40px; } }
+
+  header{ display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:22px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:linear-gradient(145deg, var(--accent), #2FAF97);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset, 0 6px 18px -6px rgba(87,230,199,0.5);
+  }
+  .brand-mark svg{ width:20px; height:20px; }
+  .brand-text h1{ font-family:var(--display); font-size:19px; font-weight:700; margin:0; letter-spacing:0.2px; }
+  .brand-text span{ font-size:12px; color:var(--text-faint); font-family:var(--mono); }
+
+  .header-right{ display:flex; align-items:center; gap:10px; }
+  .home-btn{
+    display:flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim);
+    text-decoration:none; transition:color .15s, border-color .15s, background .15s;
+  }
+  .home-btn:hover{ color:var(--accent); border-color:#3A4356; background:var(--surface-2); }
+  .home-btn svg{ width:15px; height:15px; }
+
+  .toolbar{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px 20px; margin-bottom:18px;
+  }
+  .toolbar-left{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .toolbar h2{ font-family:var(--display); font-size:16px; margin:0; }
+  .toolbar .filename{ font-family:var(--mono); font-size:11.5px; color:var(--text-faint); margin-top:2px; }
+
+  .band-select{ display:flex; align-items:center; gap:10px; }
+  .band-select label{ font-size:12px; font-weight:600; color:var(--text-dim); }
+  select{
+    background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--body); font-size:13px; padding:9px 12px; border-radius:7px; outline:none;
+    appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E97AB' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat; background-position:right 10px center; background-size:16px; padding-right:34px;
+  }
+  select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+
+  .toolbar-actions{ display:flex; gap:10px; }
+  .btn{
+    font-family:var(--display); font-weight:600; font-size:13px; padding:10px 18px; border-radius:8px;
+    border:none; cursor:pointer; transition:filter .15s, transform .1s; display:inline-flex;
+    align-items:center; gap:7px;
+  }
+  .btn:active{ transform:scale(0.98); }
+  .btn-primary{ background:var(--accent); color:#08110F; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-ai{ background:linear-gradient(135deg, var(--ai), #8B5CF6); color:#fff; }
+  .btn-ai:hover{ filter:brightness(1.1); }
+  .btn-ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--border); }
+  .btn-ghost:hover{ color:var(--text); border-color:#3A4356; }
+  .btn[disabled]{ opacity:0.5; cursor:not-allowed; }
+  .btn.loading{ position:relative; color:transparent !important; pointer-events:none; }
+  .btn.loading svg{ visibility:hidden; }
+  .btn.loading::after{
+    content:''; position:absolute; width:14px; height:14px; border-radius:50%;
+    border:2px solid rgba(255,255,255,0.3); border-top-color:currentColor; color:#fff;
+    animation:spin .6s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .btn svg{ width:14px; height:14px; }
+
+  .work-grid{ display:grid; grid-template-columns:1fr 280px; gap:18px; align-items:start; }
+  @media (max-width:960px){ .work-grid{ grid-template-columns:1fr; } }
+
+  .canvas-panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px; overflow:auto;
+  }
+  .canvas-container{ display:flex; justify-content:center; }
+  #canvas{ max-width:100%; border-radius:6px; border:1px solid var(--border-soft); cursor:crosshair; }
+
+  .side-panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px; position:sticky; top:20px;
+  }
+  .side-panel h3{ font-family:var(--display); font-size:13.5px; margin:0 0 4px; }
+  .side-panel .sub{ font-size:11.5px; color:var(--text-faint); margin:0 0 16px; }
+
+  .region-list{ display:flex; flex-direction:column; gap:8px; max-height:420px; overflow-y:auto; }
+  .region-row{
+    display:flex; align-items:center; gap:10px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:8px; padding:9px 10px; cursor:pointer; transition:border-color .15s;
+  }
+  .region-row:hover{ border-color:#3A4356; }
+  .region-row.selected{ border-color:var(--accent); background:var(--accent-glow); }
+  .region-row .r-dot{ width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .region-row .r-dot.ai{ background:var(--ai); }
+  .region-row .r-dot.manual{ background:var(--accent); }
+  .region-row .r-info{ flex:1; min-width:0; }
+  .region-row .r-band{ font-family:var(--display); font-size:12px; font-weight:600; color:var(--text); text-transform:capitalize; }
+  .region-row .r-coords{ font-family:var(--mono); font-size:10px; color:var(--text-faint); }
+  .region-row .r-remove{
+    width:22px; height:22px; border-radius:6px; background:var(--surface-3); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-faint); flex-shrink:0;
+  }
+  .region-row .r-remove:hover{ color:var(--err); border-color:rgba(241,106,106,0.4); }
+  .region-row .r-remove svg{ width:11px; height:11px; }
+
+  .region-empty{ text-align:center; padding:30px 10px; color:var(--text-faint); font-size:11.5px; }
+
+  .ai-note{
+    display:flex; align-items:flex-start; gap:8px; margin-top:14px; padding:10px 12px;
+    background:rgba(167,139,250,0.08); border:1px solid rgba(167,139,250,0.25); border-radius:8px;
+    font-size:11px; color:var(--text-dim); line-height:1.5;
+  }
+  .ai-note svg{ width:14px; height:14px; color:var(--ai); flex-shrink:0; margin-top:1px; }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--surface-3); border:1px solid var(--accent); color:var(--text);
+    padding:12px 20px; border-radius:9px; font-size:13px; font-family:var(--body);
+    display:flex; align-items:center; gap:9px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:50;
+    box-shadow:0 10px 30px -8px rgba(0,0,0,0.5);
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast svg{ width:15px; height:15px; color:var(--accent); flex-shrink:0; }
+</style>
 </head>
 <body>
-    <h1>Welcome to the Process Page</h1>
 
-    <main class="main">
+<div class="pipes-bg"></div>
 
-        <!-- HEADER -->
-        <header class="header">
+<div class="shell">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3h10l4 4v14H3V3zM17 3v6h4M8 13h8M8 17h5" stroke="#08110F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>Conduit</h1>
+        <span>draw regions</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a class="home-btn" href="/report/" title="Back to report studio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      </a>
+    </div>
+  </header>
 
-            <!-- TOP ROW -->
-            <div class="header-top">
-                <div class="header-left">
-                    <h2>Draw Regions</h2>
-                </div>
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <div>
+        <h2 id="reportTitle">Draw Regions</h2>
+        <div class="filename" id="reportFilename"></div>
+      </div>
+      <div class="band-select">
+        <label>Selected band</label>
+        <select id="band">
+          <option value="title">Title</option>
+          <option value="pageHeader">Page Header</option>
+          <option value="columnHeader">Column Header</option>
+          <option value="detail">Detail</option>
+          <option value="columnFooter">Column Footer</option>
+          <option value="pageFooter">Page Footer</option>
+          <option value="summary">Summary</option>
+        </select>
+      </div>
+    </div>
+    <div class="toolbar-actions">
+      <button class="btn btn-ai" id="useAiBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 15l.75 2.25L22 18l-2.25.75L19 21l-.75-2.25L16 18l2.25-.75L19 15z"/></svg>
+        Use AI
+      </button>
+      <button class="btn btn-primary" id="saveBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+        Save
+      </button>
+    </div>
+  </div>
 
-                <div class="header-right">
-                    <button class="btn-save" onclick="saveRegions()">Save</button>
-                </div>
-            </div>
+  <div class="work-grid">
+    <div class="canvas-panel">
+      <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+      </div>
+    </div>
 
-            <!-- SECOND ROW -->
-            <div class="band-select">
-                <label>Select Band :</label>
-                <select id="band">
-                <option value="title">Title</option>
-                <option value="pageHeader">Page Header</option>
-                <option value="columnHeader">Column Header</option>
-                <option value="detail">Detail</option>
-                <option value="columnFooter">Column Footer</option>
-                <option value="pageFooter">Page Footer</option>
-                <option value="summary">Summary</option>
-                </select>
-            </div>
+    <div class="side-panel">
+      <h3>Regions</h3>
+      <p class="sub">Click a region to select it on the canvas. Drag corners to resize, drag the box to move, Delete/Backspace to remove.</p>
+      <div class="region-list" id="regionList"></div>
 
-        </header>
+      <div class="ai-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        <span>AI-drawn boxes (violet) are a starting point — review and adjust before saving. They behave exactly like manually drawn regions.</span>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!-- CONTENT -->
-        <section class="content">
-            <div class="canvas-container">
-                <canvas id="canvas"></canvas>
-            </div>
-        </section>
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toastText">Saved</span>
+</div>
 
-        <!-- FOOTER -->
-        <!-- <footer class="footer">
-            <button class="btn-cancel" onclick="cancelBtn()">Cancel</button>
-        </footer>
+<script>
+  // ================= REPORT CONTEXT (rendered server-side, same as before) =================
+  const imageUrl = "/uploadimg/{{report.path}}";
+  const fileId = "{{report.id}}";
+  const filename = "{{report.displayname}}";
+  const imagePath = "{{report.path}}";
 
-        <div>
-            <button class="btn-cancel" onclick="compileBtn()">Compile</button>
+  document.getElementById('reportFilename').textContent = filename;
+
+  // ================= API CONFIG =================
+  //   POST {API_BASE}/{fileId}/ai-detect -> 200 { status: 'success', regions: [{band,x,y,width,height}, ...] }
+  //                                       | 502 { status: 'error', message }
+  //        Runs vision-based band detection on the uploaded image server-side and
+  //        returns one bounding box per band it identified — a starting point only,
+  //        every region below is still fully editable/deletable before Save.
+  //   POST /report/process/save-region -> unchanged, same contract as before.
+  const API_BASE = '/report/process';
+
+  let toastTimer;
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const bandSelect = document.getElementById("band");
+  const regionListEl = document.getElementById("regionList");
+
+  const BAND_COLORS = {
+    title:'#57E6C7', pageHeader:'#5FA8E0', columnHeader:'#F0C64B', detail:'#57E6C7',
+    columnFooter:'#F0C64B', pageFooter:'#5FA8E0', summary:'#EF9C4B',
+  };
+
+  // Regions saved on a previous visit to this page, rendered server-side from the
+  // Process table — if this report has been processed before, these load in
+  // automatically instead of starting from a blank canvas, so nobody accidentally
+  // re-draws or re-runs AI detection over an existing mapping by mistake.
+  const existingRegions = {{ existing_regions | tojson }};
+
+  let rectangles = existingRegions.map(r => ({ ...r, source: 'saved' }));
+  let img = new Image();
+  img.src = imageUrl;
+
+  let selectedRect = null;
+  let isDrawing = false;
+  let isDragging = false;
+  let isResizing = false;
+  let resizeHandle = null;
+
+  let startX, startY, offX, offY;
+  const HANDLE_SIZE = 8;
+
+  img.onload = function () {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    draw();
+    renderRegionList();
+    if(rectangles.length > 0){
+      showToast(`Loaded ${rectangles.length} saved region(s) from last time — edit and Save to update`);
+    }
+  };
+
+  function isInside(x, y, r) {
+    const rx = r.x, ry = r.y, rw = r.width, rh = r.height;
+    const realX = rw > 0 ? rx : rx + rw;
+    const realY = rh > 0 ? ry : ry + rh;
+    const realW = Math.abs(rw);
+    const realH = Math.abs(rh);
+    return x >= realX && x <= realX + realW && y >= realY && y <= realY + realH;
+  }
+
+  function getHandle(x, y, r) {
+    const rx = r.x, ry = r.y, rw = r.width, rh = r.height;
+    const rXR = rx + rw;
+    const rYB = ry + rh;
+    const h = HANDLE_SIZE / 2;
+
+    if (x >= rx-h && x <= rx+h && y >= ry-h && y <= ry+h) return 'tl';
+    if (x >= rXR-h && x <= rXR+h && y >= ry-h && y <= ry+h) return 'tr';
+    if (x >= rx-h && x <= rx+h && y >= rYB-h && y <= rYB+h) return 'bl';
+    if (x >= rXR-h && x <= rXR+h && y >= rYB-h && y <= rYB+h) return 'br';
+    return null;
+  }
+
+  bandSelect.addEventListener("change", e => {
+    if (selectedRect) {
+      selectedRect.band = e.target.value;
+      draw();
+      renderRegionList();
+    }
+  });
+
+  canvas.addEventListener("mousedown", e => {
+    const pos = getMousePos(e);
+    const mx = pos.x, my = pos.y;
+
+    if (selectedRect) {
+      resizeHandle = getHandle(mx, my, selectedRect);
+      if (resizeHandle) { isResizing = true; return; }
+    }
+
+    let found = false;
+    rectangles.slice().reverse().forEach(r => {
+      if (!found && isInside(mx, my, r)) {
+        selectedRect = r;
+        offX = mx - r.x;
+        offY = my - r.y;
+        isDragging = true;
+        found = true;
+        bandSelect.value = r.band;
+      }
+    });
+
+    if (found) { draw(); renderRegionList(); return; }
+
+    selectedRect = null;
+    bandSelect.value = bandSelect.options[1].value;
+    startX = mx;
+    startY = my;
+    isDrawing = true;
+    draw();
+    renderRegionList();
+  });
+
+  canvas.addEventListener("mousemove", e => {
+    const pos = getMousePos(e);
+    const mx = pos.x, my = pos.y;
+
+    if (selectedRect) {
+      const h = getHandle(mx, my, selectedRect);
+      if (h === 'tl' || h === 'br') canvas.style.cursor = 'nwse-resize';
+      else if (h === 'tr' || h === 'bl') canvas.style.cursor = 'nesw-resize';
+      else if (isInside(mx, my, selectedRect)) canvas.style.cursor = 'move';
+      else canvas.style.cursor = 'crosshair';
+    } else {
+      canvas.style.cursor = 'crosshair';
+    }
+
+    if (isResizing && selectedRect) {
+      const r = selectedRect;
+      if (resizeHandle === 'tl') { r.width += (r.x - mx); r.height += (r.y - my); r.x = mx; r.y = my; }
+      if (resizeHandle === 'tr') { r.width = mx - r.x; r.height += (r.y - my); r.y = my; }
+      if (resizeHandle === 'bl') { r.x = mx; r.width += (selectedRect.x - mx); r.height = my - r.y; }
+      if (resizeHandle === 'br') { r.width = mx - r.x; r.height = my - r.y; }
+      draw();
+      renderRegionList();
+    } else if (isDragging && selectedRect) {
+      selectedRect.x = mx - offX;
+      selectedRect.y = my - offY;
+      draw();
+      renderRegionList();
+    } else if (isDrawing) {
+      draw();
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = "#57E6C7";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(startX, startY, mx - startX, my - startY);
+      ctx.setLineDash([]);
+    }
+  });
+
+  canvas.addEventListener("mouseup", e => {
+    const pos = getMousePos(e);
+
+    if (isDrawing) {
+      let rect = {
+        x: startX, y: startY,
+        width: pos.x - startX, height: pos.y - startY,
+        band: bandSelect.value, source: 'manual',
+      };
+      if (Math.abs(rect.width) > 5 && Math.abs(rect.height) > 5) {
+        rectangles.push(rect);
+        selectedRect = rect;
+      }
+    }
+    isDrawing = isDragging = isResizing = false;
+    resizeHandle = null;
+    draw();
+    renderRegionList();
+  });
+
+  window.addEventListener("keydown", e => {
+    if ((e.key === "Delete" || e.key === "Backspace") && selectedRect
+        && document.activeElement.tagName !== 'SELECT') {
+      e.preventDefault();
+      rectangles = rectangles.filter(r => r !== selectedRect);
+      selectedRect = null;
+      draw();
+      renderRegionList();
+    }
+  });
+
+  function draw() {
+    ctx.drawImage(img, 0, 0);
+    ctx.lineWidth = 2;
+    rectangles.forEach(r => {
+      const isSel = (r === selectedRect);
+      const baseColor = r.source === 'ai' ? '#A78BFA' : (isSel ? '#5FDD8F' : '#57E6C7');
+
+      ctx.strokeStyle = baseColor;
+      ctx.setLineDash(isSel ? [2, 2] : (r.source === 'ai' ? [6, 3] : []));
+      ctx.strokeRect(r.x, r.y, r.width, r.height);
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = baseColor;
+      ctx.font = "bold 12px 'JetBrains Mono', monospace";
+      ctx.fillText(r.band.toUpperCase(), r.x + 5, r.y + 15);
+
+      if (isSel) {
+        ctx.fillStyle = "#fff";
+        ctx.strokeStyle = "#5FDD8F";
+        ctx.lineWidth = 1;
+        const h = HANDLE_SIZE / 2;
+        const corners = [
+          [r.x-h, r.y-h], [r.x+r.width-h, r.y-h],
+          [r.x-h, r.y+r.height-h], [r.x+r.width-h, r.y+r.height-h]
+        ];
+        corners.forEach(([hx, hy]) => {
+          ctx.fillRect(hx, hy, HANDLE_SIZE, HANDLE_SIZE);
+          ctx.strokeRect(hx, hy, HANDLE_SIZE, HANDLE_SIZE);
+        });
+        ctx.lineWidth = 2;
+      }
+    });
+  }
+
+  function normalizeRect(r) {
+    return {
+      x: r.width >= 0 ? r.x : r.x + r.width,
+      y: r.height >= 0 ? r.y : r.y + r.height,
+      width: Math.abs(r.width),
+      height: Math.abs(r.height),
+      band: r.band,
+    };
+  }
+
+  function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+  }
+
+  // ================= REGION SIDEBAR (review list) =================
+  function renderRegionList(){
+    if(rectangles.length === 0){
+      regionListEl.innerHTML = `<div class="region-empty">No regions yet — draw one, or click "Use AI" to detect them automatically.</div>`;
+      return;
+    }
+    regionListEl.innerHTML = '';
+    rectangles.forEach((r, idx) => {
+      const norm = normalizeRect(r);
+      const row = document.createElement('div');
+      row.className = 'region-row' + (r === selectedRect ? ' selected' : '');
+      row.innerHTML = `
+        <span class="r-dot ${r.source === 'ai' ? 'ai' : 'manual'}"></span>
+        <div class="r-info">
+          <div class="r-band">${r.band}</div>
+          <div class="r-coords">${Math.round(norm.x)},${Math.round(norm.y)} · ${Math.round(norm.width)}×${Math.round(norm.height)}</div>
         </div>
-        <div>
-            <button class="btn-cancel" onclick="genBtn()">Compile</button>
-        </div> -->
+        <div class="r-remove" title="Remove">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </div>
+      `;
+      row.addEventListener('click', (e) => {
+        if(e.target.closest('.r-remove')) return;
+        selectedRect = r;
+        bandSelect.value = r.band;
+        draw();
+        renderRegionList();
+      });
+      row.querySelector('.r-remove').addEventListener('click', () => {
+        rectangles = rectangles.filter(x => x !== r);
+        if(selectedRect === r) selectedRect = null;
+        draw();
+        renderRegionList();
+      });
+      regionListEl.appendChild(row);
+    });
+  }
 
-    </main>
+  // ================= USE AI =================
+  document.getElementById('useAiBtn').addEventListener('click', async () => {
+    if(rectangles.length > 0 && !confirm('This will replace your current regions with AI-detected ones. Continue?')) return;
 
+    const btn = document.getElementById('useAiBtn');
+    btn.classList.add('loading');
+    try{
+      const res = await fetch(`${API_BASE}/${fileId}/ai-detect`, { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok || data.status !== 'success'){
+        throw new Error(data.message || `API responded ${res.status}`);
+      }
+      rectangles = (data.regions || []).map(r => ({ ...r, source: 'ai' }));
+      selectedRect = null;
+      draw();
+      renderRegionList();
+      showToast(`AI detected ${rectangles.length} band region(s) — review before saving`);
+    } catch(err){
+      showToast(`AI detection failed: ${err.message}`);
+    } finally {
+      btn.classList.remove('loading');
+    }
+  });
 
-   
-    <script>
-        const imageUrl = "/uploadimg/{{report.path}}";
-        const fileId = "{{report.id}}";
-        const filename = "{{report.displayname}}";
-        const imagePath = "{{report.path}}";
+  // ================= SAVE =================
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    if (rectangles.length === 0) { showToast("No regions to save."); return; }
+    const btn = document.getElementById('saveBtn');
+    btn.classList.add('loading');
+    fetch(`${API_BASE}/save-region`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        file_id: fileId,
+        file_name: filename,
+        image_path: imagePath,
+        regions: rectangles.map(normalizeRect),
+      }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      showToast(data.message);
+      if (data.redirect) {
+        localStorage.setItem('regionsSaved', 'true');
+        window.location.href = data.redirect;
+      }
+    })
+    .catch(err => showToast(`Couldn't save: ${err.message}`))
+    .finally(() => btn.classList.remove('loading'));
+  });
 
-    </script>
+  window.addEventListener('pageshow', function(){
+    if(localStorage.getItem('regionsSaved')){
+      rectangles = [];
+      selectedRect = null;
+      bandSelect.value = "detail";
+      draw();
+      renderRegionList();
+      localStorage.removeItem('regionsSaved');
+    }
+  });
 
-    <script>
-        const canvas = document.getElementById("canvas");
-        const ctx = canvas.getContext("2d");
-        const bandSelect = document.getElementById("band");
+  renderRegionList();
+</script>
 
-        let rectangles = [];
-        let img = new Image();
-        img.src = imageUrl;
-
-        let selectedRect = null; // Tracks the box being edited
-        let isDrawing = false;
-        let isDragging = false;
-        let isResizing = false;
-        let resizeHandle = null; // Which corner ('tl', 'tr', 'bl', 'br')
-
-        let startX, startY, offX, offY;
-        const HANDLE_SIZE = 8; // Size of corner resize handles
-
-        img.onload = function () {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            draw();
-        };
-
-        // --- Helper: Check if point (x,y) is inside rectangle r ---
-        function isInside(x, y, r) {
-            const rx = r.x, ry = r.y, rw = r.width, rh = r.height;
-            // Handle negative widths/heights
-            const realX = rw > 0 ? rx : rx + rw;
-            const realY = rh > 0 ? ry : ry + rh;
-            const realW = Math.abs(rw);
-            const realH = Math.abs(rh);
-            return x >= realX && x <= realX + realW && y >= realY && y <= realY + realH;
-        }
-
-        // --- Helper: Get resize handle at point (x,y) for selected rect ---
-        function getHandle(x, y, r) {
-            const rx = r.x, ry = r.y, rw = r.width, rh = r.height;
-            const rXR = rx + rw;
-            const rYB = ry + rh;
-            const h = HANDLE_SIZE / 2;
-
-            if (x >= rx-h && x <= rx+h && y >= ry-h && y <= ry+h) return 'tl'; // Top Left
-            if (x >= rXR-h && x <= rXR+h && y >= ry-h && y <= ry+h) return 'tr'; // Top Right
-            if (x >= rx-h && x <= rx+h && y >= rYB-h && y <= rYB+h) return 'bl'; // Bottom Left
-            if (x >= rXR-h && x <= rXR+h && y >= rYB-h && y <= rYB+h) return 'br'; // Bottom Right
-            return null;
-        }
-
-        // --- Interaction 1: Band Dropdown Sync ---
-        bandSelect.addEventListener("change", e => {
-            if (selectedRect) {
-                selectedRect.band = e.target.value;
-                draw();
-            }
-        });
-
-        // --- Interaction 2: Mouse Down (New, Edit, Resize) ---
-        canvas.addEventListener("mousedown", e => {
-            const pos = getMousePos(e);
-            const mx = pos.x;
-            const my = pos.y;
-
-            // A. Check for Resizing existing selected box
-            if (selectedRect) {
-                resizeHandle = getHandle(mx, my, selectedRect);
-                if (resizeHandle) {
-                    isResizing = true;
-                    return;
-                }
-            }
-
-            // B. Check for Dragging/Selecting an existing box
-            let found = false;
-            rectangles.slice().reverse().forEach(r => { // Check newest first
-                if (!found && isInside(mx, my, r)) {
-                    selectedRect = r;
-                    offX = mx - r.x; // Save offsets for smooth dragging
-                    offY = my - r.y;
-                    isDragging = true;
-                    found = true;
-                    bandSelect.value = r.band; // Sync dropdown
-                }
-            });
-
-            if (found) { draw(); return; }
-
-            // C. Start Drawing a New Box
-            selectedRect = null; // Clear selection
-            bandSelect.value = bandSelect.options[1].value; // Reset to default
-            startX = mx;
-            startY = my;
-            isDrawing = true;
-            draw();
-        });
-
-        // --- Interaction 3: Mouse Move (Move, Resize, Draw Preview) ---
-        canvas.addEventListener("mousemove", e => {
-            const pos = getMousePos(e);
-            const mx = pos.x;
-            const my = pos.y;
-
-            // Update Cursor UI feedback
-            if (selectedRect) {
-                const h = getHandle(mx, my, selectedRect);
-                if (h === 'tl' || h === 'br') canvas.style.cursor = 'nwse-resize';
-                else if (h === 'tr' || h === 'bl') canvas.style.cursor = 'nesw-resize';
-                else if (isInside(mx, my, selectedRect)) canvas.style.cursor = 'move';
-                else canvas.style.cursor = 'default';
-            } else {
-                canvas.style.cursor = 'default';
-            }
-
-            if (isResizing && selectedRect) {
-                const r = selectedRect;
-                if (resizeHandle === 'tl') { r.width += (r.x - mx); r.height += (r.y - my); r.x = mx; r.y = my; }
-                if (resizeHandle === 'tr') { r.width = mx - r.x; r.height += (r.y - my); r.y = my; }
-                if (resizeHandle === 'bl') { r.x = mx; r.width += (selectedRect.x - mx); r.height = my - r.y; }
-                if (resizeHandle === 'br') { r.width = mx - r.x; r.height = my - r.y; }
-                draw();
-            } else if (isDragging && selectedRect) {
-                selectedRect.x = mx - offX;
-                selectedRect.y = my - offY;
-                draw();
-            } else if (isDrawing) {
-                draw();
-                // New Box Preview (Dotted Blue)
-                ctx.setLineDash([5, 5]);
-                ctx.strokeStyle = "blue";
-                ctx.lineWidth = 2;
-                ctx.strokeRect(startX, startY, mx - startX, my - startY);
-                ctx.setLineDash([]);
-            }
-        });
-
-        // --- Interaction 4: Mouse Up (Save/Finalize) ---
-        canvas.addEventListener("mouseup", e => {
-            const pos = getMousePos(e);
-
-            if (isDrawing) {
-                let rect = {
-                    x: startX,
-                    y: startY,
-                    width: pos.x - startX,
-                    height: pos.y - startY,
-                    band: bandSelect.value
-                };
-                if (Math.abs(rect.width) > 5 && Math.abs(rect.height) > 5) {
-                    rectangles.push(rect);
-                    selectedRect = rect; // Select new box immediately
-                }
-            }
-            isDrawing = isDragging = isResizing = false;
-            resizeHandle = null;
-            draw();
-        });
-
-        // --- Interaction 5: Keyboard Delete (Delete Selected) ---
-        window.addEventListener("keydown", e => {
-            if ((e.key === "Delete" || e.key === "Backspace") && selectedRect) {
-                e.preventDefault();
-                rectangles = rectangles.filter(r => r !== selectedRect);
-                selectedRect = null;
-                draw();
-            }
-        });
-
-        function draw() {
-            ctx.drawImage(img, 0, 0); // Background Image
-            
-            ctx.lineWidth = 2;
-            rectangles.forEach(r => {
-                const isSel = (r === selectedRect);
-                
-                // Draw Box
-                ctx.strokeStyle = isSel ? "lime" : "red"; // Green if selected
-                ctx.setLineDash(isSel ? [2, 2] : []);     // Dashed if selected
-                ctx.strokeRect(r.x, r.y, r.width, r.height);
-                ctx.setLineDash([]); // Reset
-                
-                // Draw Label
-                ctx.fillStyle = isSel ? "lime" : "red";
-                ctx.font = "bold 12px Arial";
-                ctx.fillText(r.band.toUpperCase(), r.x + 5, r.y + 15);
-
-                // Draw Resize Handles (if selected)
-                if (isSel) {
-                    ctx.fillStyle = "white";
-                    ctx.strokeStyle = "lime";
-                    ctx.lineWidth = 1;
-                    const h = HANDLE_SIZE / 2;
-                    const cornerHandles = [
-                        [r.x-h, r.y-h], [r.x+r.width-h, r.y-h], 
-                        [r.x-h, r.y+r.height-h], [r.x+r.width-h, r.y+r.height-h]
-                    ];
-                    cornerHandles.forEach(([hx, hy]) => {
-                        ctx.fillRect(hx, hy, HANDLE_SIZE, HANDLE_SIZE);
-                        ctx.strokeRect(hx, hy, HANDLE_SIZE, HANDLE_SIZE);
-                    });
-                    ctx.lineWidth = 2; // Reset
-                }
-            });
-        }
-
-        function normalizeRect(r) {
-            return {
-                x: r.width >= 0 ? r.x : r.x + r.width,
-                y: r.height >= 0 ? r.y : r.y + r.height,
-                width: Math.abs(r.width),
-                height: Math.abs(r.height),
-                band: r.band
-            };
-        }
-
-        function getMousePos(e) {
-            const rect = canvas.getBoundingClientRect();
-
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        }
-
-        function saveRegions() {
-            if (rectangles.length === 0) { alert("No regions to save."); return; }
-            fetch("/report/process/save-region", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    file_id: fileId,
-                    file_name: filename,
-                    image_path: imagePath,
-                    regions: rectangles.map(normalizeRect)
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message);
-                // console.log(data)
-                if (data.redirect) {
-                    // setting flag
-                    localStorage.setItem('regionsSaved', 'true'); 
-                    window.location.href = data.redirect;
-                }
-            });
-        }
-
-
-        window.addEventListener('pageshow', function(event){
-            if(localStorage.getItem('regionsSaved')){
-                // clear rectagles
-                rectangles = [];
-                selectedRect = null;
-                bandSelect.value = "detail";
-                draw();
-
-                // remove flag
-                localStorage.removeItem('regionsSaved');
-
-            }
-
-        });
-
-        function cancelBtn() {
-            window.location.href = "/reports/";
-        }
-    </script>
-
-    
 </body>
 </html>

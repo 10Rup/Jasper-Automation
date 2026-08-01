@@ -9,14 +9,17 @@ from ..databases.db import Base
 class Upload(Base):
     __tablename__ = 'uploads'
     id = Column(Integer, primary_key=True, index=True)
-    displayname = Column(String,index=True)
-    name = Column(String,index=True)
-    type = Column(String,index=True)
-    path = Column(String, nullable=False)
+    displayname = Column(String, index=True)
+    name = Column(String, index=True)
+    type = Column(String, index=True)       # 'report' or 'reference' — category
+    format = Column(String)                 # actual file format: pdf/xls/html/jrxml
+    path = Column(String, nullable=False)   # the uploaded sample file
+    output_path = Column(String, nullable=True)  # new — the generated report, once one exists
     size = Column(String)
     pagedimention = Column(String)
     query = Column(Text, default="")
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    status = Column(Integer, default=0)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
 
 
@@ -29,13 +32,16 @@ class Process(Base):
     bandname = Column(String, nullable=False)
     path = Column(String, default="")
     code = Column(Text, default="")
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    x = Column(Integer, nullable=True)       # new — bounding box, so it can be redrawn later
+    y = Column(Integer, nullable=True)
+    width = Column(Integer, nullable=True)
+    height = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
 
 
-    # 'type': 'mysql', 'name': 'localhost', 'host': 'localhost', 'port': '3306', 'db': '45435435', 'user': 'root', 'pass': '', 'ssl': False, 'sshHost': '', 'sshPort': '', 'sshUser': '', 'authMode': 'password', 'sshPass': '', 'keyPass': ''}
 
-
+# 'type': 'mysql', 'name': 'localhost', 'host': 'localhost', 'port': '3306', 'db': '45435435', 'user': 'root', 'pass': '', 'ssl': False, 'sshHost': '', 'sshPort': '', 'sshUser': '', 'authMode': 'password', 'sshPass': '', 'keyPass': ''}
 class Dbcredentials(Base):
     __tablename__ = 'dbcredentials'
     id = Column(Integer, primary_key=True, index=True)
@@ -93,13 +99,4 @@ class SshKey(Base):
     uploaded_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
 
-'''
-cmd:: 1. Disable permission inheritance on the file
-icacls "C:\RUPMANDAL\TeamProject\Jasper-Automation\SMbastion.pem" /inheritance:r
 
-:: 2. Grant full control ONLY to your currently logged-in user
-icacls "C:\RUPMANDAL\TeamProject\Jasper-Automation\SMbastion.pem" /grant:r "%username%:F"
-
-ssh-keygen -p -m PEM -f /path/to/your_key.pem
-
-'''
