@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1a3ec0e9-a736-460b-81a4-fa0e06798b78">
+<queryString>
+		<![CDATA[select "" as a]]>
+	</queryString>
+<field name="" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value=""/>
+	</field>
+<pageHeader>
+    <band height="140">
+        <staticText>
+            <reportElement x="175" y="0" width="100" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Counter Foil]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="20" width="275" height="15"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true" isItalic="true"/>
+            </textElement>
+            <text><![CDATA[ROLL LIST (THEORY)]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="35" width="275" height="15"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Gopal Narayan Singh University]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="50" width="275" height="15"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[MBA-Semester - II- EXAMINATION-2025-2026]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="70" width="45" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Subject]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="45" y="70" width="230" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[: Marketing Management]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="85" width="45" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Paper]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="45" y="85" width="230" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[: [Marketing Management(MBA121)]]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="0" y="110" width="60" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Full Marks]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="60" y="110" width="40" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[: 75]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="510" y="0" width="45" height="20"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Foil]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="20" width="275" height="15"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true" isItalic="true"/>
+            </textElement>
+            <text><![CDATA[ROLL LIST (THEORY)]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="35" width="275" height="15"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Gopal Narayan Singh University]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="50" width="275" height="15"/>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[MBA-Semester - II- EXAMINATION-2025-2026]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="70" width="45" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Subject]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="325" y="70" width="230" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[: Marketing Management]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="85" width="45" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Paper]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="325" y="85" width="230" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[: [Marketing Management(MBA121)]]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="280" y="110" width="60" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[Full Marks]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="340" y="110" width="40" height="15"/>
+            <textElement textAlignment="Left" verticalAlignment="Middle">
+                <font/>
+            </textElement>
+            <text><![CDATA[: 75]]></text>
+        </staticText>
+    </band>
+</pageHeader>
+<detail>
+    <band height="75">
+        <staticText>
+            <reportElement x="0" y="0" width="65" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Exam Roll No.]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="65" y="0" width="75" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[University Enrolment No.]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="140" y="0" width="55" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Marks in Figures]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="195" y="0" width="75" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Marks in Word]]></text>
+        </staticText>
+        <textField>
+            <reportElement x="0" y="45" width="65" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{EXAM_ROLL_NO}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="65" y="45" width="75" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{UNIVERSITY_ENROLMENT_NO}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="140" y="45" width="55" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{MARKS_IN_FIGURES}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="195" y="45" width="75" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{MARKS_IN_WORD}]]></textFieldExpression>
+        </textField>
+        <staticText>
+            <reportElement x="285" y="0" width="65" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Exam Roll No.]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="350" y="0" width="75" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[University Enrolment No.]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="425" y="0" width="55" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Marks in Figures]]></text>
+        </staticText>
+        <staticText>
+            <reportElement x="480" y="0" width="75" height="45"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10" isBold="true"/>
+            </textElement>
+            <text><![CDATA[Marks in Word]]></text>
+        </staticText>
+        <textField>
+            <reportElement x="285" y="45" width="65" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{EXAM_ROLL_NO}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="350" y="45" width="75" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{UNIVERSITY_ENROLMENT_NO}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="425" y="45" width="55" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{MARKS_IN_FIGURES}]]></textFieldExpression>
+        </textField>
+        <textField>
+            <reportElement x="480" y="45" width="75" height="30"/>
+            <box>
+                <pen lineWidth="1.0" lineColor="#000000"/>
+            </box>
+            <textElement textAlignment="Center" verticalAlignment="Middle">
+                <font size="10"/>
+            </textElement>
+            <textFieldExpression><![CDATA[$F{MARKS_IN_WORD}]]></textFieldExpression>
+        </textField>
+    </band>
+</detail>
+</jasperReport>

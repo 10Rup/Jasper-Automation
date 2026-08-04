@@ -1,0 +1,10 @@
+'''
+cmd:: 1. Disable permission inheritance on the file
+icacls "C:\RUPMANDAL\TeamProject\Jasper-Automation\SMbastion.pem" /inheritance:r
+
+:: 2. Grant full control ONLY to your currently logged-in user
+icacls "C:\RUPMANDAL\TeamProject\Jasper-Automation\SMbastion.pem" /grant:r "%username%:F"
+
+ssh-keygen -p -m PEM -f /path/to/your_key.pem
+
+'''

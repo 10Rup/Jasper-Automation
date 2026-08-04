@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correction Page</title>
+</head>
+<body>
+    <div>
+        <h1>Welcome to the Correction Page</h1>
+        {% for report in reports %}
+            <div>
+                <h2>{{ report.displayname }}</h2>
+                <img src="/uploadimg/{{ report.path }}" alt="{{ report.displayname }}" style="width: 100%; max-width: 600px; border-radius: 10px;">
+                <br>
+                <button><a href="/report/process/{{ report.id }}">Process Report</a></button><br>
+                <button><a href="/report/correction-upload/{{ report.id }}">Report Correction</a></button>
+                <hr>
+            </div>
+        {% endfor %}
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conduit — Generate Query</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0D12;
+    --surface: #12161F;
+    --surface-2: #1A2029;
+    --surface-3: #212836;
+    --border: #262E3D;
+    --border-soft: #1D2432;
+    --text: #E7EAF0;
+    --text-dim: #8E97AB;
+    --text-faint: #5B6478;
+    --accent: #57E6C7;
+    --accent-dim: #2E4F49;
+    --accent-glow: rgba(87,230,199,0.16);
+    --warn: #F0B429;
+    --err: #F16A6A;
+    --ok: #5FDD8F;
+    --radius: 10px;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(87,230,199,0.05), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .pipes-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.35;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 20%, transparent 75%);
+  }
+
+  .shell{ position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:40px 28px 90px; }
+
+  header{ display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:28px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:linear-gradient(145deg, var(--accent), #2FAF97);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset, 0 6px 18px -6px rgba(87,230,199,0.5);
+  }
+  .brand-mark svg{ width:20px; height:20px; }
+  .brand-text h1{ font-family:var(--display); font-size:19px; font-weight:700; margin:0; letter-spacing:0.2px; }
+  .brand-text span{ font-size:12px; color:var(--text-faint); font-family:var(--mono); }
+
+  .env-pill{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    border:1px solid var(--border); background:var(--surface);
+    padding:6px 12px; border-radius:100px; display:flex; align-items:center; gap:7px;
+  }
+  .env-dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px var(--ok); }
+
+  h2.page-title{ font-family:var(--display); font-size:16px; margin:0 0 4px; }
+  .page-sub{ font-size:12.5px; color:var(--text-faint); margin:0 0 22px; }
+
+  .add-grid{ display:grid; grid-template-columns: 1.35fr 1fr; gap:22px; align-items:start; }
+  @media (max-width:860px){ .add-grid{ grid-template-columns:1fr; } }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:26px;
+  }
+  .panel h2{ font-family:var(--display); font-size:15px; margin:0 0 4px; font-weight:600; }
+  .panel .sub{ font-size:12.5px; color:var(--text-faint); margin:0 0 20px; }
+
+  .field-label{ font-size:12px; font-weight:600; color:var(--text-dim); margin-bottom:7px; display:block; }
+  .field{ margin-bottom:18px; }
+  input[type=text], select{
+    width:100%; background:var(--surface-2); border:1px solid var(--border);
+    color:var(--text); font-family:var(--body); font-size:13.5px;
+    padding:10px 12px; border-radius:7px; outline:none; transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus, select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  input::placeholder{ color:var(--text-faint); }
+
+  .btn-row{ display:flex; gap:10px; margin-top:6px; }
+  .btn{ font-family:var(--display); font-weight:600; font-size:13px; padding:11px 20px; border-radius:8px; border:none; cursor:pointer; transition:filter .15s, transform .1s; }
+  .btn:active{ transform:scale(0.98); }
+  .btn-primary{ background:var(--accent); color:#08110F; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--border); }
+  .btn-ghost:hover{ color:var(--text); border-color:#3A4356; }
+  .btn[disabled]{ opacity:0.45; cursor:not-allowed; }
+
+  .preview-panel{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; position:sticky; top:24px; }
+  .preview-head{ display:flex; align-items:center; gap:7px; padding:13px 16px; border-bottom:1px solid var(--border); background:var(--surface-2); }
+  .preview-head .dot{ width:9px; height:9px; border-radius:50%; }
+  .preview-head span.title{ font-family:var(--mono); font-size:11.5px; color:var(--text-dim); margin-left:4px; }
+  .preview-body{ padding:16px; font-family:var(--mono); font-size:12.5px; line-height:1.9; color:var(--text-dim); min-height:150px; }
+
+  .api-banner{
+    display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:8px;
+    font-size:12.5px; font-family:var(--mono); margin-bottom:14px;
+    background:rgba(241,106,106,0.08); border:1px solid rgba(241,106,106,0.3); color:var(--err);
+  }
+  .api-banner svg{ width:15px; height:15px; flex-shrink:0; }
+  .api-banner button{
+    margin-left:auto; background:transparent; border:1px solid rgba(241,106,106,0.4); color:var(--err);
+    font-family:var(--body); font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:6px; cursor:pointer;
+  }
+  .api-banner button:hover{ background:rgba(241,106,106,0.12); }
+
+  .btn.loading{ position:relative; color:transparent !important; pointer-events:none; }
+  .btn.loading::after{
+    content:''; position:absolute; top:50%; left:50%; width:14px; height:14px;
+    margin:-7px 0 0 -7px; border-radius:50%; border:2px solid rgba(255,255,255,0.3); border-top-color:currentColor;
+    animation:spin .6s linear infinite;
+  }
+  .btn-primary.loading::after{ border-color:rgba(8,17,15,0.25); border-top-color:#08110F; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* ===== connection select ===== */
+  .conn-select{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--body); font-size:13.5px; padding:10px 12px; border-radius:7px; outline:none;
+    appearance:none; cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E97AB' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat; background-position:right 10px center; background-size:16px;
+  }
+  .conn-select:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+
+  /* ===== table multi-select dropdown ===== */
+  .multiselect{ position:relative; }
+  .multiselect-box{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+    min-height:44px; padding:8px 10px; background:var(--surface-2); border:1px solid var(--border);
+    border-radius:7px; cursor:pointer; transition:border-color .15s, box-shadow .15s;
+  }
+  .multiselect-box:hover{ border-color:#3A4356; }
+  .multiselect-box.open{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .multiselect-box[aria-disabled="true"]{ cursor:not-allowed; opacity:0.55; }
+  .multiselect-box .chevron{ width:15px; height:15px; color:var(--text-faint); flex-shrink:0; margin-top:4px; transition:transform .15s; }
+  .multiselect-box.open .chevron{ transform:rotate(180deg); }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:6px; flex:1; }
+  .chip-row .placeholder{ color:var(--text-faint); font-size:13px; padding:4px 2px; }
+  .chip{
+    display:flex; align-items:center; gap:6px; background:var(--surface-3); border:1px solid var(--border);
+    border-radius:6px; padding:4px 4px 4px 10px; font-family:var(--mono); font-size:12px; color:var(--text);
+  }
+  .chip button{ background:none; border:none; color:var(--text-faint); cursor:pointer; padding:2px 6px; font-size:13px; line-height:1; }
+  .chip button:hover{ color:var(--err); }
+
+  .multiselect-panel{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:20;
+    background:var(--surface-3); border:1px solid var(--border); border-radius:9px;
+    box-shadow:0 14px 34px -10px rgba(0,0,0,0.55); overflow:hidden;
+  }
+  .multiselect-panel input{
+    width:100%; background:var(--surface-2); border:none; border-bottom:1px solid var(--border);
+    color:var(--text); font-family:var(--body); font-size:12.5px; padding:10px 12px; outline:none;
+  }
+  .multiselect-options{ max-height:200px; overflow-y:auto; padding:6px; }
+  .multiselect-option{
+    display:flex; align-items:center; gap:9px; padding:8px 9px; border-radius:6px; cursor:pointer;
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim); transition:background .1s;
+  }
+  .multiselect-option:hover{ background:var(--surface-2); }
+  .multiselect-option.checked{ color:var(--text); }
+  .multiselect-option .box{
+    width:15px; height:15px; border-radius:4px; border:1.5px solid var(--border); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; background:var(--surface-2);
+  }
+  .multiselect-option.checked .box{ background:var(--accent); border-color:var(--accent); }
+  .multiselect-option.checked .box svg{ width:10px; height:10px; }
+  .multiselect-empty{ padding:14px; text-align:center; color:var(--text-faint); font-size:12px; }
+
+  /* ===== textareas ===== */
+  textarea.mono-area{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--mono); font-size:12.5px; line-height:1.6; padding:12px; border-radius:7px;
+    outline:none; resize:vertical; min-height:110px;
+  }
+  textarea.mono-area:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .field-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+  .field-foot .hint{ font-size:11px; color:var(--text-faint); font-family:var(--mono); }
+  .field-foot .valid-ok{ color:var(--ok); }
+  .field-foot .valid-err{ color:var(--err); }
+  .field-foot .hint.fetching{ display:inline-flex; align-items:center; gap:6px; color:var(--accent); }
+  .mini-spinner{
+    width:10px; height:10px; border-radius:50%; border:1.5px solid rgba(87,230,199,0.25);
+    border-top-color:var(--accent); animation:spin .6s linear infinite; flex-shrink:0;
+  }
+
+  /* ===== report format switch ===== */
+  .format-switch{ display:flex; gap:8px; margin-bottom:14px; }
+  .format-opt{
+    font-family:var(--body); font-size:12.5px; font-weight:500; color:var(--text-dim);
+    background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
+    padding:9px 14px; cursor:pointer; flex:1; text-align:center; transition:all .15s ease;
+  }
+  .format-opt.selected{ background:var(--accent-glow); border-color:var(--accent); color:var(--text); }
+
+  .img-drop{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+    padding:26px 14px; border:1px dashed var(--border); border-radius:8px; background:var(--surface-2);
+    cursor:pointer; color:var(--text-faint); font-size:12px; text-align:center; transition:border-color .15s;
+  }
+  .img-drop:hover{ border-color:var(--accent); }
+  .img-drop svg{ width:22px; height:22px; color:var(--accent); }
+  .img-drop img{ max-width:100%; max-height:160px; border-radius:6px; margin-bottom:4px; }
+
+  /* ===== generated SQL output ===== */
+  .sql-output{
+    font-family:var(--mono); font-size:12.5px; line-height:1.7; color:var(--text);
+    background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
+    padding:14px; white-space:pre-wrap; word-break:break-word; min-height:160px; max-height:420px; overflow-y:auto;
+    margin:0;
+  }
+  .sql-output .kw{ color:#7DB7F5; font-weight:600; }
+  .sql-output .cm{ color:var(--text-faint); font-style:italic; }
+  .sql-output .pm{ color:var(--warn); }
+  .sql-output .str{ color:var(--ok); }
+  .sql-output:empty::before{ content:'Generated SQL will appear here…'; color:var(--text-faint); font-style:italic; }
+
+  .copy-btn{
+    display:inline-flex; align-items:center; gap:6px; background:var(--surface-2); border:1px solid var(--border);
+    color:var(--text-dim); font-family:var(--body); font-size:11.5px; font-weight:600;
+    padding:6px 11px; border-radius:6px; cursor:pointer; transition:all .15s ease;
+  }
+  .copy-btn:hover{ color:var(--text); border-color:#3A4356; }
+  .copy-btn svg{ width:12px; height:12px; }
+
+  .param-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:10px; margin:14px 0; }
+  .param-field label{ font-family:var(--mono); font-size:11px; color:var(--accent); display:block; margin-bottom:5px; }
+  .param-field input{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--mono); font-size:12.5px; padding:8px 10px; border-radius:6px; outline:none;
+  }
+  .param-field input:focus{ border-color:var(--accent); }
+
+  .result-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:7px; margin-top:14px; }
+  table.result-table{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
+  table.result-table th{ text-align:left; background:var(--surface-2); color:var(--text-dim); padding:9px 12px; border-bottom:1px solid var(--border); white-space:nowrap; position:sticky; top:0; }
+  table.result-table td{ padding:8px 12px; border-bottom:1px solid var(--border-soft); color:var(--text); white-space:nowrap; }
+  table.result-table tr:last-child td{ border-bottom:none; }
+  .result-meta{ font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:8px; }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--surface-3); border:1px solid var(--accent); color:var(--text);
+    padding:12px 20px; border-radius:9px; font-size:13px; font-family:var(--body);
+    display:flex; align-items:center; gap:9px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:50;
+    box-shadow:0 10px 30px -8px rgba(0,0,0,0.5);
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast svg{ width:15px; height:15px; color:var(--accent); flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<div class="pipes-bg"></div>
+
+<div class="shell">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 3v4M15 3v4M4 10h16M6 5h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="#08110F" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>Conduit</h1>
+        <span>query builder</span>
+      </div>
+    </div>
+    <div class="env-pill"><span class="env-dot"></span> local · workspace: isha-dev</div>
+  </header>
+
+  <h2 class="page-title">Prepare a report query</h2>
+  <p class="page-sub">Describe the report and Conduit will draft an optimized, parameterized SELECT — then you can test it live against a saved connection.</p>
+
+  <div class="api-banner" id="apiBanner" style="display:none;"></div>
+
+  <div class="add-grid">
+    <div class="panel">
+      <div class="field">
+        <span class="field-label">Dataset name</span>
+        <input type="text" id="q-dataset-name" placeholder="e.g. Term 2 Grade Cards">
+        <div class="field-foot"><span class="hint">what this query is being prepared for</span></div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Database connection</span>
+        <select class="conn-select" id="q-connection">
+          <option value="">Loading connections…</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Report type</span>
+        <input type="text" id="q-report-type" placeholder="e.g. Marksheet, Roll list, Subject-wise count">
+      </div>
+
+      <div class="field">
+        <span class="field-label">Table(s)</span>
+        <div class="multiselect" id="tableMultiselect">
+          <div class="multiselect-box" id="tableSelectBox" aria-disabled="true">
+            <div class="chip-row" id="tableChipRow">
+              <span class="placeholder" id="tablePlaceholder">Select a connection first…</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="multiselect-panel" id="tableSelectPanel" style="display:none;">
+            <input type="text" id="tableFilterInput" placeholder="filter tables…">
+            <div class="multiselect-options" id="tableOptions"></div>
+          </div>
+        </div>
+        <div class="field-foot"><span class="hint">tables come from the selected connection's schema</span></div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Sample data (JSON)</span>
+        <textarea class="mono-area" id="q-sample-json" placeholder="Pulled automatically once you pick tables above — edit if needed"></textarea>
+        <div class="field-foot">
+          <span class="hint" id="jsonHint">Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Report format</span>
+        <div class="format-switch" id="formatSwitch">
+          <button type="button" class="format-opt selected" data-format="text">Paste sample text</button>
+          <button type="button" class="format-opt" data-format="image">Upload image</button>
+        </div>
+
+        <div id="format-text">
+          <textarea class="mono-area" id="q-format-text" placeholder="Paste the layout of the report — column headers, section labels, static text…"></textarea>
+        </div>
+
+        <div id="format-image" style="display:none;">
+          <label class="img-drop" id="imgDrop" for="q-format-image">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span id="imgDropText">Choose a report screenshot or drop it here</span>
+          </label>
+          <input type="file" id="q-format-image" accept="image/*" style="display:none;">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="generateBtn">Generate query</button>
+      </div>
+    </div>
+
+    <div class="preview-panel">
+      <div class="preview-head">
+        <span class="dot" style="background:var(--err)"></span>
+        <span class="dot" style="background:var(--warn)"></span>
+        <span class="dot" style="background:var(--ok)"></span>
+        <span class="title">generated.sql</span>
+        <button class="copy-btn" id="copySqlBtn" style="margin-left:auto;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy
+        </button>
+      </div>
+      <div class="preview-body">
+        <pre class="sql-output" id="sqlOutput"></pre>
+
+        <div id="paramSection" style="display:none;">
+          <span class="field-label" style="margin-top:6px;">Test values for parameters</span>
+          <div class="param-grid" id="paramGrid"></div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" id="runQueryBtn">Run against connection</button>
+          </div>
+        </div>
+
+        <div id="resultSection" style="display:none;">
+          <div class="result-wrap"><table class="result-table" id="resultTable"></table></div>
+          <div class="result-meta" id="resultMeta"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toastText">Saved</span>
+</div>
+
+<script>
+  // ================= API CONFIG =================
+  // Connections list reuses your existing endpoint:
+  //   GET {CONN_API_BASE}/view -> 200 [{id, name, type, host, ...}, ...]
+  //
+  // New routes to add for this page:
+  //   GET  {CONN_API_BASE}/{id}/tables -> 200 ["students", "marks", "subjects", ...]
+  //        Introspects the target DB's schema for the given saved connection and returns table names.
+  //
+  //   POST {QUERY_API_BASE}/sample-data -> 200 { "students": [ {...} ], "marks": [ {...}, {...}, {...}, {...} ] }
+  //        body: { connection_id, tables: [...] }
+  //        For each table, return 1 sample row by default. If the table is "repeating" relative to a
+  //        single record — e.g. one row per subject per student, so a student naturally has multiple rows —
+  //        return 4 rows instead of 1, so the LLM can see the repeating shape. A reasonable server-side
+  //        heuristic: for each requested table, check whether it has a foreign key into another requested
+  //        table (or a shared key like student_id/roll_no) with a 1:many cardinality; if so pull 4 rows
+  //        sharing the same parent key, otherwise pull 1 row.
+  //
+  //   POST {QUERY_API_BASE}/generate -> 200 { sql: "<comment block + SELECT ...>" }
+  //        body: { connection_id, dataset_name, report_type, tables: [...], sample_json: <string or parsed JSON>,
+  //                report_format: { mode: 'text', text } | { mode: 'image' } (+ multipart file 'reportImage') }
+  //        Server-side, this is where you inject the fixed system prompt
+  //        ("Generate one optimized MySQL SELECT query...") plus these inputs, call the LLM,
+  //        and return only the SQL text — never the raw prompt or extra prose.
+  //   POST {QUERY_API_BASE}/run -> 200 { columns: [...], rows: [[...], ...], row_count, execution_ms }
+  //                              | 200 { error: "..." }  (query errors are not HTTP errors)
+  //        body: { connection_id, sql, params: { paramName: value, ... } }
+  const CONN_API_BASE = '/db';
+  const QUERY_API_BASE = '/query';
+
+  // Friendly labels for connection types in the dropdown — purely cosmetic.
+  const DB_TYPE_NAMES = {
+    postgres:'PostgreSQL', mysql:'MySQL', sqlserver:'SQL Server', oracle:'Oracle',
+    mongodb:'MongoDB', redis:'Redis', sqlite:'SQLite', clickhouse:'ClickHouse',
+  };
+
+  let connections = [];
+  let availableTables = [];   // tables fetched for the currently selected connection
+  let selectedTables = [];
+  let reportFormatMode = 'text';
+  let reportImageFile = null;
+  let lastGeneratedSql = '';
+
+  // ---- toast ----
+  let toastTimer;
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+
+  // ---- load saved connections for the dropdown ----
+  const apiBanner = document.getElementById('apiBanner');
+  function showApiError(message){
+    apiBanner.style.display = 'flex';
+    apiBanner.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      ${message}
+      <button id="apiRetry">Retry</button>
+    `;
+    document.getElementById('apiRetry').addEventListener('click', loadConnections);
+  }
+
+  async function loadConnections(){
+    apiBanner.style.display = 'none';
+    const sel = document.getElementById('q-connection');
+    sel.innerHTML = `<option value="">Loading connections…</option>`;
+    try{
+      const res = await fetch(`${CONN_API_BASE}/view`);
+      if(!res.ok) throw new Error(`API responded ${res.status}`);
+      connections = await res.json();
+      if(connections.length === 0){
+        sel.innerHTML = `<option value="">No saved connections yet — add one first</option>`;
+        return;
+      }
+      sel.innerHTML = `<option value="">Select a connection…</option>` + connections.map(c =>
+        `<option value="${c.id}">${c.name} — ${DB_TYPE_NAMES[c.type] || c.type}</option>`
+      ).join('');
+    } catch(err){
+      sel.innerHTML = `<option value="">Couldn't load connections</option>`;
+      showApiError(`Couldn't load connections from ${CONN_API_BASE}/view — ${err.message}`);
+    }
+  }
+
+  // ---- when the connection changes: reset tables + sample data, fetch this DB's tables ----
+  document.getElementById('q-connection').addEventListener('change', async function(){
+    selectedTables = [];
+    availableTables = [];
+    document.getElementById('q-sample-json').value = '';
+    setJsonHint('Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)', '');
+    renderTableChips();
+    closeTablePanel();
+
+    const box = document.getElementById('tableSelectBox');
+    const connId = this.value;
+    if(!connId){
+      box.setAttribute('aria-disabled', 'true');
+      document.getElementById('tablePlaceholder').textContent = 'Select a connection first…';
+      renderTableOptions();
+      return;
+    }
+
+    box.setAttribute('aria-disabled', 'true');
+    document.getElementById('tablePlaceholder').textContent = 'Loading tables…';
+    renderTableChips();
+    try{
+      const res = await fetch(`${CONN_API_BASE}/${connId}/tables`);
+      if(!res.ok) throw new Error(`API responded ${res.status}`);
+      availableTables = await res.json();
+      box.removeAttribute('aria-disabled');
+      document.getElementById('tablePlaceholder').textContent = 'Select table(s)…';
+      renderTableChips();
+      renderTableOptions();
+    } catch(err){
+      document.getElementById('tablePlaceholder').textContent = "Couldn't load tables";
+      showToast(`Couldn't load tables: ${err.message}`);
+    }
+  });
+
+  // ---- table multi-select dropdown ----
+  const tableSelectBox = document.getElementById('tableSelectBox');
+  const tableSelectPanel = document.getElementById('tableSelectPanel');
+  const tableChipRow = document.getElementById('tableChipRow');
+  const tableFilterInput = document.getElementById('tableFilterInput');
+  const tableOptionsEl = document.getElementById('tableOptions');
+
+  function openTablePanel(){
+    if(tableSelectBox.getAttribute('aria-disabled') === 'true') return;
+    tableSelectPanel.style.display = 'block';
+    tableSelectBox.classList.add('open');
+    tableFilterInput.value = '';
+    renderTableOptions();
+    tableFilterInput.focus();
+  }
+  function closeTablePanel(){
+    tableSelectPanel.style.display = 'none';
+    tableSelectBox.classList.remove('open');
+  }
+  tableSelectBox.addEventListener('click', () => {
+    tableSelectPanel.style.display === 'block' ? closeTablePanel() : openTablePanel();
+  });
+  document.addEventListener('click', e => {
+    if(!document.getElementById('tableMultiselect').contains(e.target)) closeTablePanel();
+  });
+  tableFilterInput.addEventListener('input', renderTableOptions);
+  tableFilterInput.addEventListener('click', e => e.stopPropagation());
+
+  function renderTableOptions(){
+    const q = (tableFilterInput.value || '').toLowerCase();
+    const matches = availableTables.filter(t => t.toLowerCase().includes(q));
+    if(availableTables.length === 0){
+      tableOptionsEl.innerHTML = `<div class="multiselect-empty">No tables to show yet</div>`;
+      return;
+    }
+    if(matches.length === 0){
+      tableOptionsEl.innerHTML = `<div class="multiselect-empty">No tables match “${q}”</div>`;
+      return;
+    }
+    tableOptionsEl.innerHTML = '';
+    matches.forEach(name => {
+      const checked = selectedTables.includes(name);
+      const opt = document.createElement('div');
+      opt.className = 'multiselect-option' + (checked ? ' checked' : '');
+      opt.innerHTML = `
+        <span class="box">${checked ? '<svg viewBox="0 0 24 24" fill="none" stroke="#08110F" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>' : ''}</span>
+        ${name}
+      `;
+      opt.addEventListener('click', e => {
+        e.stopPropagation();
+        toggleTable(name);
+      });
+      tableOptionsEl.appendChild(opt);
+    });
+  }
+
+  function toggleTable(name){
+    const i = selectedTables.indexOf(name);
+    if(i === -1) selectedTables.push(name); else selectedTables.splice(i, 1);
+    renderTableChips();
+    renderTableOptions();
+    fetchSampleData();
+  }
+
+  function renderTableChips(){
+    tableChipRow.innerHTML = '';
+    if(selectedTables.length === 0){
+      const placeholder = document.createElement('span');
+      placeholder.className = 'placeholder';
+      placeholder.id = 'tablePlaceholder';
+      placeholder.textContent = tableSelectBox.getAttribute('aria-disabled') === 'true'
+        ? 'Select a connection first…' : 'Select table(s)…';
+      tableChipRow.appendChild(placeholder);
+      return;
+    }
+    selectedTables.forEach(name => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `${name}<button type="button">&times;</button>`;
+      chip.querySelector('button').addEventListener('click', e => {
+        e.stopPropagation();
+        toggleTable(name);
+      });
+      tableChipRow.appendChild(chip);
+    });
+  }
+
+  // ---- auto-fetch sample data whenever the selected tables change ----
+  function setJsonHint(text, cls){
+    const hint = document.getElementById('jsonHint');
+    hint.textContent = text;
+    hint.className = 'hint' + (cls ? ' ' + cls : '');
+  }
+
+  let sampleFetchToken = 0;
+  async function fetchSampleData(){
+    const connId = document.getElementById('q-connection').value;
+    const textarea = document.getElementById('q-sample-json');
+    if(!connId || selectedTables.length === 0){
+      textarea.value = '';
+      setJsonHint('Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)', '');
+      return;
+    }
+    const token = ++sampleFetchToken;   // guards against out-of-order responses while toggling tables quickly
+    document.getElementById('jsonHint').innerHTML = '<span class="mini-spinner"></span> fetching sample rows…';
+    document.getElementById('jsonHint').className = 'hint fetching';
+    textarea.setAttribute('disabled', 'true');
+    try{
+      const res = await fetch(`${QUERY_API_BASE}/sample-data`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ connection_id: connId, tables: selectedTables }),
+      });
+      if(token !== sampleFetchToken) return; // a newer request has already superseded this one
+      if(!res.ok) throw new Error(`API responded ${res.status}`);
+      const data = await res.json();
+      textarea.value = JSON.stringify(data, null, 2);
+      setJsonHint('✓ sample rows loaded — edit freely if needed', 'valid-ok');
+    } catch(err){
+      if(token !== sampleFetchToken) return;
+      setJsonHint(`✗ couldn't fetch sample data: ${err.message}`, 'valid-err');
+    } finally {
+      if(token === sampleFetchToken) textarea.removeAttribute('disabled');
+    }
+  }
+
+
+  // manual edits to the auto-filled sample data are still validated live
+  document.getElementById('q-sample-json').addEventListener('input', function(){
+    if(!this.value.trim()){
+      setJsonHint('Auto-filled from the selected tables — 1 row each, or 4 if a table repeats per record (e.g. one row per subject)', '');
+      return;
+    }
+    try{
+      JSON.parse(this.value);
+      setJsonHint('✓ valid JSON', 'valid-ok');
+    } catch(e){
+      setJsonHint(`✗ ${e.message}`, 'valid-err');
+    }
+  });
+
+  // ---- report format switch (paste text vs upload image) ----
+  document.querySelectorAll('.format-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.format-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      reportFormatMode = btn.dataset.format;
+      document.getElementById('format-text').style.display = reportFormatMode === 'text' ? 'block' : 'none';
+      document.getElementById('format-image').style.display = reportFormatMode === 'image' ? 'block' : 'none';
+    });
+  });
+
+  const qImageInput = document.getElementById('q-format-image');
+  const imgDrop = document.getElementById('imgDrop');
+  function setReportImage(file){
+    reportImageFile = file;
+    const reader = new FileReader();
+    reader.onload = () => {
+      imgDrop.innerHTML = `<img src="${reader.result}" alt="report sample"><span>${file.name}</span>`;
+    };
+    reader.readAsDataURL(file);
+  }
+  qImageInput.addEventListener('change', () => {
+    if(qImageInput.files[0]) setReportImage(qImageInput.files[0]);
+  });
+  ['dragover','drop'].forEach(evt => imgDrop.addEventListener(evt, e => e.preventDefault()));
+  imgDrop.addEventListener('drop', e => {
+    const f = e.dataTransfer.files[0];
+    if(f && f.type.startsWith('image/')){
+      qImageInput.files = e.dataTransfer.files;
+      setReportImage(f);
+    } else {
+      showToast('Please drop an image file');
+    }
+  });
+
+  // ---- lightweight SQL syntax highlighting for display only ----
+  function highlightSql(sql){
+    const esc = sql.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const KEYWORDS = /\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|ON|AND|OR|AS|GROUP BY|ORDER BY|WITH|CASE|WHEN|THEN|ELSE|END|UNION|HAVING|LIMIT|IS|NULL|NOT|IN|DISTINCT|COUNT|SUM|BY)\b/gi;
+    return esc
+      .replace(/(--[^\n]*)/g, '<span class="cm">$1</span>')
+      .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="cm">$1</span>')
+      .replace(/('(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>')
+      .replace(/(:[a-zA-Z_][a-zA-Z0-9_]*)/g, '<span class="pm">$1</span>')
+      .replace(KEYWORDS, '<span class="kw">$1</span>');
+  }
+
+  function extractParams(sql){
+    const found = [...sql.matchAll(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)].map(m => m[1]);
+    return [...new Set(found)];
+  }
+
+  function renderParamFields(sql){
+    const params = extractParams(sql);
+    const section = document.getElementById('paramSection');
+    const grid = document.getElementById('paramGrid');
+    grid.innerHTML = '';
+    if(params.length === 0){
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+    params.forEach(p => {
+      const field = document.createElement('div');
+      field.className = 'param-field';
+      field.innerHTML = `<label>:${p}</label><input type="text" data-param="${p}" placeholder="value">`;
+      grid.appendChild(field);
+    });
+  }
+
+  // ---- generate query ----
+  const sqlOutput = document.getElementById('sqlOutput');
+  document.getElementById('generateBtn').addEventListener('click', async () => {
+    const connectionId = document.getElementById('q-connection').value;
+    const datasetName = document.getElementById('q-dataset-name').value.trim();
+    const reportType = document.getElementById('q-report-type').value.trim();
+    const sampleJsonRaw = document.getElementById('q-sample-json').value.trim();
+
+    if(!datasetName){ showToast('Give this dataset a name'); return; }
+    if(!connectionId){ showToast('Pick a database connection first'); return; }
+    if(!reportType){ showToast('Enter a report type'); return; }
+    if(selectedTables.length === 0){ showToast('Select at least one table'); return; }
+    let sampleJson;
+    try{
+      sampleJson = sampleJsonRaw ? JSON.parse(sampleJsonRaw) : null;
+    } catch(e){
+      showToast('Sample data JSON is invalid'); return;
+    }
+    if(reportFormatMode === 'text' && !document.getElementById('q-format-text').value.trim()){
+      showToast('Paste the report format, or switch to image upload'); return;
+    }
+    if(reportFormatMode === 'image' && !reportImageFile){
+      showToast('Upload a report image, or switch to pasted text'); return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.classList.add('loading');
+    sqlOutput.innerHTML = '';
+    document.getElementById('paramSection').style.display = 'none';
+    document.getElementById('resultSection').style.display = 'none';
+
+    const basePayload = {
+      connection_id: connectionId,
+      dataset_name: datasetName,
+      report_type: reportType,
+      tables: selectedTables,
+      sample_json: sampleJsonRaw,
+    };
+
+    try{
+      let res;
+      if(reportFormatMode === 'image'){
+        const fd = new FormData();
+        Object.entries(basePayload).forEach(([k, v]) => fd.append(k, typeof v === 'string' ? v : JSON.stringify(v)));
+        fd.append('report_format_mode', 'image');
+        fd.append('reportImage', reportImageFile, reportImageFile.name);
+        res = await fetch(`${QUERY_API_BASE}/generate`, { method: 'POST', body: fd });
+      } else {
+        res = await fetch(`${QUERY_API_BASE}/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...basePayload,
+            sample_json: sampleJson,
+            report_format: { mode: 'text', text: document.getElementById('q-format-text').value },
+          }),
+        });
+      }
+      if(!res.ok){
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || err.error || `API responded ${res.status}`);
+      }
+      const data = await res.json();
+      lastGeneratedSql = data.sql || '';
+      sqlOutput.innerHTML = highlightSql(lastGeneratedSql);
+      renderParamFields(lastGeneratedSql);
+    } catch(err){
+      sqlOutput.innerHTML = `<span style="color:var(--err)">✗ ${err.message}</span>`;
+      showToast(`Couldn't generate query: ${err.message}`);
+    } finally {
+      btn.classList.remove('loading');
+    }
+  });
+
+  document.getElementById('copySqlBtn').addEventListener('click', async () => {
+    if(!lastGeneratedSql){ showToast('Nothing to copy yet'); return; }
+    try{
+      await navigator.clipboard.writeText(lastGeneratedSql);
+      showToast('SQL copied to clipboard');
+    } catch(e){
+      showToast("Couldn't copy — select and copy manually");
+    }
+  });
+
+  // ---- run generated query against the selected connection ----
+  document.getElementById('runQueryBtn').addEventListener('click', async () => {
+    const connectionId = document.getElementById('q-connection').value;
+    if(!connectionId){ showToast('Pick a database connection first'); return; }
+    if(!lastGeneratedSql){ showToast('Generate a query first'); return; }
+
+    const params = {};
+    document.querySelectorAll('#paramGrid input').forEach(inp => { params[inp.dataset.param] = inp.value; });
+
+    const btn = document.getElementById('runQueryBtn');
+    btn.classList.add('loading');
+    const resultSection = document.getElementById('resultSection');
+    resultSection.style.display = 'none';
+
+    try{
+      const res = await fetch(`${QUERY_API_BASE}/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ connection_id: connectionId, sql: lastGeneratedSql, params }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if(!res.ok || data.error){
+        throw new Error(data.error || `API responded ${res.status}`);
+      }
+      renderResultTable(data);
+    } catch(err){
+      showToast(`Query failed: ${err.message}`);
+    } finally {
+      btn.classList.remove('loading');
+    }
+  });
+
+  function renderResultTable(data){
+    const table = document.getElementById('resultTable');
+    const meta = document.getElementById('resultMeta');
+    const cols = data.columns || [];
+    const rows = data.rows || [];
+    table.innerHTML = `
+      <thead><tr>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+      <tbody>${rows.map(r => `<tr>${r.map(v => `<td>${v === null ? '<span style="color:var(--text-faint)">null</span>' : v}</td>`).join('')}</tr>`).join('')}</tbody>
+    `;
+    meta.textContent = `${data.row_count ?? rows.length} row(s)${data.execution_ms ? ' · ' + data.execution_ms + 'ms' : ''}`;
+    document.getElementById('resultSection').style.display = 'block';
+  }
+
+  loadConnections();
+</script>
+</body>
+</html>

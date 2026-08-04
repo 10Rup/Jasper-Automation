@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Page</title>
+  </head>
+  <body>
+    <div>
+      <h1>Welcome to the View Page</h1>
+      {% for report in reports %}
+      <div>
+        <h2>{{ report.displayname }}</h2>
+        <img
+          src="/uploadimg/{{ report.path }}"
+          alt="{{ report.displayname }}"
+          style="width: 100%; max-width: 600px; border-radius: 10px"
+        />
+        <br />
+        <button><a href="/report/process/{{ report.id }}">Process Report</a></button>
+        <!-- <button><a href="/report/generate/{{ report.id }}">Generate Report</a></button> -->
+        <!-- <button><a href="/report/generate-ocr/{{ report.id }}">Generate Report Ocr</a></button> -->
+        <textarea id="add-query-{{report.id}}" class="query-textarea" placeholder="Enter your query here..."></textarea>
+        <button onclick="addQuery('{{ report.id }}')">Add Query</a></button><br><br>
+        <!-- <a href="/report/add-query/{{ report.id }}" -->
+        <button><a href="/report/generate-geminie/{{ report.id }}">Generate Report</a></button>
+        
+        <hr/>
+      </div>
+      {% endfor %}
+    </div>
+
+    <script>
+      function addQuery(reportId) {
+        const queryText = document.getElementById(`add-query-${reportId}`).value;
+        fetch(`/report/add-query/${reportId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ query: queryText }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status == 'success') {
+            alert(data.message);
+          } else {
+            alert('Failed to add query.');
+          }
+          location.reload();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while adding the query.');
+        });
+      }
+
+
+    </script>
+  </body>
+</html>
