@@ -321,3 +321,40 @@ def describe_table(id: int, table_name: str, db: Session = Depends(conn)):
         raise HTTPException(502, str(e))
 
     return {"description": description}
+
+
+# add to dbconn.py
+from ...services.dbconn.suggest import suggest_relevant_tables
+
+@router.post('/{id}/tables/suggest')
+def suggest_tables(id: int, payload: dict = Body(...), db: Session = Depends(conn)):
+    connection = db.query(Dbcredentials).filter(Dbcredentials.id == id, Dbcredentials.deleted_at.is_(None)).first()
+    if not connection:
+        raise HTTPException(404, "connection not found")
+
+    report_type = (payload.get("report_type") or "").strip()
+    description = (payload.get("description") or "").strip()
+    if not report_type and not description:
+        raise HTTPException(400, "report_type or description is required")
+
+    c = build_conn_dict(connection)
+    try:
+        all_tables = list_tables(c)
+    except Exception as e:
+        raise HTTPException(502, f"couldn't list tables: {e}")
+
+    own_descriptions = load_table_descriptions(id)
+    shared_descriptions = load_default_descriptions()
+
+    lines = []
+    for t in all_tables:
+        bare = bare_table_name(t)
+        desc = own_descriptions.get(t) or shared_descriptions.get(bare) or ""
+        lines.append(f"- {t}" + (f": {desc}" if desc else ""))
+
+    try:
+        suggested = suggest_relevant_tables(report_type, description, lines, all_tables)
+    except RuntimeError as e:
+        raise HTTPException(502, str(e))
+
+    return {"tables": suggested}

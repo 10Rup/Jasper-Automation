@@ -5,24 +5,25 @@ from sqlalchemy import func, create_engine, text
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-
-
 from ...databases.db import conn
 from ...models.model import Upload, Process, Dbcredentials, SavedQuery
 
 from datetime import datetime, timezone, date
 
-#from ...services.report.generate import generateReport 
-#from ...services.report.ocr_generate import imgToOcr, buildJson
 from ...services.report.geminie_generate import imgToCode
 from ...services.report.cleanXml import clean_sql
 from ...services.dbconn.connections import build_conn_dict
-from ...services.dbconn.dbTesting import get_sample_data, get_sample_data_mongo,build_sqlalchemy_url, maybe_ssh_tunnel
-from ...services.query.build import call_claude
+from ...services.dbconn.dbTesting import get_sample_data, get_sample_data_mongo, build_sqlalchemy_url, maybe_ssh_tunnel
+from ...services.query.build import call_claude, find_similar_saved_queries
+from ...services.query.suggest_fields import suggest_report_fields
+from ...services.query.sample_cache import get_cached_sample, save_cached_sample
 
 import os
 import json
 import base64
+import re
+import time
+from decimal import Decimal
 from dotenv import load_dotenv
 from sql_metadata import Parser
 
@@ -33,45 +34,36 @@ apikeygeminie = os.getenv("API_KEY_GEMINIE")
 output = os.getenv("OUTPUT_DIR")
 reference = os.getenv("REFERENCE_DIR")
 
+MAX_IMAGE_BYTES = 5 * 1024 * 1024  # Claude's vision input limit is comfortably above typical screenshots
+MAX_ROWS = 500
+CONNECT_TIMEOUT = 5  # keep this in sync with the constant used in dbTesting.py
+
+# Blocks anything that isn't a pure read. WITH is allowed since CTEs are part of your
+# generated query pattern (pivoting via CASE WHEN inside a CTE per the system prompt).
+FORBIDDEN_KEYWORDS = re.compile(
+    r"\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REVOKE|"
+    r"REPLACE|MERGE|CALL|EXEC|EXECUTE)\b",
+    re.IGNORECASE,
+)
+
 router = APIRouter(prefix='/query', tags=['Query'])
 templates = Jinja2Templates(f"{appname}/templates/query")
 
 
+# ================= PAGES =================
 
 @router.get('/')
 def create_query(request: Request, db: Session = Depends(conn)):
-
-    
-    return templates.TemplateResponse(
-        request, 
-        'build.html'
-    ) 
+    return templates.TemplateResponse(request, 'build.html')
 
 
+@router.get('/list')
+def query_list_page(request: Request):
+    return templates.TemplateResponse(request, 'queryList.html')
 
 
-@router.get('/saved')
-def list_saved_queries(db: Session = Depends(conn)):
-    rows = db.query(SavedQuery).order_by(SavedQuery.created_at.desc()).all()
-    return [
-        {
-            "id": r.id,
-            "dataset_name": r.dataset_name,
-            "report_type": r.report_type,
-            "sql_text": r.sql_text,
-            "created_at": r.created_at.isoformat() if r.created_at else None,
-        }
-        for r in rows
-    ]
+# ================= SAMPLE DATA =================
 
-
-
-
-
-
-
-
-from ...services.query.sample_cache import get_cached_sample, save_cached_sample
 @router.post("/sample-data")
 def sample_data(payload: dict = Body(...), db: Session = Depends(conn)):
     connection = db.query(Dbcredentials).filter(Dbcredentials.id == int(payload["connection_id"])).first()
@@ -112,20 +104,7 @@ def sample_data(payload: dict = Body(...), db: Session = Depends(conn)):
     return {**cached_results, **fresh_results}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-from sql_metadata import Parser
+# ================= GENERATE =================
 
 def validate_generated_tables(sql: str, allowed_tables: list[str]) -> list[str]:
     """
@@ -145,10 +124,6 @@ def validate_generated_tables(sql: str, allowed_tables: list[str]) -> list[str]:
     return unknown
 
 
-
-
-MAX_IMAGE_BYTES = 5 * 1024 * 1024  # Claude's vision input limit is comfortably above typical screenshots
-
 @router.post("/generate")
 async def generate_query(request: Request, db: Session = Depends(conn)):
     content_type = request.headers.get("content-type", "")
@@ -162,6 +137,7 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
         sample_json = form.get("sample_json", "")
         connection_id = form.get("connection_id")
         image_file = form.get("reportImage")
+        parameters = form.get("parameters") or []
         image_bytes = await image_file.read() if image_file else None
         image_mime = image_file.content_type if image_file else None
         report_text = None
@@ -177,10 +153,11 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
         connection_id = body.get("connection_id")
         report_format = body.get("report_format", {})
         report_text = report_format.get("text", "")
+        parameters = body.get("parameters") or []
         image_bytes = None
         image_mime = None
 
-    # ---- validation (unchanged) ----
+    # ---- validation ----
     if not connection_id:
         raise HTTPException(400, "connection_id is required")
     if not tables:
@@ -194,6 +171,7 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
     except json.JSONDecodeError as e:
         raise HTTPException(400, f"sample_json is not valid JSON: {e}")
 
+
     # ---- build the user turn — description appended only when the user gave one ----
     user_text = (
         f"Dataset name: {dataset_name}\n"
@@ -201,8 +179,38 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
         f"Table(s): {', '.join(tables)}\n"
         f"Sample data (JSON): {sample_json}\n"
     )
+
+
+    
+    if parameters:   # <- no more body.get(...) here — just uses the variable already set above
+        param_lines = "\n".join(
+            f"- :{p['name']}" + (f" — {p['description']}" if p.get('description') else "")
+            for p in parameters if p.get('name')
+        )
+        user_text += (
+            f"\n\nRequired named parameters — the query MUST include a WHERE-clause filter "
+            f"using each of these named parameters, in addition to any others you determine "
+            f"are needed:\n{param_lines}\n"
+        )
+            
     if description and description.strip():
         user_text += f"Additional context from the user: {description.strip()}\n"
+
+    # ---- pull in reference queries and append them to the prompt ----
+    reference_queries = find_similar_saved_queries(db, connection_id, tables, report_type, limit=2)
+    if reference_queries:
+        reference_block = (
+            "\n\nReference — previously saved, verified working queries for similar reports "
+            "on this connection (structural/pattern guidance ONLY — see rule 8):\n"
+        )
+        for i, rq in enumerate(reference_queries, 1):
+            reference_block += (
+                f"\n--- Reference {i} ---\n"
+                f"Report type: {rq.report_type}\n"
+                f"Description: {rq.description or '(none)'}\n"
+                f"SQL:\n{rq.sql_text}\n"
+            )
+        user_text += reference_block
 
     content_blocks = []
     if image_bytes:
@@ -221,8 +229,6 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
     content_blocks.append({"type": "text", "text": user_text})
 
     sql_text = call_claude(content_blocks)
-    
-    sql_text = call_claude(content_blocks)
 
     unknown_tables = validate_generated_tables(sql_text, tables)
     if unknown_tables:
@@ -236,7 +242,7 @@ async def generate_query(request: Request, db: Session = Depends(conn)):
     return {"sql": sql_text}
 
 
-
+# ================= SAVED QUERIES =================
 
 @router.post("/save")
 def save_query(payload: dict = Body(...), db: Session = Depends(conn)):
@@ -259,15 +265,13 @@ def save_query(payload: dict = Body(...), db: Session = Depends(conn)):
     if not connection:
         raise HTTPException(404, "connection not found")
 
-    # sample_json arrives as a JSON string from the frontend (same shape /generate validates) —
-    # parse it so it's stored as structured JSON, not a string-of-a-string
     sample_json_raw = payload.get("sample_json")
     sample_json = None
     if sample_json_raw:
         try:
             sample_json = json.loads(sample_json_raw) if isinstance(sample_json_raw, str) else sample_json_raw
         except json.JSONDecodeError:
-            sample_json = None  # don't fail the save over an unparseable sample — it's reference data, not critical
+            sample_json = None
 
     row = SavedQuery(
         connection_id=int(connection_id),
@@ -291,21 +295,75 @@ def save_query(payload: dict = Body(...), db: Session = Depends(conn)):
     })
 
 
-# run the query generated
-import re
-import time
-from decimal import Decimal
-MAX_ROWS = 500
-CONNECT_TIMEOUT = 5  # keep this in sync with the constant used in dbTesting.py
+@router.get('/saved')
+def list_saved_queries(db: Session = Depends(conn)):
+    rows = (
+        db.query(SavedQuery)
+        .filter(SavedQuery.deleted_at.is_(None))
+        .order_by(SavedQuery.created_at.desc())
+        .all()
+    )
+    result = []
+    for r in rows:
+        used_by = (
+            db.query(Upload)
+            .filter(Upload.saved_query_id == r.id, Upload.deleted_at.is_(None))
+            .all()
+        )
+        result.append({
+            "id": r.id,
+            "dataset_name": r.dataset_name,
+            "report_type": r.report_type,
+            "description": r.description,
+            "sql_text": r.sql_text,
+            "active": r.active if r.active is not None else True,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
+            "used_by": [{"id": u.id, "displayname": u.displayname or u.name} for u in used_by],
+        })
+    return result
 
-# Blocks anything that isn't a pure read. WITH is allowed since CTEs are part of your
-# generated query pattern (pivoting via CASE WHEN inside a CTE per the system prompt).
-FORBIDDEN_KEYWORDS = re.compile(
-    r"\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REVOKE|"
-    r"REPLACE|MERGE|CALL|EXEC|EXECUTE)\b",
-    re.IGNORECASE,
-)
 
+@router.put('/saved/{id}')
+def update_saved_query(id: int, payload: dict = Body(...), db: Session = Depends(conn)):
+    row = db.query(SavedQuery).filter(SavedQuery.id == id, SavedQuery.deleted_at.is_(None)).first()
+    if not row:
+        raise HTTPException(404, "saved query not found")
+    if 'dataset_name' in payload: row.dataset_name = payload['dataset_name']
+    if 'report_type' in payload: row.report_type = payload['report_type']
+    if 'description' in payload: row.description = payload['description']
+    if 'sql_text' in payload: row.sql_text = payload['sql_text']
+    db.commit()
+    return {"ok": True}
+
+
+@router.put('/saved/{id}/active')
+def set_saved_query_active(id: int, payload: dict = Body(...), db: Session = Depends(conn)):
+    row = db.query(SavedQuery).filter(SavedQuery.id == id, SavedQuery.deleted_at.is_(None)).first()
+    if not row:
+        raise HTTPException(404, "saved query not found")
+    row.active = bool(payload.get("active", True))
+    db.commit()
+    return {"ok": True, "active": row.active}
+
+
+@router.delete('/saved/{id}')
+def delete_saved_query(id: int, db: Session = Depends(conn)):
+    row = db.query(SavedQuery).filter(SavedQuery.id == id, SavedQuery.deleted_at.is_(None)).first()
+    if not row:
+        raise HTTPException(404, "saved query not found")
+    in_use = (
+        db.query(Upload)
+        .filter(Upload.saved_query_id == id, Upload.deleted_at.is_(None))
+        .count()
+    )
+    if in_use:
+        raise HTTPException(400, f"this query is used by {in_use} report(s) — remove it from those first")
+    row.deleted_at = datetime.now(timezone.utc)
+    db.commit()
+    return {"ok": True}
+
+
+# ================= RUN =================
 
 def json_safe(value):
     if isinstance(value, Decimal): return float(value)
@@ -360,10 +418,6 @@ def run_query(payload: dict = Body(...), db: Session = Depends(conn)):
     # ---- read-only guard ----
     if not re.match(r"^\s*(SELECT|WITH)\b", sql, re.IGNORECASE):
         return {"error": "only SELECT statements can be run from this tool"}
-    
-    # if not re.match(r"^\s*(--[^\n]*\n|\s)*\b(SELECT|WITH)\b", sql, re.IGNORECASE):
-    #     return {"error": "only SELECT statements can be run from this tool"}
-    
     if FORBIDDEN_KEYWORDS.search(sql):
         return {"error": "query contains a disallowed statement type"}
     if ";" in sql.rstrip(";"):
@@ -401,6 +455,7 @@ def run_query(payload: dict = Body(...), db: Session = Depends(conn)):
     }
 
 
+# ================= UPLOADS (reused for the "reuse a previously uploaded file" dropdown) =================
 
 @router.get("/uploads")
 def list_query_uploads(db: Session = Depends(conn)):
@@ -429,3 +484,26 @@ def get_upload_file(id: int, db: Session = Depends(conn)):
     if not os.path.exists(upload.path):
         raise HTTPException(404, "file is missing on disk")
     return FileResponse(upload.path)
+
+
+# ================= SUGGEST FIELDS =================
+
+@router.post("/suggest-fields")
+def suggest_fields(payload: dict = Body(...)):
+    report_type = (payload.get("report_type") or "").strip()
+    description = (payload.get("description") or "").strip()
+    sample_json = payload.get("sample_json")
+    if not isinstance(sample_json, str):
+        sample_json = json.dumps(sample_json, ensure_ascii=False)
+
+    if not sample_json.strip() or sample_json.strip() == "{}":
+        raise HTTPException(400, "sample data is required — select tables first")
+    if not report_type and not description:
+        raise HTTPException(400, "report_type or description is required")
+
+    try:
+        fields_text = suggest_report_fields(report_type, description, sample_json)
+    except RuntimeError as e:
+        raise HTTPException(502, str(e))
+
+    return {"fields": fields_text}

@@ -4,6 +4,10 @@ import anthropic
 from fastapi import HTTPException
 import os
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+from ...models.model import Upload, Process, Dbcredentials, SavedQuery
+
+
 
 load_dotenv()
 client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))  # picks up ANTHROPIC_API_KEY from env
@@ -33,6 +37,14 @@ SYSTEM_PROMPT = (
     "Output ONLY the raw SQL statement — nothing else. No comments, no assumptions block, "
     "no explanation, no markdown code fences (no ``` at all). The response must start directly "
     "with SELECT or WITH and contain nothing but valid, executable SQL."
+
+    "8. If reference queries from previously saved reports are provided, use them ONLY for "
+    "structural and stylistic guidance — JOIN patterns, named-parameter conventions, CTE/pivot "
+    "style, general query shape. NEVER copy a column name, table name, or alias from a "
+    "reference query unless that exact name also appears in the CURRENT sample JSON provided "
+    "above. A reference query may be for an entirely different table set, and its columns will "
+    "not exist in this one — treat it as a pattern to learn from, not a source of truth for "
+    "identifiers."
 )
 
 
@@ -109,3 +121,34 @@ def call_claude(content_blocks: list[dict]) -> str:
 
     return sql_text
 
+
+
+def find_similar_saved_queries(db: Session, connection_id: str, tables: list[str], report_type: str, limit: int = 2) -> list:
+    """
+    Finds previously saved queries for THIS connection that overlap with the current
+    request — either by sharing tables, or matching report type. Only pulls from
+    active, non-deleted rows: disabling a query is treated as "don't trust this as
+    a reference anymore," same as it already means "don't offer this to reports."
+    """
+    candidates = (
+        db.query(SavedQuery)
+        .filter(
+            SavedQuery.connection_id == int(connection_id),
+            SavedQuery.active == True,
+            SavedQuery.deleted_at.is_(None),
+        )
+        .all()
+    )
+
+    current_tables = set(tables)
+    scored = []
+    for sq in candidates:
+        sq_tables = set(sq.tables or [])
+        overlap = len(current_tables & sq_tables)
+        type_match = 1 if report_type and sq.report_type and report_type.strip().lower() == sq.report_type.strip().lower() else 0
+        score = overlap * 2 + type_match  # table overlap weighted higher than a type-name match
+        if score > 0:
+            scored.append((score, sq))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    return [sq for _, sq in scored[:limit]]

@@ -19,9 +19,11 @@ class Upload(Base):
     pagedimention = Column(String)
     query = Column(Text, default="")
     status = Column(Integer, default=0)
+    saved_query_id = Column(Integer, ForeignKey('saved_queries.id'), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     deleted_at = Column(DateTime, nullable=True)
 
+    saved_query = relationship("SavedQuery")
 
 
 
@@ -74,18 +76,20 @@ class Dbcredentials(Base):
 
 class SavedQuery(Base):
     __tablename__ = "saved_queries"
-
     id = Column(Integer, primary_key=True, index=True)
     connection_id = Column(Integer, ForeignKey("dbcredentials.id"), nullable=False)
     dataset_name = Column(String(255), nullable=False)
     report_type = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
-    tables = Column(JSON, nullable=False)        # ["students", "marks"]
-    sample_json = Column(JSON, nullable=True)     # kept for reference/regeneration later
+    tables = Column(JSON, nullable=False)
+    sample_json = Column(JSON, nullable=True)
     sql_text = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    active = Column(Boolean, default=True)          # new — controls availability to reports
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)  # new — soft delete
 
     connection = relationship("Dbcredentials")
+
 
 
 class SshKey(Base):

@@ -439,13 +439,16 @@
   let queryModalTarget = null; // the upload record currently being edited
   let queryModalReload = null; // the loadList() of whichever section opened this
   let savedDatasets = [];      // cached SavedQuery rows, refreshed each time the modal opens
+  let pickedDatasetId = null;  // set when a dataset is chosen from the dropdown; cleared on manual edit
 
   async function loadSavedDatasets(){
     queryDatasetSelect.innerHTML = `<option value="">Loading saved datasets…</option>`;
     try{
       const res = await fetch(`${QUERY_API_BASE}/saved`);
       if(!res.ok) throw new Error(`API responded ${res.status}`);
-      savedDatasets = await res.json();
+      // only offer datasets that haven't been disabled — an inactive query shouldn't
+      // be pickable for a new report, even though it stays visible in the management view
+      savedDatasets = (await res.json()).filter(d => d.active !== false);
       if(savedDatasets.length === 0){
         queryDatasetSelect.innerHTML = `<option value="">No saved datasets yet</option>`;
         return;
@@ -459,10 +462,14 @@
   }
 
   queryDatasetSelect.addEventListener('change', function(){
-    if(!this.value) return;
+    if(!this.value){ pickedDatasetId = null; return; }
     const dataset = savedDatasets.find(d => String(d.id) === this.value);
-    if(dataset) queryTextarea.value = dataset.sql_text || '';
+    if(dataset){
+      queryTextarea.value = dataset.sql_text || '';
+      pickedDatasetId = dataset.id;
+    }
   });
+  queryTextarea.addEventListener('input', () => { pickedDatasetId = null; }); // hand-edited — no longer tied to that exact saved query
 
   function openQueryModal(f, reloadFn){
     queryModalTarget = f;
@@ -470,6 +477,7 @@
     queryTitle.textContent = `Query for "${f.displayname || f.name}"`;
     queryTextarea.value = f.query || '';
     queryDatasetSelect.value = '';
+    pickedDatasetId = f.saved_query_id || null; // preserve the existing link if this report already came from a dataset
     loadSavedDatasets();
     queryOverlay.classList.add('show');
   }
@@ -489,7 +497,7 @@
       const res = await fetch(`${API_BASE}/uploads/${queryModalTarget.id}/query`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: queryTextarea.value }),
+        body: JSON.stringify({ query: queryTextarea.value, saved_query_id: pickedDatasetId }),
       });
       if(!res.ok){
         const err = await res.json().catch(() => ({}));

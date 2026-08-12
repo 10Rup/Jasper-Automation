@@ -175,9 +175,9 @@ def save_upload_query(id: int, payload: dict = Body(...), db: Session = Depends(
     if not upload:
         raise HTTPException(404, "upload not found")
     upload.query = payload.get("query", "")
+    upload.saved_query_id = payload.get("saved_query_id")  # None if hand-typed/edited
     db.commit()
     return {"ok": True}
-
 
 @report_router.post('/uploads/{id}/process')
 def process_upload(id: int, db: Session = Depends(conn)):

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conduit — Saved Queries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0D12;
+    --surface: #12161F;
+    --surface-2: #1A2029;
+    --surface-3: #212836;
+    --border: #262E3D;
+    --border-soft: #1D2432;
+    --text: #E7EAF0;
+    --text-dim: #8E97AB;
+    --text-faint: #5B6478;
+    --accent: #57E6C7;
+    --accent-dim: #2E4F49;
+    --accent-glow: rgba(87,230,199,0.16);
+    --warn: #F0B429;
+    --err: #F16A6A;
+    --ok: #5FDD8F;
+    --radius: 10px;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(87,230,199,0.05), transparent 40%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .pipes-bg{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.3;
+    background-image:
+      linear-gradient(var(--border-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 20%, transparent 75%);
+  }
+
+  .shell{ position:relative; z-index:1; max-width:1520px; margin:0 auto; padding:40px 40px 90px; }
+  @media (max-width:900px){ .shell{ padding:28px 20px 70px; } }
+
+  header{ display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:28px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:12px; }
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:linear-gradient(145deg, var(--accent), #2FAF97);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.08) inset, 0 6px 18px -6px rgba(87,230,199,0.5);
+  }
+  .brand-mark svg{ width:20px; height:20px; }
+  .brand-text h1{ font-family:var(--display); font-size:19px; font-weight:700; margin:0; letter-spacing:0.2px; }
+  .brand-text span{ font-size:12px; color:var(--text-faint); font-family:var(--mono); }
+
+  .header-right{ display:flex; align-items:center; gap:10px; }
+  .home-btn{
+    display:flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--text-dim);
+    text-decoration:none; transition:color .15s, border-color .15s, background .15s;
+  }
+  .home-btn:hover{ color:var(--accent); border-color:#3A4356; background:var(--surface-2); }
+  .home-btn svg{ width:15px; height:15px; }
+  .env-pill{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    border:1px solid var(--border); background:var(--surface);
+    padding:6px 12px; border-radius:100px; display:flex; align-items:center; gap:7px;
+  }
+  .env-dot{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px var(--ok); }
+
+  .list-toolbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; gap:14px; flex-wrap:wrap; }
+  .list-toolbar h2{ font-family:var(--display); font-size:16px; margin:0; }
+  .list-toolbar .sub{ font-size:12.5px; color:var(--text-faint); margin-top:3px; }
+  .search-box{ background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:9px 13px; font-size:12.5px; color:var(--text-dim); font-family:var(--mono); width:240px; }
+  .search-box:focus{ outline:none; border-color:var(--accent); }
+
+  .api-banner{
+    display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:8px;
+    font-size:12.5px; font-family:var(--mono); margin-bottom:14px;
+    background:rgba(241,106,106,0.08); border:1px solid rgba(241,106,106,0.3); color:var(--err);
+  }
+  .api-banner svg{ width:15px; height:15px; flex-shrink:0; }
+  .api-banner button{
+    margin-left:auto; background:transparent; border:1px solid rgba(241,106,106,0.4); color:var(--err);
+    font-family:var(--body); font-size:11.5px; font-weight:600; padding:5px 11px; border-radius:6px; cursor:pointer;
+  }
+  .api-banner button:hover{ background:rgba(241,106,106,0.12); }
+
+  .query-list{ display:flex; flex-direction:column; gap:12px; }
+
+  .query-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px 20px; transition:border-color .15s, opacity .15s;
+  }
+  .query-card:hover{ border-color:#3A4356; }
+  .query-card.inactive{ opacity:0.55; }
+
+  .qc-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .qc-name{ font-family:var(--display); font-weight:700; font-size:14.5px; color:var(--text); }
+  .qc-type-badge{ font-family:var(--mono); font-size:10.5px; color:var(--text-dim); background:var(--surface-3); padding:3px 10px; border-radius:100px; flex-shrink:0; }
+  .qc-spacer{ flex:1; }
+  .qc-date{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); flex-shrink:0; }
+
+  .qc-toggle-wrap{ display:flex; align-items:center; gap:7px; flex-shrink:0; }
+  .qc-toggle-label{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); }
+  .switch{
+    position:relative; width:34px; height:19px; background:var(--surface-3); border:1px solid var(--border);
+    border-radius:100px; cursor:pointer; flex-shrink:0; transition:background .2s ease, border-color .2s ease;
+  }
+  .switch::after{
+    content:''; position:absolute; top:1.5px; left:1.5px; width:14px; height:14px; border-radius:50%;
+    background:var(--text-dim); transition:left .2s cubic-bezier(.4,0,.2,1), background .2s ease;
+  }
+  .switch.on{ background:var(--accent-dim); border-color:var(--accent); }
+  .switch.on::after{ left:16.5px; background:var(--accent); }
+
+  .qc-icon-btn{
+    width:28px; height:28px; border-radius:7px; background:var(--surface-2); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--text-faint);
+    transition:color .15s, border-color .15s; flex-shrink:0;
+  }
+  .qc-icon-btn:hover{ color:var(--text); border-color:#3A4356; }
+  .qc-icon-btn.danger:hover{ color:var(--err); border-color:rgba(241,106,106,0.4); }
+  .qc-icon-btn[disabled]{ opacity:0.35; cursor:not-allowed; pointer-events:none; }
+  .qc-icon-btn svg{ width:13px; height:13px; }
+
+  .qc-desc{ font-size:12.5px; color:var(--text-faint); line-height:1.55; margin-bottom:10px; }
+
+  .qc-sql{
+    font-family:var(--mono); font-size:11.5px; line-height:1.6; color:var(--text-dim);
+    background:var(--surface-2); border:1px solid var(--border); border-radius:7px;
+    padding:10px 12px; max-height:110px; overflow-y:auto; white-space:pre-wrap; word-break:break-word;
+    margin-bottom:10px;
+  }
+
+  .qc-footer{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .qc-used-toggle{
+    font-family:var(--mono); font-size:11px; color:var(--accent); cursor:pointer; display:inline-flex;
+    align-items:center; gap:5px; background:none; border:none; padding:0;
+  }
+  .qc-used-toggle svg{ width:11px; height:11px; transition:transform .15s; }
+  .qc-used-toggle.open svg{ transform:rotate(180deg); }
+  .qc-used-list{ display:none; flex-wrap:wrap; gap:6px; margin-top:8px; width:100%; }
+  .qc-used-list.show{ display:flex; }
+  .qc-used-chip{
+    font-family:var(--mono); font-size:10.5px; background:var(--surface-3); color:var(--text-dim);
+    padding:4px 10px; border-radius:100px; border:1px solid var(--border);
+  }
+  .qc-not-used{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); }
+
+  .empty-state{ text-align:center; padding:70px 20px; color:var(--text-faint); }
+  .empty-state svg{ width:36px; height:36px; margin-bottom:14px; opacity:0.5; }
+  .empty-state p{ font-size:13px; margin:0; }
+
+  .skeleton-card{ height:110px; border-radius:var(--radius); background:linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%); background-size:200% 100%; animation:shimmer 1.4s ease infinite; border:1px solid var(--border); }
+  @keyframes shimmer{ 0%{ background-position:200% 0; } 100%{ background-position:-200% 0; } }
+
+  /* ================= EDIT MODAL ================= */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; z-index:100; background:rgba(5,7,10,0.82);
+    align-items:center; justify-content:center; padding:40px; backdrop-filter:blur(3px);
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    max-width:680px; width:100%; max-height:88vh; overflow:auto; position:relative;
+  }
+  .modal-close{
+    position:absolute; top:12px; right:12px; z-index:2; width:32px; height:32px; border-radius:8px;
+    background:rgba(10,13,18,0.7); border:1px solid var(--border); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .modal-close:hover{ color:var(--text); border-color:#3A4356; }
+  .modal-close svg{ width:14px; height:14px; }
+
+  .edit-modal-body{ padding:24px; }
+  .edit-modal-body h3{ font-family:var(--display); font-size:15px; margin:0 0 4px; }
+  .edit-modal-body .sub{ font-size:12px; color:var(--text-faint); margin:0 0 18px; }
+  .field-label{ font-size:12px; font-weight:600; color:var(--text-dim); margin-bottom:7px; display:block; }
+  .field{ margin-bottom:16px; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  input[type=text]{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--body); font-size:13px; padding:10px 12px; border-radius:7px; outline:none;
+  }
+  input[type=text]:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  textarea{
+    width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text);
+    font-family:var(--body); font-size:12.5px; line-height:1.55; padding:10px 12px; border-radius:7px;
+    outline:none; resize:vertical;
+  }
+  textarea.mono{ font-family:var(--mono); font-size:12px; min-height:200px; }
+  textarea:focus{ border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-glow); }
+  .modal-actions{ display:flex; gap:10px; margin-top:16px; justify-content:flex-end; }
+  .btn{ font-family:var(--display); font-weight:600; font-size:13px; padding:10px 18px; border-radius:8px; border:none; cursor:pointer; }
+  .btn-primary{ background:var(--accent); color:#08110F; }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-ghost{ background:transparent; color:var(--text-dim); border:1px solid var(--border); }
+  .btn-ghost:hover{ color:var(--text); border-color:#3A4356; }
+  .btn[disabled]{ opacity:0.5; cursor:not-allowed; }
+
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--surface-3); border:1px solid var(--accent); color:var(--text);
+    padding:12px 20px; border-radius:9px; font-size:13px; font-family:var(--body);
+    display:flex; align-items:center; gap:9px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:50;
+    box-shadow:0 10px 30px -8px rgba(0,0,0,0.5);
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .toast svg{ width:15px; height:15px; color:var(--accent); flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<div class="pipes-bg"></div>
+
+<div class="shell">
+  <header>
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 3v4M15 3v4M4 10h16M6 5h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="#08110F" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>Conduit</h1>
+        <span>saved queries</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a class="home-btn" href="/" title="Back to home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+      </a>
+      <div class="env-pill"><span class="env-dot"></span> local · workspace: report-dev</div>
+    </div>
+  </header>
+
+  <div class="list-toolbar">
+    <div>
+      <h2>Saved queries</h2>
+      <div class="sub">Every dataset saved from the Query Builder — edit, disable, or remove them here.</div>
+    </div>
+    <input class="search-box" id="searchBox" type="text" placeholder="filter by dataset name…">
+  </div>
+
+  <div class="api-banner" id="apiBanner" style="display:none;"></div>
+  <div class="query-list" id="queryList"></div>
+</div>
+
+<!-- ================= EDIT MODAL ================= -->
+<div class="modal-overlay" id="editOverlay">
+  <div class="modal-box">
+    <div class="modal-close" id="editClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </div>
+    <div class="edit-modal-body">
+      <h3>Edit saved query</h3>
+      <p class="sub">Changes here don't retroactively change any report already using this query's current SQL — reports keep whatever they last saved.</p>
+
+      <div class="row2">
+        <div class="field">
+          <span class="field-label">Dataset name</span>
+          <input type="text" id="editDatasetName">
+        </div>
+        <div class="field">
+          <span class="field-label">Report type</span>
+          <input type="text" id="editReportType">
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Description <span style="font-weight:400; color:var(--text-faint);">optional</span></span>
+        <textarea id="editDescription"></textarea>
+      </div>
+
+      <div class="field">
+        <span class="field-label">SQL</span>
+        <textarea class="mono" id="editSql" spellcheck="false"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="editCancel">Cancel</button>
+        <button class="btn btn-primary" id="editSave">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <span id="toastText">Saved</span>
+</div>
+
+<script>
+  // ================= API CONFIG =================
+  //   GET    {API_BASE}/saved            -> 200 [{id, dataset_name, report_type, description,
+  //                                              sql_text, active, created_at,
+  //                                              used_by: [{id, displayname}, ...]}, ...]
+  //   PUT    {API_BASE}/saved/{id}       -> 200 {ok: true}
+  //          body: { dataset_name, report_type, description, sql_text } (any subset)
+  //   PUT    {API_BASE}/saved/{id}/active -> 200 {ok: true, active}
+  //          body: { active: true|false } — controls whether this query is offered
+  //          to reports at all (the Add Query dataset dropdown filters to active only).
+  //   DELETE {API_BASE}/saved/{id}       -> 200 {ok: true} | 400 if used_by is non-empty
+  //          Soft delete — the backend refuses if any report still references this query.
+  const API_BASE = '/query';
+
+  let allQueries = [];
+  let editTarget = null;
+
+  let toastTimer;
+  function showToast(msg){
+    const toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+
+  function showApiError(message){
+    const banner = document.getElementById('apiBanner');
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+      ${message}
+      <button id="apiRetry">Retry</button>
+    `;
+    document.getElementById('apiRetry').addEventListener('click', loadQueries);
+  }
+
+  async function loadQueries(){
+    document.getElementById('apiBanner').style.display = 'none';
+    const list = document.getElementById('queryList');
+    list.innerHTML = `<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>`;
+    try{
+      const res = await fetch(`${API_BASE}/saved`);
+      if(!res.ok) throw new Error(`API responded ${res.status}`);
+      allQueries = await res.json();
+      renderList();
+    } catch(err){
+      list.innerHTML = '';
+      showApiError(`Couldn't load saved queries from ${API_BASE}/saved — ${err.message}`);
+    }
+  }
+
+  function renderList(){
+    const list = document.getElementById('queryList');
+    const q = (document.getElementById('searchBox').value || '').toLowerCase();
+    const filtered = allQueries.filter(x => (x.dataset_name || '').toLowerCase().includes(q));
+
+    if(filtered.length === 0){
+      list.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16M4 12h10M4 18h6"/></svg>
+        <p>${allQueries.length === 0 ? 'No saved queries yet — save one from the Query Builder.' : `No queries match “${q}”.`}</p>
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    filtered.forEach(item => {
+      const isActive = item.active !== false;
+      const usedBy = item.used_by || [];
+
+      const card = document.createElement('div');
+      card.className = 'query-card' + (isActive ? '' : ' inactive');
+      card.innerHTML = `
+        <div class="qc-head">
+          <span class="qc-name">${item.dataset_name}</span>
+          ${item.report_type ? `<span class="qc-type-badge">${item.report_type}</span>` : ''}
+          <span class="qc-spacer"></span>
+          <span class="qc-date">${item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}</span>
+          <div class="qc-toggle-wrap">
+            <span class="qc-toggle-label">${isActive ? 'Active' : 'Inactive'}</span>
+            <div class="switch ${isActive ? 'on' : ''}" title="Toggle whether this query is available to reports"></div>
+          </div>
+          <div class="qc-icon-btn" title="Edit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="qc-icon-btn danger" title="${usedBy.length ? `Used by ${usedBy.length} report(s) — remove it from those first` : 'Delete'}" ${usedBy.length ? 'disabled' : ''}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6"/></svg>
+          </div>
+        </div>
+
+        ${item.description ? `<div class="qc-desc">${item.description}</div>` : ''}
+        <div class="qc-sql">${item.sql_text || ''}</div>
+
+        <div class="qc-footer">
+          ${usedBy.length
+            ? `<button type="button" class="qc-used-toggle">
+                 <span>Used by ${usedBy.length} report${usedBy.length > 1 ? 's' : ''}</span>
+                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M6 9l6 6 6-6"/></svg>
+               </button>`
+            : `<span class="qc-not-used">Not used by any report yet</span>`}
+          <div class="qc-used-list">
+            ${usedBy.map(u => `<span class="qc-used-chip">${u.displayname}</span>`).join('')}
+          </div>
+        </div>
+      `;
+
+      // ---- active/inactive toggle ----
+      card.querySelector('.switch').addEventListener('click', async function(){
+        const nextState = !this.classList.contains('on');
+        try{
+          const res = await fetch(`${API_BASE}/saved/${item.id}/active`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ active: nextState }),
+          });
+          if(!res.ok) throw new Error(`API responded ${res.status}`);
+          item.active = nextState;
+          this.classList.toggle('on', nextState);
+          card.classList.toggle('inactive', !nextState);
+          card.querySelector('.qc-toggle-label').textContent = nextState ? 'Active' : 'Inactive';
+          showToast(nextState ? 'Query enabled for reports' : 'Query disabled — reports can no longer pick this dataset');
+        } catch(err){
+          showToast(`Couldn't update: ${err.message}`);
+        }
+      });
+
+      // ---- edit ----
+      card.querySelector('.qc-icon-btn[title="Edit"]').addEventListener('click', () => openEditModal(item));
+
+      // ---- delete (button is already disabled server-guaranteed if used_by is non-empty) ----
+      card.querySelector('.qc-icon-btn.danger').addEventListener('click', async () => {
+        if(usedBy.length) return; // guarded by [disabled] too, but no harm being explicit
+        if(!confirm(`Delete "${item.dataset_name}"? This can't be undone.`)) return;
+        try{
+          const res = await fetch(`${API_BASE}/saved/${item.id}`, { method: 'DELETE' });
+          if(!res.ok){
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || `API responded ${res.status}`);
+          }
+          showToast('Query deleted');
+          loadQueries();
+        } catch(err){
+          showToast(`Couldn't delete: ${err.message}`);
+        }
+      });
+
+      // ---- used-by expand/collapse ----
+      const usedToggle = card.querySelector('.qc-used-toggle');
+      if(usedToggle){
+        usedToggle.addEventListener('click', () => {
+          usedToggle.classList.toggle('open');
+          card.querySelector('.qc-used-list').classList.toggle('show');
+        });
+      }
+
+      list.appendChild(card);
+    });
+  }
+
+  document.getElementById('searchBox').addEventListener('input', renderList);
+
+  // ================= EDIT MODAL =================
+  const editOverlay = document.getElementById('editOverlay');
+  function openEditModal(item){
+    editTarget = item;
+    document.getElementById('editDatasetName').value = item.dataset_name || '';
+    document.getElementById('editReportType').value = item.report_type || '';
+    document.getElementById('editDescription').value = item.description || '';
+    document.getElementById('editSql').value = item.sql_text || '';
+    editOverlay.classList.add('show');
+  }
+  function closeEditModal(){
+    editOverlay.classList.remove('show');
+    editTarget = null;
+  }
+  document.getElementById('editClose').addEventListener('click', closeEditModal);
+  document.getElementById('editCancel').addEventListener('click', closeEditModal);
+  editOverlay.addEventListener('click', e => { if(e.target === editOverlay) closeEditModal(); });
+
+  document.getElementById('editSave').addEventListener('click', async () => {
+    if(!editTarget) return;
+    const btn = document.getElementById('editSave');
+    btn.disabled = true;
+    try{
+      const res = await fetch(`${API_BASE}/saved/${editTarget.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dataset_name: document.getElementById('editDatasetName').value.trim(),
+          report_type: document.getElementById('editReportType').value.trim(),
+          description: document.getElementById('editDescription').value,
+          sql_text: document.getElementById('editSql').value,
+        }),
+      });
+      if(!res.ok){
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `API responded ${res.status}`);
+      }
+      showToast('Query updated');
+      closeEditModal();
+      loadQueries();
+    } catch(err){
+      showToast(`Couldn't save: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  loadQueries();
+</script>
+</body>
+</html>
